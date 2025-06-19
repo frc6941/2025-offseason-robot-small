@@ -1,0 +1,130 @@
+package frc.robot;
+
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.system.plant.DCMotor;
+import lib.ironpulse.swerve.SwerveConfig;
+import lib.ironpulse.swerve.SwerveLimit;
+import lib.ironpulse.swerve.SwerveModuleLimit;
+import lib.ironpulse.swerve.sim.SwerveSimConfig;
+import lib.ntext.NTParameter;
+
+import static edu.wpi.first.units.Units.*;
+
+public class Constants {
+    /* -------------------------------------------------------------------------- */
+    /*                               Global Settings                              */
+    /* -------------------------------------------------------------------------- */
+    public static final boolean kTuning = true;
+    public static final double kDtS = 0.01;
+
+    /* -------------------------------------------------------------------------- */
+    /*                               Swerve Settings                              */
+    /* -------------------------------------------------------------------------- */
+    public static final class Swerve {
+        public static final String kSwerveTag = "Swerve";
+        public static final String kSwerveModuleTag = "Swerve/SwerveModule";
+
+        public static SwerveLimit kDefaultSwerveLimit = SwerveLimit.builder()
+                .maxLinearVelocity(MetersPerSecond.of(4.5))
+                .maxSkidAcceleration(MetersPerSecondPerSecond.of(22.0))
+                .maxAngularVelocity(RadiansPerSecond.of(10.0))
+                .maxAngularAcceleration(RadiansPerSecondPerSecond.of(15.0))
+                .build();
+        public static SwerveModuleLimit kDefaultSwerveModuleLimit = SwerveModuleLimit.builder()
+                .maxDriveVelocity(MetersPerSecond.of(4.5))
+                .maxDriveAcceleration(MetersPerSecondPerSecond.of(25.0))
+                .maxSteerAngularVelocity(RadiansPerSecond.of(200.0))
+                .maxSteerAngularAcceleration(RadiansPerSecondPerSecond.of(300.0))
+                .build();
+
+        public static SwerveConfig.SwerveModuleConfig kModuleCompFL = SwerveConfig.SwerveModuleConfig.builder()
+                .location(new Translation2d(0.5, 0.5))
+                .driveMotorId(0)
+                .steerMotorId(1)
+                .encoderId(0)
+                .driveMotorEncoderOffset(Degree.of(50))
+                .steerMotorEncoderOffset(Degree.of(50))
+                .driveInverted(false)
+                .steerInverted(false)
+                .encoderInverted(false)
+                .build();
+        public static SwerveConfig.SwerveModuleConfig kModuleCompFR = SwerveConfig.SwerveModuleConfig.builder()
+                .location(new Translation2d(0.5, -0.5))
+                .driveMotorId(0)
+                .steerMotorId(1)
+                .encoderId(0)
+                .driveMotorEncoderOffset(Degree.of(50))
+                .steerMotorEncoderOffset(Degree.of(50))
+                .driveInverted(false)
+                .steerInverted(false)
+                .encoderInverted(false)
+                .build();
+        public static SwerveConfig.SwerveModuleConfig kModuleCompBL = SwerveConfig.SwerveModuleConfig.builder()
+                .location(new Translation2d(-0.5, 0.5))
+                .driveMotorId(0)
+                .steerMotorId(1)
+                .encoderId(0)
+                .driveMotorEncoderOffset(Degree.of(50))
+                .steerMotorEncoderOffset(Degree.of(50))
+                .driveInverted(false)
+                .steerInverted(false)
+                .encoderInverted(false)
+                .build();
+        public static SwerveConfig.SwerveModuleConfig kModuleCompBR = SwerveConfig.SwerveModuleConfig.builder()
+                .location(new Translation2d(-0.5, -0.5))
+                .driveMotorId(0)
+                .steerMotorId(1)
+                .encoderId(0)
+                .driveMotorEncoderOffset(Degree.of(50))
+                .steerMotorEncoderOffset(Degree.of(50))
+                .driveInverted(false)
+                .steerInverted(false)
+                .encoderInverted(false)
+                .build();
+
+
+        public static SwerveSimConfig kSimConfig = SwerveSimConfig.builder()
+                .wheelDiameter(Inch.of(4.01))
+                .driveGearRatio(7.0)
+                .steerGearRatio(20.0)
+                .driveMotor(DCMotor.getKrakenX60Foc(1))
+                .driveMomentOfInertia(KilogramSquareMeters.of(0.025))
+                .driveStdDevPos(0.0001)
+                .driveStdDevVel(0.001)
+                .steerMotor(DCMotor.getKrakenX60Foc(1))
+                .steerMomentOfInertia(KilogramSquareMeters.of(0.004))
+                .steerStdDevPos(0.0001)
+                .steerStdDevVel(0.001)
+                .defaultSwerveLimit(kDefaultSwerveLimit)
+                .defaultSwerveModuleLimit(kDefaultSwerveModuleLimit)
+                .moduleConfigs(new SwerveConfig.SwerveModuleConfig[]{
+                        kModuleCompFL, kModuleCompFR, kModuleCompBL, kModuleCompBR
+                })
+                .build();
+
+        @NTParameter(tableName = kSwerveModuleTag, isTuning = Constants.kTuning)
+        private final static class SwerveModuleParams {
+            static final double driveKp = 0.1;
+            static final double driveKi = 0.0;
+            static final double driveKd = 0.0;
+            static final double driveKs = 0.0;
+            static final double driveKv = 0.134;
+            static final double driveKa = 0.0;
+            static final boolean driveIsBrake = true;
+
+            static final double steerKp = 10.0;
+            static final double steerKi = 0.0;
+            static final double steerKd = 0.0;
+            static final boolean steerIsBrake = true;
+        }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                              Controller Settings                           */
+    /* -------------------------------------------------------------------------- */
+    public static class Controller {
+        public static final int kDriver = 0;
+        public static final int kOperator = 1;
+        public static final int kTest = 2;
+    }
+}
