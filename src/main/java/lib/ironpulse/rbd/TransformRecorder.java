@@ -49,9 +49,9 @@ public class TransformRecorder {
     }
 
     public void addDefaultTransforms() {
-        putTransform(kTransformWorldDriverStationBlue, kFrameWorld, kFrameDriverStationBlue);
-        putTransform(kTransformWorldDriverStationRed, kFrameWorld, kFrameDriverStationRed);
-        putTransform(new Pose3d(), Seconds.of(0.0), kFrameWorld, kFrameRobot);
+        putTransform(kTransformWorldDriverStationBlue, kFrameWorld, kFrameDriverStationBlue); // static: TWorldDSB
+        putTransform(kTransformWorldDriverStationRed, kFrameWorld, kFrameDriverStationRed); // static TWorldDSR
+        putTransform(new Pose3d(), Seconds.of(0.0), kFrameWorld, kFrameRobot); // static TWorldRobot at origin
     }
 
     public void putTransform(Pose3d transform, Time time, String from, String to, boolean isStatic) {

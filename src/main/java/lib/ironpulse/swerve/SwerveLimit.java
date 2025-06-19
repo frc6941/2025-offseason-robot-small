@@ -33,6 +33,9 @@ public record SwerveLimit(LinearVelocity maxLinearVelocity, LinearAcceleration m
      * @return a new {@link ChassisSpeeds} instance with velocities limited and discretized.
      */
     public ChassisSpeeds apply(ChassisSpeeds curr, ChassisSpeeds des, double dt) {
+        // go from continuous to discrete
+        curr = ChassisSpeeds.discretize(curr, dt);
+
         // get limits in doubles
         double vMaxMps = maxLinearVelocity.in(MetersPerSecond);
         double aMaxMps2 = maxSkidAcceleration.in(MetersPerSecondPerSecond);
@@ -47,28 +50,16 @@ public record SwerveLimit(LinearVelocity maxLinearVelocity, LinearAcceleration m
         Translation2d aDes = vDes.minus(vCurr).div(dt);
         aDes = MathTools.clampMagnitude(aDes, aMaxMps2);
         vDes = vCurr.plus(aDes.times(dt));
+        vDes = MathTools.clampMagnitude(vDes, vMaxMps);
 
         // apply angular limits
         double wDes = des.omegaRadiansPerSecond;
         double alphaDes = (wDes - curr.omegaRadiansPerSecond) / dt;
         alphaDes = MathUtil.clamp(alphaDes, -alphaMaxRadps2, alphaMaxRadps2);
         wDes = curr.omegaRadiansPerSecond + alphaDes * dt;
+        wDes = MathTools.clampMagnitude(wDes, wMaxRadps);
 
-        // snap to zero when within one‐step decay
-        // only snap when decelerating
-        double linearDecayThreshold = aMaxMps2 * dt + MathTools.TOLERANCE;
-        if (vDes.getNorm() <= linearDecayThreshold &&
-                new Translation2d(des.vxMetersPerSecond, des.vyMetersPerSecond).getNorm() < vCurr.getNorm()) {
-            vDes = new Translation2d();
-        }
-        double angularDecayThreshold = alphaMaxRadps2 * dt + MathTools.TOLERANCE;
-        if (Math.abs(wDes) <= angularDecayThreshold &&
-                Math.abs(des.omegaRadiansPerSecond) < Math.abs(curr.omegaRadiansPerSecond)) {
-            wDes = 0.0;
-        }
-
-        // go from continuous time to discrete time, return result
-        ChassisSpeeds res = new ChassisSpeeds(vDes.getX(), vDes.getY(), wDes);
-        return ChassisSpeeds.discretize(res, dt);
+        // return result
+        return new ChassisSpeeds(vDes.getX(), vDes.getY(), wDes);
     }
 }

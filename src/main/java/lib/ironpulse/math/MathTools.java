@@ -53,6 +53,10 @@ public class MathTools {
         return clampMagnitude(input, 0.0, maxMagnitude);
     }
 
+    public static double clampMagnitude(double input, double maxMagnitude) {
+        return MathUtil.clamp(Math.abs(input), 0.0, maxMagnitude) * Math.signum(input);
+    }
+
     public static boolean epsilonEquals(double v1, double v2) {
         return Math.abs(v1 - v2) < TOLERANCE;
     }

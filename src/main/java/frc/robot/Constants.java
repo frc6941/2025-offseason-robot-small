@@ -14,8 +14,12 @@ public class Constants {
     /* -------------------------------------------------------------------------- */
     /*                               Global Settings                              */
     /* -------------------------------------------------------------------------- */
+    public static enum RobotType {
+        PRAC, COMP, SIM
+    }
     public static final boolean kTuning = true;
     public static final double kDtS = 0.01;
+    public static final String kParameterTag = "Params";
 
     /* -------------------------------------------------------------------------- */
     /*                               Swerve Settings                              */
@@ -38,6 +42,7 @@ public class Constants {
                 .build();
 
         public static SwerveConfig.SwerveModuleConfig kModuleCompFL = SwerveConfig.SwerveModuleConfig.builder()
+                .name("FL")
                 .location(new Translation2d(0.5, 0.5))
                 .driveMotorId(0)
                 .steerMotorId(1)
@@ -49,6 +54,7 @@ public class Constants {
                 .encoderInverted(false)
                 .build();
         public static SwerveConfig.SwerveModuleConfig kModuleCompFR = SwerveConfig.SwerveModuleConfig.builder()
+                .name("FR")
                 .location(new Translation2d(0.5, -0.5))
                 .driveMotorId(0)
                 .steerMotorId(1)
@@ -60,6 +66,7 @@ public class Constants {
                 .encoderInverted(false)
                 .build();
         public static SwerveConfig.SwerveModuleConfig kModuleCompBL = SwerveConfig.SwerveModuleConfig.builder()
+                .name("BL")
                 .location(new Translation2d(-0.5, 0.5))
                 .driveMotorId(0)
                 .steerMotorId(1)
@@ -71,6 +78,7 @@ public class Constants {
                 .encoderInverted(false)
                 .build();
         public static SwerveConfig.SwerveModuleConfig kModuleCompBR = SwerveConfig.SwerveModuleConfig.builder()
+                .name("BR")
                 .location(new Translation2d(-0.5, -0.5))
                 .driveMotorId(0)
                 .steerMotorId(1)
@@ -89,12 +97,12 @@ public class Constants {
                 .steerGearRatio(20.0)
                 .driveMotor(DCMotor.getKrakenX60Foc(1))
                 .driveMomentOfInertia(KilogramSquareMeters.of(0.025))
-                .driveStdDevPos(0.0001)
-                .driveStdDevVel(0.001)
+                .driveStdDevPos(0.0000001)
+                .driveStdDevVel(0.000001)
                 .steerMotor(DCMotor.getKrakenX60Foc(1))
                 .steerMomentOfInertia(KilogramSquareMeters.of(0.004))
-                .steerStdDevPos(0.0001)
-                .steerStdDevVel(0.001)
+                .steerStdDevPos(0.0000001)
+                .steerStdDevVel(0.000001)
                 .defaultSwerveLimit(kDefaultSwerveLimit)
                 .defaultSwerveModuleLimit(kDefaultSwerveModuleLimit)
                 .moduleConfigs(new SwerveConfig.SwerveModuleConfig[]{
@@ -102,19 +110,19 @@ public class Constants {
                 })
                 .build();
 
-        @NTParameter(tableName = kSwerveModuleTag, isTuning = Constants.kTuning)
+        @NTParameter(tableName = kParameterTag + "/" + kSwerveModuleTag, isTuning = Constants.kTuning)
         private final static class SwerveModuleParams {
-            static final double driveKp = 0.1;
+            static final double driveKp = 0.3;
             static final double driveKi = 0.0;
             static final double driveKd = 0.0;
             static final double driveKs = 0.0;
-            static final double driveKv = 0.134;
+            static final double driveKv = 1.5;
             static final double driveKa = 0.0;
             static final boolean driveIsBrake = true;
 
             static final double steerKp = 10.0;
             static final double steerKi = 0.0;
-            static final double steerKd = 0.0;
+            static final double steerKd = 0.1;
             static final boolean steerIsBrake = true;
         }
     }

@@ -30,7 +30,7 @@ public class SwerveModule {
 
     public void updateInputs() {
         io.updateInputs(data);
-        Logger.processInputs(kSwerveModuleTag, data);
+        Logger.processInputs(kSwerveModuleTag + "/" + moduleConfig.name, data);
     }
 
     public void periodic() {

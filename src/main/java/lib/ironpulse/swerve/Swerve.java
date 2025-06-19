@@ -38,16 +38,15 @@ public class Swerve extends SubsystemBase {
     public Swerve(SwerveConfig swerveConfig, ImuIO imuIO, SwerveModuleIO... moduleIOs) {
         this.config = swerveConfig;
         this.modules = new ArrayList<>(moduleIOs.length);
-        if (config.moduleCount() != moduleIOs.length) {
+        if (config.moduleCount() != moduleIOs.length)
             throw new Error("Module count mismatch: " + config.moduleCount() + " vs " + moduleIOs.length);
-        }
+
 
         // ios
         this.imuIO = imuIO;
         this.imuIOInputs = new ImuIOInputsAutoLogged();
         for (int i = 0; i < config.moduleConfigs.length; i++)
             this.modules.add(i, new SwerveModule(config, config.moduleConfigs[i], moduleIOs[i]));
-
         SwerveModuleState[] states = new SwerveModuleState[config.moduleCount()];
         for (int i = 0; i < config.moduleCount(); i++)
             states[i] = modules.get(i).getSwerveModuleState();
@@ -79,19 +78,20 @@ public class Swerve extends SubsystemBase {
         LoggedTracer.record(kSwerveTag + "/Inputs");
 
         // module periodic
-        modules.forEach(SwerveModule::periodic);
-
-        // module commands
+        modules.forEach((SwerveModule::periodic));
         if (DriverStation.isDisabled()) modules.forEach(SwerveModule::runStop);
 
+        // telemetry
+        Logger.recordOutput(kSwerveTag + "/ChassisSpeedCurr", getChassisSpeeds());
+        Logger.recordOutput(kSwerveTag + "/ChassisSpeedCmd", setpointCurr.chassisSpeeds());
+        Logger.recordOutput(kSwerveTag + "/SwerveModuleStateCmd", setpointCurr.moduleStates());
     }
 
     // -------- Run -------
     public void runVelocity(ChassisSpeeds des) {
         mode = MODE.VELOCITY;
-        var curr = getChassisSpeeds();
-        setpointCurr = setpointGenerator.generate(curr, des, setpointCurr, Constants.kDtS);
-        Logger.recordOutput(kSwerveTag + "/Setpoint", setpointCurr);
+        setpointCurr = setpointGenerator.generate(des, setpointCurr, Constants.kDtS);
+
         for (int i = 0; i < config.moduleCount(); i++)
             modules.get(i).runState(setpointCurr.moduleStates()[i]);
     }

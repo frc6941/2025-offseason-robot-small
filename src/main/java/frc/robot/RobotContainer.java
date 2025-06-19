@@ -37,12 +37,12 @@ public class RobotContainer {
         swerve.setDefaultCommand(
                 SwerveCommands.driveWithJoystick(
                         swerve,
-                        () -> -driverController.getLeftY(),
+                        () -> driverController.getLeftY(),
                         () -> -driverController.getLeftX(),
                         () -> driverController.getRightX(),
                         () -> driverController.leftStick().getAsBoolean(),
                         MetersPerSecond.of(0.05),
-                        DegreesPerSecond.of(10.0)
+                        DegreesPerSecond.of(5.0)
                 )
         );
     }

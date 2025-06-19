@@ -39,10 +39,9 @@ public class SwerveSetpointGenerator {
     private SwerveModuleLimit moduleLimit;
 
 
-    public SwerveSetpoint generate(ChassisSpeeds currChassisSpeed, ChassisSpeeds desiredChassisSpeed,
-                                   SwerveSetpoint prevSetpoint, double dt) {
+    public SwerveSetpoint generate(ChassisSpeeds desiredChassisSpeed, SwerveSetpoint prevSetpoint, double dt) {
         // apply limit at chassis-level
-        desiredChassisSpeed = chassisLimit.apply(currChassisSpeed, desiredChassisSpeed, dt);
+        desiredChassisSpeed = chassisLimit.apply(prevSetpoint.chassisSpeeds(), desiredChassisSpeed, dt);
 
         // compute module desired states
         SwerveModuleState[] desiredModuleState = kinematics.toSwerveModuleStates(desiredChassisSpeed);
@@ -56,9 +55,9 @@ public class SwerveSetpointGenerator {
 
         // Special case: desiredState is a complete stop.
         // In this case, module angle is arbitrary, so just use the previous angle.
-        boolean need_to_steer = true;
+        boolean needToSteer = true;
         if (epsilonEquals(toTwist2d(desiredChassisSpeed), new Twist2d())) {
-            need_to_steer = false;
+            needToSteer = false;
             for (int i = 0; i < n; ++i) {
                 desiredModuleState[i].angle = prevSetpoint.moduleStates()[i].angle;
                 desiredModuleState[i].speedMetersPerSecond = 0.0;
@@ -93,11 +92,11 @@ public class SwerveSetpointGenerator {
             }
         }
 
-        if (allModulesShouldFlip && !epsilonEquals(
-                toTwist2d(prevSetpoint.chassisSpeeds()), new Twist2d()) && !epsilonEquals(
-                toTwist2d(desiredChassisSpeed), new Twist2d()))
+        if (allModulesShouldFlip
+                && !epsilonEquals(toTwist2d(prevSetpoint.chassisSpeeds()), new Twist2d())
+                && !epsilonEquals(toTwist2d(desiredChassisSpeed), new Twist2d()))
             // It will (likely) be faster to stop the robot, rotate the modules in place to the complement of desired, and accelerate again.
-            return generate(desiredChassisSpeed, currChassisSpeed, prevSetpoint, dt);
+            return generate(new ChassisSpeeds(), prevSetpoint, dt);
 
 
         // Compute the deltas between start and goal. We can then interpolate from the start state to the goal state; then find the
@@ -118,7 +117,7 @@ public class SwerveSetpointGenerator {
         // active constraint.
         final double maxThetaStep = dt * moduleLimit.maxSteerAngularVelocity().in(RadiansPerSecond);
         for (int i = 0; i < n; ++i) {
-            if (!need_to_steer) {
+            if (!needToSteer) {
                 overrideSteering.add(Optional.of(prevSetpoint.moduleStates()[i].angle));
                 continue;
             }
