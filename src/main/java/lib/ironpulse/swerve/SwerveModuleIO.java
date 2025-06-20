@@ -2,10 +2,7 @@ package lib.ironpulse.swerve;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.units.measure.Torque;
-import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.units.measure.*;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface SwerveModuleIO {
@@ -20,7 +17,7 @@ public interface SwerveModuleIO {
     }
     default void setDriveVelocity(LinearVelocity des) {
     }
-    default void setDriveTorqueFeedforward(Torque des) {
+    default void setDriveVelocity(LinearVelocity des, Current ff) {
     }
     default void setSteerOpenLoop(Voltage des) {
     }

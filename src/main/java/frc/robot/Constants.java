@@ -17,9 +17,11 @@ public class Constants {
     public static enum RobotType {
         PRAC, COMP, SIM
     }
+    public static final RobotType kRobotType = RobotType.PRAC;
     public static final boolean kTuning = true;
     public static final double kDtS = 0.01;
     public static final String kParameterTag = "Params";
+
 
     /* -------------------------------------------------------------------------- */
     /*                               Swerve Settings                              */
