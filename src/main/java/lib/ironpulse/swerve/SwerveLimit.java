@@ -46,7 +46,7 @@ public record SwerveLimit(LinearVelocity maxLinearVelocity, LinearAcceleration m
         Translation2d vDes = new Translation2d(des.vxMetersPerSecond, des.vyMetersPerSecond);
         Translation2d vCurr = new Translation2d(curr.vxMetersPerSecond, curr.vyMetersPerSecond);
 
-        // Calculate required acceleration
+        // calculate required acceleration
         Translation2d aDes = vDes.minus(vCurr).div(dt);
         aDes = MathTools.clampMagnitude(aDes, aMaxMps2);
         vDes = vCurr.plus(aDes.times(dt));

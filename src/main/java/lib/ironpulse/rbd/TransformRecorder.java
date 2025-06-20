@@ -29,29 +29,15 @@ public class TransformRecorder {
     public static final Pose3d kTransformWorldDriverStationRed = new Pose3d(
             new Pose2d(kFieldLength, kFieldWidth, Rotation2d.k180deg)
     );
-    private static TransformRecorder instance;
+
     private final TreeMap<String, TransformNode> frameTree;
 
     @Getter
     @Setter
     private double bufferDuration = 3.0;
 
-    private TransformRecorder() {
+    public TransformRecorder() {
         frameTree = new TreeMap<>();
-        addDefaultTransforms();
-    }
-
-    public static TransformRecorder getInstance() {
-        if (instance == null) {
-            instance = new TransformRecorder();
-        }
-        return instance;
-    }
-
-    public void addDefaultTransforms() {
-        putTransform(kTransformWorldDriverStationBlue, kFrameWorld, kFrameDriverStationBlue); // static: TWorldDSB
-        putTransform(kTransformWorldDriverStationRed, kFrameWorld, kFrameDriverStationRed); // static TWorldDSR
-        putTransform(new Pose3d(), Seconds.of(0.0), kFrameWorld, kFrameRobot); // static TWorldRobot at origin
     }
 
     public void putTransform(Pose3d transform, Time time, String from, String to, boolean isStatic) {

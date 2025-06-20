@@ -25,7 +25,7 @@ public class RobotStateTests {
         Field instanceField = TransformRecorder.class.getDeclaredField("instance");
         instanceField.setAccessible(true);
         instanceField.set(null, null);
-        state = TransformRecorder.getInstance();
+        state = new TransformRecorder();
         state.setBufferDuration(10.0);
     }
 

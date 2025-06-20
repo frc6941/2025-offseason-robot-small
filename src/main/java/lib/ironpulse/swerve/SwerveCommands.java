@@ -7,17 +7,16 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import lib.ironpulse.rbd.TransformRecorder;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static lib.ironpulse.math.MathTools.epsilonEquals;
 
 public class SwerveCommands {
@@ -32,7 +31,7 @@ public class SwerveCommands {
             DoubleSupplier xSupplier,
             DoubleSupplier ySupplier,
             DoubleSupplier zSupplier,
-            BooleanSupplier robotRelative,
+            Supplier<Pose3d> transformDriverRobotSupplier,
             LinearVelocity translationDeadband,
             AngularVelocity rotationDeadband,
             Function<Translation2d, Translation2d> translationCurve,
@@ -65,25 +64,14 @@ public class SwerveCommands {
             omega = rotationCurve.apply(omega);
 
             // compose to chassis speeds
-            ChassisSpeeds chassisSpeeds = new ChassisSpeeds(v.getX(), v.getY(), omega.in(RadiansPerSecond));
-            if (!robotRelative.getAsBoolean()) {
-                // NOTE: the so-called "FieldRelative" is actually "DriverStationRelative". we take the relative speed
-                // of the drivetrain w.r.t DriverStation, based on alliance color
-                DriverStation.Alliance alliance = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue);
-                String referenceFrame = alliance.equals(DriverStation.Alliance.Red) ?
-                        TransformRecorder.kFrameDriverStationRed : TransformRecorder.kFrameDriverStationBlue;
-                Pose3d transformDriverStationRobot =
-                        TransformRecorder.getInstance().getTransform(
-                                Seconds.of(Timer.getTimestamp()),
-                                referenceFrame, TransformRecorder.kFrameRobot
-                        ).orElseThrow();
-                chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                        chassisSpeeds,
-                        transformDriverStationRobot.getRotation().toRotation2d()
-                );
+            // NOTE: the so-called "FieldRelative" is actually "DriverStationRelative". we take the relative speed
+            // of the drivetrain w.r.t DriverStation, based on alliance color
+            ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                    v.getX(), v.getY(), omega.in(RadiansPerSecond),
+                    transformDriverRobotSupplier.get().getRotation().toRotation2d()
+            );
 
-                swerve.runVelocity(chassisSpeeds);
-            }
+            swerve.runVelocity(chassisSpeeds);
         });
         cmd.addRequirements(swerve);
 
@@ -95,12 +83,12 @@ public class SwerveCommands {
             DoubleSupplier xSupplier,
             DoubleSupplier ySupplier,
             DoubleSupplier zSupplier,
-            BooleanSupplier robotRelative,
+            Supplier<Pose3d> transformDriverRobotSupplier,
             LinearVelocity translationDeadband,
             AngularVelocity rotationDeadband
     ) {
         return driveWithJoystick(
-                swerve, xSupplier, ySupplier, zSupplier, robotRelative, translationDeadband, rotationDeadband,
+                swerve, xSupplier, ySupplier, zSupplier, transformDriverRobotSupplier, translationDeadband, rotationDeadband,
                 (x) -> x, (x) -> x
         );
     }

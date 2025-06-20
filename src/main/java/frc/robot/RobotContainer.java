@@ -1,14 +1,17 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import lib.ironpulse.rbd.TransformRecorder;
 import lib.ironpulse.swerve.Swerve;
 import lib.ironpulse.swerve.SwerveCommands;
 import lib.ironpulse.swerve.sim.ImuIOSim;
 import lib.ironpulse.swerve.sim.SwerveModuleIOSim;
 
-import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.*;
 
 public class RobotContainer {
     // Subsystems
@@ -40,7 +43,14 @@ public class RobotContainer {
                         () -> driverController.getLeftY(),
                         () -> -driverController.getLeftX(),
                         () -> driverController.getRightX(),
-                        () -> driverController.leftStick().getAsBoolean(),
+                        () -> RobotStateRecorder.getInstance().getTransform(
+                                Seconds.of(Timer.getTimestamp()),
+                                DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue).equals(
+                                        DriverStation.Alliance.Blue)
+                                        ? RobotStateRecorder.kFrameDriverStationBlue :
+                                        RobotStateRecorder.kFrameDriverStationRed,
+                                TransformRecorder.kFrameRobot
+                        ).orElse(new Pose3d()),
                         MetersPerSecond.of(0.05),
                         DegreesPerSecond.of(5.0)
                 )
