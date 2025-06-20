@@ -22,9 +22,6 @@ public class RobotStateTests {
     @BeforeEach
     void setUp() throws Exception {
         // Reset singleton for isolated tests
-        Field instanceField = TransformRecorder.class.getDeclaredField("instance");
-        instanceField.setAccessible(true);
-        instanceField.set(null, null);
         state = new TransformRecorder();
         state.setBufferDuration(10.0);
     }
