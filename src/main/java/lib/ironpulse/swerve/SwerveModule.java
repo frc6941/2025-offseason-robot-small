@@ -65,10 +65,9 @@ public class SwerveModule {
         io.setSteerAngleAbsolute(state.angle.getMeasure());
     }
 
-    public void runState(SwerveModuleState state, Torque ff) {
-        io.setDriveVelocity(MetersPerSecond.of(state.speedMetersPerSecond));
+    public void runState(SwerveModuleState state, Current ff) {
+        io.setDriveVelocity(MetersPerSecond.of(state.speedMetersPerSecond), ff);
         io.setSteerAngleAbsolute(state.angle.getMeasure());
-        io.setDriveTorqueFeedforward(ff);
     }
 
     public void runDriveVoltage(Voltage voltage) {
