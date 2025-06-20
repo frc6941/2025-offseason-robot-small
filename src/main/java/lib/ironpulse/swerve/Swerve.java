@@ -82,7 +82,9 @@ public class Swerve extends SubsystemBase {
         if (DriverStation.isDisabled()) modules.forEach(SwerveModule::runStop);
 
         // telemetry
+        Logger.recordOutput(kSwerveTag + "/Mode", mode);
         Logger.recordOutput(kSwerveTag + "/ChassisSpeedCurr", getChassisSpeeds());
+        Logger.recordOutput(kSwerveTag + "/SwerveModuleStateCurr", getModuleStates().toArray(new SwerveModuleState[0]));
         Logger.recordOutput(kSwerveTag + "/ChassisSpeedCmd", setpointCurr.chassisSpeeds());
         Logger.recordOutput(kSwerveTag + "/SwerveModuleStateCmd", setpointCurr.moduleStates());
     }
