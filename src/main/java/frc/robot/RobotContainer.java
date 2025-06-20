@@ -10,6 +10,7 @@ import lib.ironpulse.swerve.Swerve;
 import lib.ironpulse.swerve.SwerveCommands;
 import lib.ironpulse.swerve.sim.ImuIOSim;
 import lib.ironpulse.swerve.sim.SwerveModuleIOSim;
+import lib.ironpulse.swerve.sjtu6.SwerveModuleIOSJTU6;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -22,40 +23,42 @@ public class RobotContainer {
     CommandGenericHID operatorController = new CommandGenericHID(Constants.Controller.kOperator);
 
     public RobotContainer() {
-        if (Robot.isSimulation()) {
-            swerve = new Swerve(
-                    Constants.Swerve.kSimConfig,
-                    new ImuIOSim(),
-                    new SwerveModuleIOSim(Constants.Swerve.kSimConfig),
-                    new SwerveModuleIOSim(Constants.Swerve.kSimConfig),
-                    new SwerveModuleIOSim(Constants.Swerve.kSimConfig),
-                    new SwerveModuleIOSim(Constants.Swerve.kSimConfig)
-            );
-        }else{
-           
+        switch (Constants.kRobotType) {
+            case PRAC -> {
+                swerve = new Swerve(
+                        Constants.Swerve.kSimConfig, new ImuIOSim(),
+                        new SwerveModuleIOSim(Constants.Swerve.kSimConfig, 0),
+                        new SwerveModuleIOSim(Constants.Swerve.kSimConfig, 1),
+                        new SwerveModuleIOSim(Constants.Swerve.kSimConfig, 2),
+                        new SwerveModuleIOSim(Constants.Swerve.kSimConfig, 3)
+                );
+                SwerveModuleIOSJTU6.startSyncThread();
+            }
+            case SIM -> {
+                swerve = new Swerve(
+                        Constants.Swerve.kSimConfig, new ImuIOSim(),
+                        new SwerveModuleIOSim(Constants.Swerve.kSimConfig, 0),
+                        new SwerveModuleIOSim(Constants.Swerve.kSimConfig, 1),
+                        new SwerveModuleIOSim(Constants.Swerve.kSimConfig, 2),
+                        new SwerveModuleIOSim(Constants.Swerve.kSimConfig, 3)
+                );
+            }
         }
 
         configBindings();
     }
 
     private void configBindings() {
-        swerve.setDefaultCommand(
-                SwerveCommands.driveWithJoystick(
-                        swerve,
-                        () -> driverController.getLeftY(),
-                        () -> -driverController.getLeftX(),
-                        () -> driverController.getRightX(),
-                        () -> RobotStateRecorder.getInstance().getTransform(
-                                Seconds.of(Timer.getTimestamp()),
-                                DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue).equals(
-                                        DriverStation.Alliance.Blue)
-                                        ? RobotStateRecorder.kFrameDriverStationBlue :
-                                        RobotStateRecorder.kFrameDriverStationRed,
-                                TransformRecorder.kFrameRobot
-                        ).orElse(new Pose3d()),
-                        MetersPerSecond.of(0.05),
-                        DegreesPerSecond.of(5.0)
-                )
-        );
+        swerve.setDefaultCommand(SwerveCommands.driveWithJoystick(
+                swerve, () -> driverController.getLeftY(), () -> -driverController.getLeftX(),
+                () -> driverController.getRightX(), () -> RobotStateRecorder.getInstance().getTransform(
+                        Seconds.of(Timer.getTimestamp()),
+                        DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue).equals(
+                                DriverStation.Alliance.Blue)
+                                ? RobotStateRecorder.kFrameDriverStationBlue
+                                : RobotStateRecorder.kFrameDriverStationRed,
+                        TransformRecorder.kFrameRobot
+                ).orElse(new Pose3d()), MetersPerSecond.of(0.05), DegreesPerSecond.of(5.0)
+        ));
     }
 }
