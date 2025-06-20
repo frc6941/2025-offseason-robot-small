@@ -33,15 +33,15 @@ public class SwerveConfig {
 
     @Builder
     public static class SwerveModuleConfig {
-        String name;
-        Translation2d location;
-        int driveMotorId;
-        int steerMotorId;
-        int encoderId;
-        Angle driveMotorEncoderOffset;
-        Angle steerMotorEncoderOffset;
-        boolean driveInverted;
-        boolean steerInverted;
-        boolean encoderInverted;
+        public String name;
+        public Translation2d location;
+        public int driveMotorId;
+        public int steerMotorId;
+        public int encoderId;
+        public Angle driveMotorEncoderOffset;
+        public Angle steerMotorEncoderOffset;
+        public boolean driveInverted;
+        public boolean steerInverted;
+        public boolean encoderInverted;
     }
 }

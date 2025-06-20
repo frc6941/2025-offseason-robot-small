@@ -17,10 +17,10 @@ public class SwerveTests {
         var swerve = new Swerve(
                 Constants.Swerve.kSimConfig,
                 new ImuIOSim(),
-                new SwerveModuleIOSim(Constants.Swerve.kSimConfig),
-                new SwerveModuleIOSim(Constants.Swerve.kSimConfig),
-                new SwerveModuleIOSim(Constants.Swerve.kSimConfig),
-                new SwerveModuleIOSim(Constants.Swerve.kSimConfig)
+                new SwerveModuleIOSim(Constants.Swerve.kSimConfig, 0),
+                new SwerveModuleIOSim(Constants.Swerve.kSimConfig, 1),
+                new SwerveModuleIOSim(Constants.Swerve.kSimConfig, 2),
+                new SwerveModuleIOSim(Constants.Swerve.kSimConfig, 3)
         );
         swerve.runVelocity(new ChassisSpeeds(10.0, 10.0, 0.0));
         swerve.periodic();

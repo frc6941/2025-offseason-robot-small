@@ -1,11 +1,13 @@
 package lib.ironpulse.swerve.sjtu6;
 
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Frequency;
 import lib.ironpulse.swerve.SwerveConfig;
 import lombok.experimental.SuperBuilder;
 
 @SuperBuilder
 public class SwerveSJTU6Config extends SwerveConfig {
-    // SJTU6-specific slip detection configuration
-    public Current slipCurrent;
+    public Current driveStatorCurrentLimit;
+    public Current steerStatorCurrentLimit;
+    public Frequency odometryFrequency;
 }

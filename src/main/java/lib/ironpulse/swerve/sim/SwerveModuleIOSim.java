@@ -24,7 +24,7 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
     private PIDController steerFB;
     private boolean isSteerCloseLoop = false;
 
-    public SwerveModuleIOSim(SwerveSimConfig config) {
+    public SwerveModuleIOSim(SwerveSimConfig config, int idx) {
         this.config = config;
         initializePlants();
         initializeControllers();
