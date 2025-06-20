@@ -117,7 +117,7 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         driveConfig.Slot0.kA = SwerveModuleParamsNT.driveKa();
 
         // apply configuration
-        driveMotor.getConfigurator().apply(driveConfig);
+        PhoenixUtils.tryUntilOk(5, () -> driveMotor.getConfigurator().apply(driveConfig, 0.25));
         driveMotor.optimizeBusUtilization();
 
         // create signals
@@ -156,7 +156,7 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         steerConfig.ClosedLoopGeneral.ContinuousWrap = true;
 
         // apply configuration
-        steerMotor.getConfigurator().apply(steerConfig);
+        PhoenixUtils.tryUntilOk(5, () -> steerMotor.getConfigurator().apply(steerConfig, 0.25));
         steerMotor.optimizeBusUtilization();
 
         // create turn status signals
