@@ -6,8 +6,6 @@ import lombok.experimental.SuperBuilder;
 
 @SuperBuilder
 public class SwerveSJTU6Config extends SwerveConfig {
-    // slip configurations
-    Current slipCurrent;
-
-
+    // SJTU6-specific slip detection configuration
+    public Current slipCurrent;
 }

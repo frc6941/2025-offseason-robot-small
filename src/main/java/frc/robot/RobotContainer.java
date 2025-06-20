@@ -31,6 +31,8 @@ public class RobotContainer {
                     new SwerveModuleIOSim(Constants.Swerve.kSimConfig),
                     new SwerveModuleIOSim(Constants.Swerve.kSimConfig)
             );
+        }else{
+           
         }
 
         configBindings();
