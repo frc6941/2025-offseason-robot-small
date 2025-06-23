@@ -56,7 +56,7 @@ public class Constants {
                 .steerMotorEncoderOffset(Degree.of(90.9648))
                 .driveInverted(false)
                 .steerInverted(false)
-                .encoderInverted(false)
+                .encoderInverted(true)
                 .build();
         public static SwerveConfig.SwerveModuleConfig kModuleCompFR = SwerveConfig.SwerveModuleConfig.builder()
                 .name("FR")
@@ -68,7 +68,7 @@ public class Constants {
                 .steerMotorEncoderOffset(Degree.of(100.8972))
                 .driveInverted(false)
                 .steerInverted(false)
-                .encoderInverted(false)
+                .encoderInverted(true)
                 .build();
         public static SwerveConfig.SwerveModuleConfig kModuleCompBL = SwerveConfig.SwerveModuleConfig.builder()
                 .name("BL")
@@ -80,7 +80,7 @@ public class Constants {
                 .steerMotorEncoderOffset(Degree.of(279.0504))
                 .driveInverted(false)
                 .steerInverted(false)
-                .encoderInverted(false)
+                .encoderInverted(true)
                 .build();
         public static SwerveConfig.SwerveModuleConfig kModuleCompBR = SwerveConfig.SwerveModuleConfig.builder()
                 .name("BR")
@@ -92,7 +92,7 @@ public class Constants {
                 .steerMotorEncoderOffset(Degree.of(153.1044))
                 .driveInverted(false)
                 .steerInverted(false)
-                .encoderInverted(false)
+                .encoderInverted(true)
                 .build();
 
 

@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import lib.ironpulse.utils.LoggedTracer;
-import lib.ironpulse.utils.PhoenixUtils;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
@@ -46,7 +45,7 @@ public class Robot extends LoggedRobot {
     @Override
     public void robotPeriodic() {
         Threads.setCurrentThreadPriority(true, 99);
-        PhoenixUtils.refreshAll();
+        //PhoenixUtils.refreshAll();
         CommandScheduler.getInstance().run();
         LoggedTracer.record("Commands");
     }
