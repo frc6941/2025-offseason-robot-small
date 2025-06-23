@@ -2,14 +2,17 @@ package lib.ironpulse.swerve.sjtu6;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
@@ -17,8 +20,7 @@ import edu.wpi.first.units.measure.*;
 import frc.robot.SwerveModuleParamsNT;
 import lib.ironpulse.swerve.SwerveConfig;
 import lib.ironpulse.swerve.SwerveModuleIO;
-import lib.ironpulse.utils.PhoenixSynchronizationThread;
-import lib.ironpulse.utils.PhoenixUtils;
+import org.littletonrobotics.junction.Logger;
 
 import java.util.Queue;
 import java.util.concurrent.locks.ReentrantLock;
@@ -28,9 +30,10 @@ import static edu.wpi.first.units.Units.*;
 public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
     // sync thread for all modules
     private static final ReentrantLock syncLock = new ReentrantLock();
-    private static PhoenixSynchronizationThread syncThread;
+    //private static PhoenixSynchronizationThread syncThread;
     private final TalonFX driveMotor;
     private final TalonFX steerMotor;
+    private final CANcoder encoder;
     private final SwerveSJTU6Config config;
     private final SwerveConfig.SwerveModuleConfig moduleConfig;
     // control requests
@@ -60,41 +63,63 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
     private StatusSignal<Current> steerTorqueCurrentAmps;
     private StatusSignal<Temperature> steerTemperatureCel;
 
+    private int moduleID;
+
     public SwerveModuleIOSJTU6(SwerveSJTU6Config config, int idx) {
         this.config = config;
         this.moduleConfig = config.moduleConfigs[idx];
-
-        if (syncThread == null)
-            syncThread = new PhoenixSynchronizationThread(syncLock, config.odometryFrequency);
+        this.moduleID = idx;
+//        if (syncThread == null)
+//            syncThread = new PhoenixSynchronizationThread(syncLock, config.odometryFrequency);
 
         // initialize and config motors
         driveMotor = new TalonFX(moduleConfig.driveMotorId);
         steerMotor = new TalonFX(moduleConfig.steerMotorId);
+        encoder = new CANcoder(moduleConfig.encoderId);
         configureDriveMotor();
         configureSteerMotor();
 
         // register signals, refresh in robotPeriodic
-        PhoenixUtils.registerSignals(
-                true,
-                drivePosition,
-                driveVelocity,
-                driveVoltage,
-                driveSupplyCurrentAmps,
-                driveTorqueCurrentAmps,
-                driveTemperatureCel,
-                steerPosition,
-                steerVelocity,
-                steerVoltage,
-                steerSupplyCurrentAmps,
-                steerTorqueCurrentAmps,
-                steerTemperatureCel
+//        PhoenixUtils.registerSignals(
+//                true,
+//                drivePosition,
+//                driveVelocity,
+//                driveVoltage,
+//                driveSupplyCurrentAmps,
+//                driveTorqueCurrentAmps,
+//                driveTemperatureCel,
+//                steerPosition,
+//                steerVelocity,
+//                steerVoltage,
+//                steerSupplyCurrentAmps,
+//                steerTorqueCurrentAmps,
+//                steerTemperatureCel
+//        );
+
+        CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
+        encoderConfig.MagnetSensor.SensorDirection = moduleConfig.encoderInverted?
+            SensorDirectionValue.Clockwise_Positive:SensorDirectionValue.CounterClockwise_Positive;
+        encoder.getConfigurator().apply(encoderConfig);
+
+        driveMotor.clearStickyFaults();
+        steerMotor.clearStickyFaults();
+
+        BaseStatusSignal.setUpdateFrequencyForAll(
+                100,
+                drivePosition, driveVelocity, driveVoltage,
+                driveSupplyCurrentAmps, driveTorqueCurrentAmps, driveTemperatureCel,
+                steerPosition, steerVelocity, steerVoltage,
+                steerSupplyCurrentAmps, steerTorqueCurrentAmps, steerTemperatureCel
         );
+
+        driveMotor.optimizeBusUtilization();
+        steerMotor.optimizeBusUtilization();
     }
 
-    public static void startSyncThread() {
-        if (syncThread != null && !syncThread.isAlive())
-            syncThread.start();
-    }
+//    public static void startSyncThread() {
+//        if (syncThread != null && !syncThread.isAlive())
+//            syncThread.start();
+//    }
 
     private void configureDriveMotor() {
         TalonFXConfiguration driveConfig = new TalonFXConfiguration();
@@ -117,12 +142,12 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         driveConfig.Slot0.kA = SwerveModuleParamsNT.driveKa();
 
         // apply configuration
-        PhoenixUtils.tryUntilOk(5, () -> driveMotor.getConfigurator().apply(driveConfig, 0.25));
+        //PhoenixUtils.tryUntilOk(5, () -> driveMotor.getConfigurator().apply(driveConfig, 0.25));
         driveMotor.optimizeBusUtilization();
 
         // create signals
         drivePosition = driveMotor.getPosition();
-        drivePositionQueue = syncThread.registerSignal(drivePosition.clone());
+        //drivePositionQueue = syncThread.registerSignal(drivePosition.clone());
         driveVelocity = driveMotor.getVelocity();
         driveVoltage = driveMotor.getMotorVoltage();
         driveSupplyCurrentAmps = driveMotor.getSupplyCurrent();
@@ -157,12 +182,12 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         steerConfig.ClosedLoopGeneral.ContinuousWrap = true;
 
         // apply configuration
-        PhoenixUtils.tryUntilOk(5, () -> steerMotor.getConfigurator().apply(steerConfig, 0.25));
+        //PhoenixUtils.tryUntilOk(5, () -> steerMotor.getConfigurator().apply(steerConfig, 0.25));
         steerMotor.optimizeBusUtilization();
 
         // create turn status signals
         steerPosition = steerMotor.getPosition();
-        steerPositionQueue = syncThread.registerSignal(steerPosition.clone());
+        //steerPositionQueue = syncThread.registerSignal(steerPosition.clone());
         steerVelocity = steerMotor.getVelocity();
         steerVoltage = steerMotor.getMotorVoltage();
         steerSupplyCurrentAmps = steerMotor.getSupplyCurrent();
@@ -172,6 +197,12 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
 
     @Override
     public void updateInputs(SwerveModuleIOInputs inputs) {
+        BaseStatusSignal.refreshAll(
+                drivePosition, driveVelocity, driveVoltage,
+                driveSupplyCurrentAmps, driveTorqueCurrentAmps, driveTemperatureCel,
+                steerPosition, steerVelocity, steerVoltage,
+                steerSupplyCurrentAmps, steerTorqueCurrentAmps, steerTemperatureCel
+                );
         // drive motor inputs
         inputs.driveMotorConnected = BaseStatusSignal.isAllGood(
                 drivePosition, driveVelocity, driveVoltage,
@@ -185,26 +216,26 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         inputs.driveMotorTemperatureCel = driveTemperatureCel.getValueAsDouble();
 
         // drive position samples
-        inputs.driveMotorPositionRadSamples = drivePositionQueue.stream().mapToDouble(
-                Units::rotationsToRadians).toArray();
-        drivePositionQueue.clear();
+//        inputs.driveMotorPositionRadSamples = drivePositionQueue.stream().mapToDouble(
+//                Units::rotationsToRadians).toArray();
+//        drivePositionQueue.clear();
 
         // steer motor inputs
         inputs.steerMotorConnected = BaseStatusSignal.isAllGood(
                 steerPosition, steerVelocity, steerVoltage,
                 steerSupplyCurrentAmps, steerTorqueCurrentAmps
         );
-        inputs.steerMotorPositionRad = driveMotorRotationsToMechanismRad(steerPosition.getValueAsDouble());
-        inputs.steerMotorVelocityRadPerSec = driveMotorRotationsToMechanismRad(steerVelocity.getValueAsDouble());
+        inputs.steerMotorPositionRad = steerMotorRotationsToMechanismRad(steerPosition.getValueAsDouble());
+        inputs.steerMotorVelocityRadPerSec = steerMotorRotationsToMechanismRad(steerVelocity.getValueAsDouble());
         inputs.steerMotorVoltageVolt = steerVoltage.getValueAsDouble();
         inputs.steerMotorSupplyCurrentAmpere = steerSupplyCurrentAmps.getValueAsDouble();
         inputs.steerMotorTorqueCurrentAmpere = steerTorqueCurrentAmps.getValueAsDouble();
         inputs.steerMotorTemperatureCel = steerTemperatureCel.getValueAsDouble();
 
         // steer motor samples
-        inputs.steerMotorPositionRadSamples = steerPositionQueue.stream().mapToDouble(
-                Units::rotationsToRadians).toArray();
-        steerPositionQueue.clear();
+//        inputs.steerMotorPositionRadSamples = steerPositionQueue.stream().mapToDouble(
+//                Units::rotationsToRadians).toArray();
+//        steerPositionQueue.clear();
     }
 
     @Override
@@ -326,7 +357,7 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
      * Convert steer motor rotations to mechanism radians (accounts for gear ratio)
      */
     private double steerMotorRotationsToMechanismRad(double motorRotations) {
-        return Units.rotationsToRadians(motorRotations) / config.steerGearRatio;
+        return Units.rotationsToRadians(motorRotations);
     }
 
     /**
