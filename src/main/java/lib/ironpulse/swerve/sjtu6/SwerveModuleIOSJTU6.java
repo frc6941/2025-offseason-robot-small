@@ -142,6 +142,7 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         steerConfig.Feedback.FeedbackRemoteSensorID = moduleConfig.encoderId;
         steerConfig.Feedback.RotorToSensorRatio = config.steerGearRatio;
         steerConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+        steerConfig.Feedback.withFeedbackRotorOffset(moduleConfig.steerMotorEncoderOffset);
 
         // current limits
         steerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
