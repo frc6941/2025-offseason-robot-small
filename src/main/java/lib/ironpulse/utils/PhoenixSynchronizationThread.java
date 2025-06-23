@@ -36,7 +36,7 @@ import static edu.wpi.first.units.Units.Hertz;
  * time synchronization.
  */
 public class PhoenixSynchronizationThread extends Thread {
-    private static boolean isCANFD = new CANBus("*").isNetworkFD();
+    private static boolean isCANFD = new CANBus("rio").isNetworkFD();
     private final Lock signalsLock = new ReentrantLock(); // Prevents conflicts when registering signals
     private final Lock userLock;
     private final double frequency;

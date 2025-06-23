@@ -26,11 +26,11 @@ public class RobotContainer {
         switch (Constants.kRobotType) {
             case PRAC -> {
                 swerve = new Swerve(
-                        Constants.Swerve.kSimConfig, new ImuIOSim(),
-                        new SwerveModuleIOSim(Constants.Swerve.kSimConfig, 0),
-                        new SwerveModuleIOSim(Constants.Swerve.kSimConfig, 1),
-                        new SwerveModuleIOSim(Constants.Swerve.kSimConfig, 2),
-                        new SwerveModuleIOSim(Constants.Swerve.kSimConfig, 3)
+                        Constants.Swerve.kRealConfig, new ImuIOSim(),
+                        new SwerveModuleIOSJTU6(Constants.Swerve.kRealConfig, 0),
+                        new SwerveModuleIOSJTU6(Constants.Swerve.kRealConfig, 1),
+                        new SwerveModuleIOSJTU6(Constants.Swerve.kRealConfig, 2),
+                        new SwerveModuleIOSJTU6(Constants.Swerve.kRealConfig, 3)
                 );
                 SwerveModuleIOSJTU6.startSyncThread();
             }

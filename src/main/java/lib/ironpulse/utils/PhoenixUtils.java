@@ -42,9 +42,9 @@ public class PhoenixUtils {
 
     /** Refresh all registered signals. */
     public static void refreshAll() {
-        if (canivoreSignals.length > 0) {
-            BaseStatusSignal.refreshAll(canivoreSignals);
-        }
+//        if (canivoreSignals.length > 0) {
+//            BaseStatusSignal.refreshAll(canivoreSignals);
+//        }
         if (rioSignals.length > 0) {
             BaseStatusSignal.refreshAll(rioSignals);
         }
