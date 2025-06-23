@@ -1,6 +1,7 @@
 package lib.ironpulse.swerve;
 
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -103,5 +104,15 @@ public class SwerveModule {
 
     public SwerveModulePosition getSwerveModulePosition() {
         return new SwerveModulePosition(getDriveDistance(), new Rotation2d(getSteerAngle()));
+    }
+
+    public SwerveModulePosition[] getSampledSwerveModulePositions() {
+        SwerveModulePosition[] positions = new SwerveModulePosition[data.driveMotorPositionRadSamples.length];
+        for (int i = 0; i < data.driveMotorPositionRadSamples.length; i++)
+            positions[i] = new SwerveModulePosition(
+                    swerveConfig.wheelDiameter.times(data.driveMotorPositionRadSamples[i] * 0.5),
+                    new Rotation2d(data.steerMotorPositionRadSamples[i])
+            );
+        return positions;
     }
 }

@@ -49,6 +49,7 @@ public class Robot extends LoggedRobot {
         PhoenixUtils.refreshAll();
         CommandScheduler.getInstance().run();
         LoggedTracer.record("Commands");
+        container.robotPeriodic();
     }
 
     @Override

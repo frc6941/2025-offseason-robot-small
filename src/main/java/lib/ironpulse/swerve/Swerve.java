@@ -1,9 +1,18 @@
 package lib.ironpulse.swerve;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator3d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N4;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -13,9 +22,11 @@ import org.littletonrobotics.junction.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.Swerve.kSwerveTag;
 
 public class Swerve extends SubsystemBase {
@@ -25,10 +36,11 @@ public class Swerve extends SubsystemBase {
     private final SwerveConfig config;
     private final List<SwerveModule> modules;
     private final ImuIO imuIO;
-
     // controller
     private final SwerveDriveKinematics kinematics;
     private final SwerveSetpointGenerator setpointGenerator;
+    // estimator
+    private final SwerveDrivePoseEstimator3d poseEstimator;
     // precomputed
     private final List<Rotation2d> xLockAngles;
     private final ImuIOInputsAutoLogged imuIOInputs;
@@ -41,7 +53,6 @@ public class Swerve extends SubsystemBase {
         if (config.moduleCount() != moduleIOs.length)
             throw new Error("Module count mismatch: " + config.moduleCount() + " vs " + moduleIOs.length);
 
-
         // ios
         this.imuIO = imuIO;
         this.imuIOInputs = new ImuIOInputsAutoLogged();
@@ -51,12 +62,19 @@ public class Swerve extends SubsystemBase {
         for (int i = 0; i < config.moduleCount(); i++)
             states[i] = modules.get(i).getSwerveModuleState();
 
-
         // kinematics, limits, and setpoint generator
         kinematics = new SwerveDriveKinematics(config.moduleLocations());
         setpointGenerator = SwerveSetpointGenerator.builder().kinematics(kinematics).chassisLimit(
                 config.defaultSwerveLimit).moduleLimit(config.defaultSwerveModuleLimit).build();
         setpointCurr = new SwerveSetpoint(new ChassisSpeeds(), states);
+
+        // estimator
+        poseEstimator = new SwerveDrivePoseEstimator3d(
+                kinematics,
+                new Rotation3d(),
+                getModulePositions(),
+                new Pose3d()
+        );
 
         // precompute
         var moduleLocations = config.moduleLocations();
@@ -74,7 +92,19 @@ public class Swerve extends SubsystemBase {
         imuIO.updateInputs(imuIOInputs);
         Logger.processInputs(kSwerveTag + "/IMU", imuIOInputs);
         modules.forEach(SwerveModule::updateInputs);
+
+        // odom
+        var swerveModulePositionsWithTime = getSampledModulePositions();
+        var rotations = imuIOInputs.odometryRotations;
+        for (int i = 0; i < swerveModulePositionsWithTime.size(); i++) {
+            var positionWithTime = swerveModulePositionsWithTime.get(i);
+            poseEstimator.updateWithTime(
+                    positionWithTime.getFirst(), rotations[i],
+                    positionWithTime.getSecond()
+            );
+        }
         odometryLock.unlock();
+
         LoggedTracer.record(kSwerveTag + "/Inputs");
 
         // module periodic
@@ -84,9 +114,10 @@ public class Swerve extends SubsystemBase {
         // telemetry
         Logger.recordOutput(kSwerveTag + "/Mode", mode);
         Logger.recordOutput(kSwerveTag + "/ChassisSpeedCurr", getChassisSpeeds());
-        Logger.recordOutput(kSwerveTag + "/SwerveModuleStateCurr", getModuleStates().toArray(new SwerveModuleState[0]));
+        Logger.recordOutput(kSwerveTag + "/SwerveModuleStateCurr", getModuleStates());
         Logger.recordOutput(kSwerveTag + "/ChassisSpeedCmd", setpointCurr.chassisSpeeds());
         Logger.recordOutput(kSwerveTag + "/SwerveModuleStateCmd", setpointCurr.moduleStates());
+        Logger.recordOutput(kSwerveTag + "/SwerveEstimatorPose", poseEstimator.getEstimatedPosition());
     }
 
     // -------- Run -------
@@ -114,17 +145,58 @@ public class Swerve extends SubsystemBase {
     }
 
     // ------- Getters -------
-    private List<SwerveModuleState> getModuleStates() {
-        List<SwerveModuleState> states = new ArrayList<>(modules.size());
-        for (SwerveModule module : modules) {
-            states.add(module.getSwerveModuleState());
-        }
+    private SwerveModuleState[] getModuleStates() {
+        SwerveModuleState[] states = new SwerveModuleState[modules.size()];
+        for (int i = 0; i < modules.size(); i++)
+            states[i] = modules.get(i).getSwerveModuleState();
         return states;
     }
 
-    private ChassisSpeeds getChassisSpeeds() {
-        SwerveModuleState[] statesArray = getModuleStates().toArray(new SwerveModuleState[0]);
-        return kinematics.toChassisSpeeds(statesArray);
+    private SwerveModulePosition[] getModulePositions() {
+        SwerveModulePosition[] states = new SwerveModulePosition[modules.size()];
+        for (int i = 0; i < modules.size(); i++)
+            states[i] = modules.get(i).getSwerveModulePosition();
+        return states;
+    }
+
+    public List<Pair<Double, SwerveModulePosition[]>> getSampledModulePositions() {
+        double[] timestamps = imuIOInputs.odometryYawTimestamps;
+        int moduleCount = modules.size();
+
+        // cache each module’s sampled positions array
+        List<SwerveModulePosition[]> samplesByModule = modules.stream()
+                .map(SwerveModule::getSampledSwerveModulePositions)
+                .toList();
+
+        List<Pair<Double, SwerveModulePosition[]>> result = new ArrayList<>(timestamps.length);
+        for (int sampleIdx = 0; sampleIdx < timestamps.length; sampleIdx++) {
+            // build the array of positions at this timestamp
+            SwerveModulePosition[] positionsAtTime = new SwerveModulePosition[moduleCount];
+            for (int moduleIdx = 0; moduleIdx < moduleCount; moduleIdx++)
+                positionsAtTime[moduleIdx] = samplesByModule.get(moduleIdx)[sampleIdx];
+            result.add(new Pair<>(timestamps[sampleIdx], positionsAtTime));
+        }
+
+        return result;
+    }
+
+    public ChassisSpeeds getChassisSpeeds() {
+        return kinematics.toChassisSpeeds(getModuleStates());
+    }
+
+    public Pose3d getEstimatedPose() {
+        return poseEstimator.getEstimatedPosition();
+    }
+
+    public Optional<Pose3d> getEstimatedPositionAt(Time time) {
+        return poseEstimator.sampleAt(time.in(Seconds));
+    }
+
+    public void addVisionMeasurement(
+            Pose3d visionRobotPoseMeters,
+            double timestampSeconds,
+            Matrix<N4, N1> visionMeasurementStdDevs) {
+        poseEstimator.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
     }
 
 

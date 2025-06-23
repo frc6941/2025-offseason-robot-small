@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.system.plant.DCMotor;
 import lib.ironpulse.swerve.SwerveConfig;
 import lib.ironpulse.swerve.SwerveLimit;
@@ -111,6 +112,13 @@ public class Constants {
                         kModuleCompFL, kModuleCompFR, kModuleCompBL, kModuleCompBR
                 })
                 .build();
+
+        public static final SwerveConfig kConfig;
+        static {
+            switch (kRobotType) {
+                default -> kConfig = kSimConfig;
+            }
+        }
 
         @NTParameter(tableName = kParameterTag + "/" + kSwerveModuleTag, isTuning = Constants.kTuning)
         private final static class SwerveModuleParams {

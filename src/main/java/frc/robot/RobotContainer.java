@@ -54,11 +54,16 @@ public class RobotContainer {
                 () -> driverController.getRightX(), () -> RobotStateRecorder.getInstance().getTransform(
                         Seconds.of(Timer.getTimestamp()),
                         DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue).equals(
-                                DriverStation.Alliance.Blue)
-                                ? RobotStateRecorder.kFrameDriverStationBlue
-                                : RobotStateRecorder.kFrameDriverStationRed,
+                                DriverStation.Alliance.Blue) ? RobotStateRecorder.kFrameDriverStationBlue : RobotStateRecorder.kFrameDriverStationRed,
                         TransformRecorder.kFrameRobot
                 ).orElse(new Pose3d()), MetersPerSecond.of(0.05), DegreesPerSecond.of(5.0)
         ));
+    }
+
+    public void robotPeriodic() {
+        var now = Seconds.of(Timer.getTimestamp());
+        swerve.getEstimatedPositionAt(now).ifPresent(
+                pose -> RobotStateRecorder.getInstance().putTransform(
+                        pose, now, RobotStateRecorder.kFrameWorld, RobotStateRecorder.kFrameRobot));
     }
 }
