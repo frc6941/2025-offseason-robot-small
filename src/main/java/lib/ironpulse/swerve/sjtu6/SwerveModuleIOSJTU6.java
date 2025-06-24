@@ -166,7 +166,7 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         // encoder settings
         steerConfig.Feedback.FeedbackRemoteSensorID = moduleConfig.encoderId;
         steerConfig.Feedback.RotorToSensorRatio = config.steerGearRatio;
-        steerConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+        steerConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
         steerConfig.Feedback.withFeedbackRotorOffset(moduleConfig.steerMotorEncoderOffset);
 
         // current limits
@@ -214,6 +214,7 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         inputs.driveMotorSupplyCurrentAmpere = driveSupplyCurrentAmps.getValueAsDouble();
         inputs.driveMotorTorqueCurrentAmpere = driveTorqueCurrentAmps.getValueAsDouble();
         inputs.driveMotorTemperatureCel = driveTemperatureCel.getValueAsDouble();
+        Logger.recordOutput("steerPosistion" + moduleID, driveMotorRotationsToMechanismRad(steerMotor.getPosition().getValueAsDouble()));
 
         // drive position samples
 //        inputs.driveMotorPositionRadSamples = drivePositionQueue.stream().mapToDouble(
