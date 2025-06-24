@@ -99,6 +99,7 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
         encoderConfig.MagnetSensor.SensorDirection = moduleConfig.encoderInverted?
             SensorDirectionValue.Clockwise_Positive:SensorDirectionValue.CounterClockwise_Positive;
+        encoderConfig.MagnetSensor.MagnetOffset = moduleConfig.steerMotorEncoderOffset.magnitude();
         encoder.getConfigurator().apply(encoderConfig);
 
         driveMotor.clearStickyFaults();
@@ -166,8 +167,8 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         // encoder settings
         steerConfig.Feedback.FeedbackRemoteSensorID = moduleConfig.encoderId;
         steerConfig.Feedback.RotorToSensorRatio = config.steerGearRatio;
-        steerConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-        steerConfig.Feedback.withFeedbackRotorOffset(moduleConfig.steerMotorEncoderOffset);
+        steerConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+        //steerConfig.Feedback.withFeedbackRotorOffset(moduleConfig.steerMotorEncoderOffset);
 
         // current limits
         steerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -214,6 +215,7 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         inputs.driveMotorSupplyCurrentAmpere = driveSupplyCurrentAmps.getValueAsDouble();
         inputs.driveMotorTorqueCurrentAmpere = driveTorqueCurrentAmps.getValueAsDouble();
         inputs.driveMotorTemperatureCel = driveTemperatureCel.getValueAsDouble();
+        Logger.recordOutput("steerPosistion" + moduleID, driveMotorRotationsToMechanismRad(steerMotor.getPosition().getValueAsDouble()));
 
         // drive position samples
 //        inputs.driveMotorPositionRadSamples = drivePositionQueue.stream().mapToDouble(
@@ -357,7 +359,7 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
      * Convert steer motor rotations to mechanism radians (accounts for gear ratio)
      */
     private double steerMotorRotationsToMechanismRad(double motorRotations) {
-        return Units.rotationsToRadians(motorRotations);
+        return Units.rotationsToRadians(motorRotations) / config.steerGearRatio;
     }
 
     /**
