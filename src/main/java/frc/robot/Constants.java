@@ -2,10 +2,13 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Frequency;
 import lib.ironpulse.swerve.SwerveConfig;
 import lib.ironpulse.swerve.SwerveLimit;
 import lib.ironpulse.swerve.SwerveModuleLimit;
 import lib.ironpulse.swerve.sim.SwerveSimConfig;
+import lib.ironpulse.swerve.sjtu6.SwerveSJTU6Config;
 import lib.ntext.NTParameter;
 
 import static edu.wpi.first.units.Units.*;
@@ -17,7 +20,7 @@ public class Constants {
     public static enum RobotType {
         PRAC, COMP, SIM
     }
-    public static final RobotType kRobotType = RobotType.PRAC;
+    public static final RobotType kRobotType = Robot.isReal()?RobotType.PRAC:RobotType.SIM;
     public static final boolean kTuning = true;
     public static final double kDtS = 0.01;
     public static final String kParameterTag = "Params";
@@ -46,50 +49,50 @@ public class Constants {
         public static SwerveConfig.SwerveModuleConfig kModuleCompFL = SwerveConfig.SwerveModuleConfig.builder()
                 .name("FL")
                 .location(new Translation2d(0.5, 0.5))
-                .driveMotorId(0)
-                .steerMotorId(1)
-                .encoderId(0)
+                .driveMotorId(15)
+                .steerMotorId(14)
+                .encoderId(20)
                 .driveMotorEncoderOffset(Degree.of(50))
-                .steerMotorEncoderOffset(Degree.of(50))
+                .steerMotorEncoderOffset(Rotations.of(-0.24658203125))
                 .driveInverted(false)
                 .steerInverted(false)
-                .encoderInverted(false)
+                .encoderInverted(true)
                 .build();
         public static SwerveConfig.SwerveModuleConfig kModuleCompFR = SwerveConfig.SwerveModuleConfig.builder()
                 .name("FR")
                 .location(new Translation2d(0.5, -0.5))
-                .driveMotorId(0)
-                .steerMotorId(1)
-                .encoderId(0)
+                .driveMotorId(2)
+                .steerMotorId(7)
+                .encoderId(21)
                 .driveMotorEncoderOffset(Degree.of(50))
-                .steerMotorEncoderOffset(Degree.of(50))
+                .steerMotorEncoderOffset(Rotations.of(-0.2783203125))
                 .driveInverted(false)
                 .steerInverted(false)
-                .encoderInverted(false)
+                .encoderInverted(true)
                 .build();
         public static SwerveConfig.SwerveModuleConfig kModuleCompBL = SwerveConfig.SwerveModuleConfig.builder()
                 .name("BL")
                 .location(new Translation2d(-0.5, 0.5))
-                .driveMotorId(0)
-                .steerMotorId(1)
-                .encoderId(0)
+                .driveMotorId(5)
+                .steerMotorId(3)
+                .encoderId(9)
                 .driveMotorEncoderOffset(Degree.of(50))
-                .steerMotorEncoderOffset(Degree.of(50))
+                .steerMotorEncoderOffset(Rotations.of(0.224853515625))
                 .driveInverted(false)
                 .steerInverted(false)
-                .encoderInverted(false)
+                .encoderInverted(true)
                 .build();
         public static SwerveConfig.SwerveModuleConfig kModuleCompBR = SwerveConfig.SwerveModuleConfig.builder()
                 .name("BR")
                 .location(new Translation2d(-0.5, -0.5))
-                .driveMotorId(0)
-                .steerMotorId(1)
-                .encoderId(0)
+                .driveMotorId(10)
+                .steerMotorId(6)
+                .encoderId(12)
                 .driveMotorEncoderOffset(Degree.of(50))
-                .steerMotorEncoderOffset(Degree.of(50))
+                .steerMotorEncoderOffset(Rotations.of(-0.464599609375))
                 .driveInverted(false)
                 .steerInverted(false)
-                .encoderInverted(false)
+                .encoderInverted(true)
                 .build();
 
 
@@ -110,6 +113,19 @@ public class Constants {
                 .moduleConfigs(new SwerveConfig.SwerveModuleConfig[]{
                         kModuleCompFL, kModuleCompFR, kModuleCompBL, kModuleCompBR
                 })
+                .build();
+        public static SwerveSJTU6Config kRealConfig = SwerveSJTU6Config.builder()
+                .wheelDiameter(Inch.of(4.01))
+                .driveGearRatio(6.7460317460317460317460317460317)
+                .steerGearRatio(21.428571428571428571428571428571)
+                .defaultSwerveLimit(kDefaultSwerveLimit)
+                .defaultSwerveModuleLimit(kDefaultSwerveModuleLimit)
+                .moduleConfigs(new SwerveConfig.SwerveModuleConfig[]{
+                        kModuleCompFL,kModuleCompFR,kModuleCompBL,kModuleCompBR
+                })
+                .odometryFrequency(Hertz.of(50))
+                .driveStatorCurrentLimit(Amps.of(110))
+                .steerStatorCurrentLimit(Amps.of(110))
                 .build();
 
         @NTParameter(tableName = kParameterTag + "/" + kSwerveModuleTag, isTuning = Constants.kTuning)

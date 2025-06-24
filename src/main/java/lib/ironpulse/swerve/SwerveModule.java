@@ -35,29 +35,29 @@ public class SwerveModule {
 
     public void periodic() {
         // config io
-        io.configDriveKp(SwerveModuleParamsNT.driveKp());
-        io.configDriveKi(SwerveModuleParamsNT.driveKi());
-        io.configDriveKd(SwerveModuleParamsNT.driveKd());
-        io.configDriveFF(new SimpleMotorFeedforward(
-                SwerveModuleParamsNT.driveKs(), SwerveModuleParamsNT.driveKv(),
-                                                    SwerveModuleParamsNT.driveKa()
-        ));
-        io.configDriveBrake(SwerveModuleParamsNT.driveIsBrake());
-
-        io.configSteerKp(SwerveModuleParamsNT.steerKp());
-        io.configSteerKi(SwerveModuleParamsNT.steerKi());
-        io.configSteerKd(SwerveModuleParamsNT.steerKd());
-        io.configSteerBrake(SwerveModuleParamsNT.steerIsBrake());
+//        io.configDriveKp(SwerveModuleParamsNT.driveKp());
+//        io.configDriveKi(SwerveModuleParamsNT.driveKi());
+//        io.configDriveKd(SwerveModuleParamsNT.driveKd());
+//        io.configDriveFF(new SimpleMotorFeedforward(
+//                SwerveModuleParamsNT.driveKs(), SwerveModuleParamsNT.driveKv(),
+//                                                    SwerveModuleParamsNT.driveKa()
+//        ));
+//        io.configDriveBrake(SwerveModuleParamsNT.driveIsBrake());
+//
+//        io.configSteerKp(SwerveModuleParamsNT.steerKp());
+//        io.configSteerKi(SwerveModuleParamsNT.steerKi());
+//        io.configSteerKd(SwerveModuleParamsNT.steerKd());
+//        io.configSteerBrake(SwerveModuleParamsNT.steerIsBrake());
 
         // compute position for odometry
-        int sampleCount = data.driveMotorPositionRadSamples.length;
-        odometryPositions = new SwerveModulePosition[sampleCount];
-
-        for (int i = 0; i < data.driveMotorPositionRadSamples.length; i++)
-            odometryPositions[i] = new SwerveModulePosition(
-                    data.driveMotorPositionRadSamples[i] * swerveConfig.wheelDiameter.in(Meter) * 0.5,
-                    new Rotation2d(data.steerMotorPositionRadSamples[i])
-            );
+//        int sampleCount = data.driveMotorPositionRadSamples.length;
+//        odometryPositions = new SwerveModulePosition[sampleCount];
+//
+//        for (int i = 0; i < data.driveMotorPositionRadSamples.length; i++)
+//            odometryPositions[i] = new SwerveModulePosition(
+//                    data.driveMotorPositionRadSamples[i] * swerveConfig.wheelDiameter.in(Meter) * 0.5,
+//                    new Rotation2d(data.steerMotorPositionRadSamples[i])
+//            );
     }
 
     public void runState(SwerveModuleState state) {
