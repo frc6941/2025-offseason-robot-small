@@ -69,38 +69,16 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         this.config = config;
         this.moduleConfig = config.moduleConfigs[idx];
         this.moduleID = idx;
-//        if (syncThread == null)
-//            syncThread = new PhoenixSynchronizationThread(syncLock, config.odometryFrequency);
+
 
         // initialize and config motors
-        driveMotor = new TalonFX(moduleConfig.driveMotorId);
-        steerMotor = new TalonFX(moduleConfig.steerMotorId);
-        encoder = new CANcoder(moduleConfig.encoderId);
+        driveMotor = new TalonFX(moduleConfig.driveMotorId, config.canivoreCanBusName);
+        steerMotor = new TalonFX(moduleConfig.steerMotorId, config.canivoreCanBusName);
+        encoder = new CANcoder(moduleConfig.encoderId, config.canivoreCanBusName);
         configureDriveMotor();
         configureSteerMotor();
 
-        // register signals, refresh in robotPeriodic
-//        PhoenixUtils.registerSignals(
-//                true,
-//                drivePosition,
-//                driveVelocity,
-//                driveVoltage,
-//                driveSupplyCurrentAmps,
-//                driveTorqueCurrentAmps,
-//                driveTemperatureCel,
-//                steerPosition,
-//                steerVelocity,
-//                steerVoltage,
-//                steerSupplyCurrentAmps,
-//                steerTorqueCurrentAmps,
-//                steerTemperatureCel
-//        );
 
-        CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
-        encoderConfig.MagnetSensor.SensorDirection = moduleConfig.encoderInverted?
-            SensorDirectionValue.Clockwise_Positive:SensorDirectionValue.CounterClockwise_Positive;
-        encoderConfig.MagnetSensor.MagnetOffset = moduleConfig.steerMotorEncoderOffset.magnitude();
-        encoder.getConfigurator().apply(encoderConfig);
 
         driveMotor.clearStickyFaults();
         steerMotor.clearStickyFaults();
@@ -117,10 +95,7 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         steerMotor.optimizeBusUtilization();
     }
 
-//    public static void startSyncThread() {
-//        if (syncThread != null && !syncThread.isAlive())
-//            syncThread.start();
-//    }
+
 
     private void configureDriveMotor() {
         TalonFXConfiguration driveConfig = new TalonFXConfiguration();
@@ -144,6 +119,7 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
 
         // apply configuration
         //PhoenixUtils.tryUntilOk(5, () -> driveMotor.getConfigurator().apply(driveConfig, 0.25));
+        driveMotor.getConfigurator().apply(driveConfig);
         driveMotor.optimizeBusUtilization();
 
         // create signals
@@ -158,6 +134,12 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
 
     private void configureSteerMotor() {
         TalonFXConfiguration steerConfig = new TalonFXConfiguration();
+        CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
+
+        encoderConfig.MagnetSensor.SensorDirection = moduleConfig.encoderInverted?
+        SensorDirectionValue.Clockwise_Positive:SensorDirectionValue.CounterClockwise_Positive;
+        encoderConfig.MagnetSensor.MagnetOffset = moduleConfig.steerMotorEncoderOffset.magnitude();
+        
 
         // motor output direction
         steerConfig.MotorOutput.Inverted = moduleConfig.steerInverted ?
@@ -165,10 +147,9 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         steerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         // encoder settings
+        steerConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
         steerConfig.Feedback.FeedbackRemoteSensorID = moduleConfig.encoderId;
         steerConfig.Feedback.RotorToSensorRatio = config.steerGearRatio;
-        steerConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-        //steerConfig.Feedback.withFeedbackRotorOffset(moduleConfig.steerMotorEncoderOffset);
 
         // current limits
         steerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -184,11 +165,13 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
 
         // apply configuration
         //PhoenixUtils.tryUntilOk(5, () -> steerMotor.getConfigurator().apply(steerConfig, 0.25));
+        steerMotor.getConfigurator().apply(steerConfig);
+        encoder.getConfigurator().apply(encoderConfig);
         steerMotor.optimizeBusUtilization();
+        encoder.optimizeBusUtilization();
 
         // create turn status signals
         steerPosition = steerMotor.getPosition();
-        //steerPositionQueue = syncThread.registerSignal(steerPosition.clone());
         steerVelocity = steerMotor.getVelocity();
         steerVoltage = steerMotor.getMotorVoltage();
         steerSupplyCurrentAmps = steerMotor.getSupplyCurrent();
@@ -210,17 +193,13 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
                 driveSupplyCurrentAmps, driveTorqueCurrentAmps
         );
         inputs.driveMotorPositionRad = driveMotorRotationsToMechanismRad(drivePosition.getValueAsDouble());
-        inputs.driveMotorVelocityRadPerSec = driveMotorRotationsToMechanismRad(driveVelocity.getValueAsDouble());
+        inputs.driveMotorVelocityRadPerSec = driveMotorRotationsPerSecToMechanismRadPerSec(driveVelocity.getValueAsDouble());
         inputs.driveMotorVoltageVolt = driveVoltage.getValueAsDouble();
         inputs.driveMotorSupplyCurrentAmpere = driveSupplyCurrentAmps.getValueAsDouble();
         inputs.driveMotorTorqueCurrentAmpere = driveTorqueCurrentAmps.getValueAsDouble();
         inputs.driveMotorTemperatureCel = driveTemperatureCel.getValueAsDouble();
-        Logger.recordOutput("steerPosistion" + moduleID, driveMotorRotationsToMechanismRad(steerMotor.getPosition().getValueAsDouble()));
+        Logger.recordOutput("steerPosition" + moduleID, steerMotorRotationsToMechanismRad(steerMotor.getPosition().getValueAsDouble()));
 
-        // drive position samples
-//        inputs.driveMotorPositionRadSamples = drivePositionQueue.stream().mapToDouble(
-//                Units::rotationsToRadians).toArray();
-//        drivePositionQueue.clear();
 
         // steer motor inputs
         inputs.steerMotorConnected = BaseStatusSignal.isAllGood(
@@ -228,23 +207,20 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
                 steerSupplyCurrentAmps, steerTorqueCurrentAmps
         );
         inputs.steerMotorPositionRad = steerMotorRotationsToMechanismRad(steerPosition.getValueAsDouble());
-        inputs.steerMotorVelocityRadPerSec = steerMotorRotationsToMechanismRad(steerVelocity.getValueAsDouble());
+        inputs.steerMotorVelocityRadPerSec = steerMotorRotationsPerSecToMechanismRadPerSec(steerVelocity.getValueAsDouble());
         inputs.steerMotorVoltageVolt = steerVoltage.getValueAsDouble();
         inputs.steerMotorSupplyCurrentAmpere = steerSupplyCurrentAmps.getValueAsDouble();
         inputs.steerMotorTorqueCurrentAmpere = steerTorqueCurrentAmps.getValueAsDouble();
         inputs.steerMotorTemperatureCel = steerTemperatureCel.getValueAsDouble();
 
-        // steer motor samples
-//        inputs.steerMotorPositionRadSamples = steerPositionQueue.stream().mapToDouble(
-//                Units::rotationsToRadians).toArray();
-//        steerPositionQueue.clear();
+
     }
 
     @Override
     public void setSwerveModuleState(SwerveModuleState state) {
         // Set drive velocity
-        double velocityRps = linearVelocityToDriveMotorRPS(state.speedMetersPerSecond);
-        driveMotor.setControl(driveVelocityRequest.withVelocity(velocityRps));
+        double velocityRps = linearVelocityToWheelRPS(state.speedMetersPerSecond);
+        driveMotor.setControl(driveVelocityRequest.withVelocity(velocityRps * config.driveGearRatio));
 
         // Set steer angle
         double positionRotations = mechanismRadToSteerMotorRotations(state.angle.getRadians());
@@ -258,15 +234,15 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
 
     @Override
     public void setDriveVelocity(LinearVelocity velocity) {
-        double velocityRps = linearVelocityToDriveMotorRPS(velocity.in(MetersPerSecond));
-        driveMotor.setControl(driveVelocityRequest.withVelocity(velocityRps));
+        double velocityRps = linearVelocityToWheelRPS(velocity.in(MetersPerSecond));
+        driveMotor.setControl(driveVelocityRequest.withVelocity(velocityRps * config.driveGearRatio));
     }
 
     @Override
     public void setDriveVelocity(LinearVelocity velocity, Current ff) {
-        double velocityRps = linearVelocityToDriveMotorRPS(velocity.in(MetersPerSecond));
+        double velocityRps = linearVelocityToWheelRPS(velocity.in(MetersPerSecond));
         driveMotor.setControl(
-                driveVelocityRequest.withVelocity(velocityRps).withFeedForward(ff.in(Amp))
+                driveVelocityRequest.withVelocity(velocityRps * config.driveGearRatio).withFeedForward(ff.in(Amp))
         );
     }
 
@@ -346,49 +322,110 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         steerMotor.getConfigurator().apply(steerBrakeConfig);
     }
 
-    // ========== CONVERSION HELPER METHODS ==========
+    // ========== UNIT CONVERSION METHODS ==========
+    
+    /*
+     * CONVERSION OVERVIEW:
+     * 
+     * This swerve module uses TalonFX motors with gear reduction for both drive and steering.
+     * The interface expects wheel/mechanism units, but the motors need motor shaft units.
+     * 
+     * Drive System:
+     * - Motor shaft -> [gear ratio] -> Wheel
+     * - Higher gear ratio = motor spins faster than wheel
+     * - Example: 6.14:1 gear ratio means motor rotates 6.14 times per wheel rotation
+     * 
+     * Steer System:
+     * - Motor shaft -> [gear ratio] -> Module rotation
+     * - CANcoder provides absolute position feedback fused with motor encoder
+     * - For SJTU6, typically 1:1 (direct drive) so no gear ratio conversion needed
+     */
 
+    // ========== DRIVE MOTOR CONVERSIONS ==========
+    
     /**
-     * Convert drive motor rotations to mechanism radians (accounts for gear ratio)
+     * Convert drive motor rotations to wheel position in radians.
+     * 
+     * Flow: Motor rotations -> Wheel radians
+     * Math: motor_rot * (2π rad/rot) / gear_ratio = wheel_rad
+     * 
+     * @param motorRotations Raw motor encoder rotations
+     * @return Wheel position in radians
      */
     private double driveMotorRotationsToMechanismRad(double motorRotations) {
         return Units.rotationsToRadians(motorRotations) / config.driveGearRatio;
     }
 
     /**
-     * Convert steer motor rotations to mechanism radians (accounts for gear ratio)
+     * Convert drive motor rotations per second to wheel angular velocity in rad/s.
+     * 
+     * Flow: Motor RPS -> Wheel rad/s  
+     * Math: motor_rps * (2π rad/rot) / gear_ratio = wheel_rad_per_sec
+     * 
+     * @param motorRotationsPerSec Raw motor velocity in rotations per second
+     * @return Wheel angular velocity in rad/s
+     */
+    private double driveMotorRotationsPerSecToMechanismRadPerSec(double motorRotationsPerSec) {
+        return Units.rotationsToRadians(motorRotationsPerSec) / config.driveGearRatio;
+    }
+
+    /**
+     * Convert linear velocity to wheel rotations per second.
+     * 
+     * Flow: Linear velocity (m/s) -> Wheel RPS
+     * Math: linear_vel / (wheel_diameter * π) = wheel_rps
+     * 
+     * This is used at the interface level - gear ratio is applied when commanding motors.
+     * 
+     * @param linearVelocityMPS Linear velocity in meters per second
+     * @return Wheel rotations per second
+     */
+    private double linearVelocityToWheelRPS(double linearVelocityMPS) {
+        double wheelCircumference = config.wheelDiameter.in(Meter) * Math.PI;
+        return linearVelocityMPS / wheelCircumference;
+    }
+
+    // ========== STEER MOTOR CONVERSIONS ==========
+    
+    /**
+     * Convert steer motor rotations to mechanism angle in radians.
+     * 
+     * Flow: Motor rotations -> Module angle radians
+     * Math: motor_rot * (2π rad/rot) = mechanism_rad
+     * 
+     * Note: SJTU6 typically uses 1:1 gearing (direct drive), so no gear ratio needed.
+     * The CANcoder is fused with the motor encoder to provide absolute positioning.
+     * 
+     * @param motorRotations Raw motor encoder rotations  
+     * @return Module angle in radians
      */
     private double steerMotorRotationsToMechanismRad(double motorRotations) {
-        return Units.rotationsToRadians(motorRotations) / config.steerGearRatio;
+        return Units.rotationsToRadians(motorRotations);
     }
 
     /**
-     * Convert mechanism radians to steer motor rotations (accounts for gear ratio)
+     * Convert steer motor rotations per second to mechanism angular velocity in rad/s.
+     * 
+     * Flow: Motor RPS -> Module angular velocity rad/s
+     * Math: motor_rps * (2π rad/rot) = mechanism_rad_per_sec
+     * 
+     * @param motorRotationsPerSec Raw motor velocity in rotations per second
+     * @return Module angular velocity in rad/s
+     */
+    private double steerMotorRotationsPerSecToMechanismRadPerSec(double motorRotationsPerSec) {
+        return Units.rotationsToRadians(motorRotationsPerSec);
+    }
+
+    /**
+     * Convert mechanism angle in radians to steer motor rotations.
+     * 
+     * Flow: Module angle radians -> Motor rotations
+     * Math: mechanism_rad / (2π rad/rot) = motor_rot
+     * 
+     * @param mechanismRad Desired module angle in radians
+     * @return Motor position in rotations
      */
     private double mechanismRadToSteerMotorRotations(double mechanismRad) {
-        return Units.radiansToRotations(mechanismRad) * config.steerGearRatio;
-    }
-
-    /**
-     * Convert linear velocity to drive motor RPS (accounts for wheel diameter and gear ratio)
-     */
-    private double linearVelocityToDriveMotorRPS(double linearVelocityMPS) {
-        double distancePerRotation = config.wheelDiameter.in(Meter) * Math.PI;
-        return linearVelocityMPS / distancePerRotation * config.driveGearRatio;
-    }
-
-    /**
-     * Convert drive motor RPS to linear velocity (accounts for wheel diameter and gear ratio)
-     */
-    private double driveMotorRPSToLinearVelocity(double motorRPS) {
-        double distancePerRotation = config.wheelDiameter.in(Meter) * Math.PI;
-        return motorRPS * distancePerRotation / config.driveGearRatio;
-    }
-
-    /**
-     * Get wheel distance traveled from drive motor position
-     */
-    private double driveMotorPositionToWheelDistance(double motorPositionRad) {
-        return motorPositionRad * config.wheelDiameter.in(Meter) * 0.5 / config.driveGearRatio;
+        return Units.radiansToRotations(mechanismRad);
     }
 }

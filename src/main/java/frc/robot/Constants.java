@@ -24,6 +24,7 @@ public class Constants {
     public static final boolean kTuning = true;
     public static final double kDtS = 0.01;
     public static final String kParameterTag = "Params";
+    public static final String CANIVORE_CAN_BUS_NAME = "6941Canivore0";
 
 
     /* -------------------------------------------------------------------------- */
@@ -46,14 +47,14 @@ public class Constants {
                 .maxSteerAngularAcceleration(RadiansPerSecondPerSecond.of(300.0))
                 .build();
 
-        public static SwerveConfig.SwerveModuleConfig kModuleCompFL = SwerveConfig.SwerveModuleConfig.builder()
+                public static SwerveConfig.SwerveModuleConfig kModuleCompFL = SwerveConfig.SwerveModuleConfig.builder()
                 .name("FL")
                 .location(new Translation2d(0.5, 0.5))
-                .driveMotorId(15)
-                .steerMotorId(14)
-                .encoderId(20)
+                .driveMotorId(4)
+                .steerMotorId(3)
+                .encoderId(10)
                 .driveMotorEncoderOffset(Degree.of(50))
-                .steerMotorEncoderOffset(Rotations.of(-0.24658203125))
+                .steerMotorEncoderOffset(Rotations.of(-0.153564453125))
                 .driveInverted(false)
                 .steerInverted(false)
                 .encoderInverted(true)
@@ -61,11 +62,11 @@ public class Constants {
         public static SwerveConfig.SwerveModuleConfig kModuleCompFR = SwerveConfig.SwerveModuleConfig.builder()
                 .name("FR")
                 .location(new Translation2d(0.5, -0.5))
-                .driveMotorId(2)
-                .steerMotorId(7)
-                .encoderId(21)
+                .driveMotorId(6)
+                .steerMotorId(5)
+                .encoderId(11)
                 .driveMotorEncoderOffset(Degree.of(50))
-                .steerMotorEncoderOffset(Rotations.of(-0.2783203125))
+                .steerMotorEncoderOffset(Rotations.of(-0.304443359375))
                 .driveInverted(false)
                 .steerInverted(false)
                 .encoderInverted(true)
@@ -73,11 +74,11 @@ public class Constants {
         public static SwerveConfig.SwerveModuleConfig kModuleCompBL = SwerveConfig.SwerveModuleConfig.builder()
                 .name("BL")
                 .location(new Translation2d(-0.5, 0.5))
-                .driveMotorId(5)
-                .steerMotorId(3)
-                .encoderId(9)
+                .driveMotorId(2)
+                .steerMotorId(1)
+                .encoderId(0)
                 .driveMotorEncoderOffset(Degree.of(50))
-                .steerMotorEncoderOffset(Rotations.of(0.224853515625))
+                .steerMotorEncoderOffset(Rotations.of(0.03955078125))
                 .driveInverted(false)
                 .steerInverted(false)
                 .encoderInverted(true)
@@ -85,11 +86,11 @@ public class Constants {
         public static SwerveConfig.SwerveModuleConfig kModuleCompBR = SwerveConfig.SwerveModuleConfig.builder()
                 .name("BR")
                 .location(new Translation2d(-0.5, -0.5))
-                .driveMotorId(10)
-                .steerMotorId(6)
-                .encoderId(12)
+                .driveMotorId(8)
+                .steerMotorId(7)
+                .encoderId(20)
                 .driveMotorEncoderOffset(Degree.of(50))
-                .steerMotorEncoderOffset(Rotations.of(-0.464599609375))
+                .steerMotorEncoderOffset(Rotations.of(-0.379638671875))
                 .driveInverted(false)
                 .steerInverted(false)
                 .encoderInverted(true)
@@ -114,7 +115,7 @@ public class Constants {
                         kModuleCompFL, kModuleCompFR, kModuleCompBL, kModuleCompBR
                 })
                 .build();
-        public static SwerveSJTU6Config kRealConfig = SwerveSJTU6Config.builder()
+                public static SwerveSJTU6Config kRealConfig = SwerveSJTU6Config.builder()
                 .wheelDiameter(Inch.of(4.01))
                 .driveGearRatio(6.7460317460317460317460317460317)
                 .steerGearRatio(21.428571428571428571428571428571)
@@ -126,7 +127,9 @@ public class Constants {
                 .odometryFrequency(Hertz.of(50))
                 .driveStatorCurrentLimit(Amps.of(110))
                 .steerStatorCurrentLimit(Amps.of(110))
+                .canivoreCanBusName(CANIVORE_CAN_BUS_NAME)
                 .build();
+
 
         @NTParameter(tableName = kParameterTag + "/" + kSwerveModuleTag, isTuning = Constants.kTuning)
         private final static class SwerveModuleParams {
@@ -138,9 +141,9 @@ public class Constants {
             static final double driveKa = 0.0;
             static final boolean driveIsBrake = true;
 
-            static final double steerKp = 10.0;
-            static final double steerKi = 0.0;
-            static final double steerKd = 0.1;
+            static final double steerKp = 120.0;
+            static final double steerKi = 0.2;
+            static final double steerKd = 0.005;
             static final boolean steerIsBrake = true;
         }
     }
