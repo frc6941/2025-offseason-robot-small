@@ -10,4 +10,5 @@ public class SwerveSJTU6Config extends SwerveConfig {
     public Current driveStatorCurrentLimit;
     public Current steerStatorCurrentLimit;
     public Frequency odometryFrequency;
+    public String canivoreCanBusName;
 }
