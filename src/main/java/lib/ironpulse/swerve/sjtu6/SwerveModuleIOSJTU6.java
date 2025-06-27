@@ -83,13 +83,6 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         driveMotor.clearStickyFaults();
         steerMotor.clearStickyFaults();
 
-        BaseStatusSignal.setUpdateFrequencyForAll(
-                100,
-                drivePosition, driveVelocity, driveVoltage,
-                driveSupplyCurrentAmps, driveTorqueCurrentAmps, driveTemperatureCel,
-                steerPosition, steerVelocity, steerVoltage,
-                steerSupplyCurrentAmps, steerTorqueCurrentAmps, steerTemperatureCel
-        );
 
         driveMotor.optimizeBusUtilization();
         steerMotor.optimizeBusUtilization();
@@ -124,12 +117,26 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
 
         // create signals
         drivePosition = driveMotor.getPosition();
-        //drivePositionQueue = syncThread.registerSignal(drivePosition.clone());
         driveVelocity = driveMotor.getVelocity();
         driveVoltage = driveMotor.getMotorVoltage();
         driveSupplyCurrentAmps = driveMotor.getSupplyCurrent();
         driveTorqueCurrentAmps = driveMotor.getTorqueCurrent();
         driveTemperatureCel = driveMotor.getDeviceTemp();
+        
+        // Configure signal update frequencies to prevent stale messages
+        // High priority signals for control (100Hz = 10ms)
+        drivePosition.setUpdateFrequency(100.0);
+        driveVelocity.setUpdateFrequency(100.0);
+        
+        // Medium priority signals for telemetry (50Hz = 20ms)
+        driveVoltage.setUpdateFrequency(50.0);
+        driveSupplyCurrentAmps.setUpdateFrequency(50.0);
+        driveTorqueCurrentAmps.setUpdateFrequency(50.0);
+        
+        // Low priority signals for diagnostics (10Hz = 100ms)
+        driveTemperatureCel.setUpdateFrequency(10.0);
+        
+        //drivePositionQueue = syncThread.registerSignal(drivePosition.clone());
     }
 
     private void configureSteerMotor() {
@@ -167,8 +174,7 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         //PhoenixUtils.tryUntilOk(5, () -> steerMotor.getConfigurator().apply(steerConfig, 0.25));
         steerMotor.getConfigurator().apply(steerConfig);
         encoder.getConfigurator().apply(encoderConfig);
-        steerMotor.optimizeBusUtilization();
-        encoder.optimizeBusUtilization();
+
 
         // create turn status signals
         steerPosition = steerMotor.getPosition();
@@ -177,6 +183,19 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         steerSupplyCurrentAmps = steerMotor.getSupplyCurrent();
         steerTorqueCurrentAmps = steerMotor.getTorqueCurrent();
         steerTemperatureCel = steerMotor.getDeviceTemp();
+        
+        // Configure signal update frequencies to prevent stale messages
+        // High priority signals for control (100Hz = 10ms)
+        steerPosition.setUpdateFrequency(100.0);
+        steerVelocity.setUpdateFrequency(100.0);
+        
+        // Medium priority signals for telemetry (50Hz = 20ms)
+        steerVoltage.setUpdateFrequency(50.0);
+        steerSupplyCurrentAmps.setUpdateFrequency(50.0);
+        steerTorqueCurrentAmps.setUpdateFrequency(50.0);
+        
+        // Low priority signals for diagnostics (10Hz = 100ms)
+        steerTemperatureCel.setUpdateFrequency(10.0);
     }
 
     @Override
