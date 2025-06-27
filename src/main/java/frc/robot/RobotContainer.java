@@ -50,8 +50,8 @@ public class RobotContainer {
 
     private void configBindings() {
         swerve.setDefaultCommand(SwerveCommands.driveWithJoystick(
-                swerve, () -> driverController.getLeftY(), () -> -driverController.getLeftX(),
-                () -> driverController.getRightX(), () -> RobotStateRecorder.getInstance().getTransform(
+                swerve, () -> configureDeadband(driverController.getLeftY()), () -> configureDeadband(-driverController.getLeftX()),
+                () -> configureDeadband(driverController.getRightX()), () -> RobotStateRecorder.getInstance().getTransform(
                         Seconds.of(Timer.getTimestamp()),
                         DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue).equals(
                                 DriverStation.Alliance.Blue)
@@ -60,5 +60,9 @@ public class RobotContainer {
                         TransformRecorder.kFrameRobot
                 ).orElse(new Pose3d()), MetersPerSecond.of(0.05), DegreesPerSecond.of(5.0)
         ));
+    }
+
+    private double configureDeadband(double input){
+        return Math.abs(input)>Constants.Swerve.deadband?input:0;
     }
 }
