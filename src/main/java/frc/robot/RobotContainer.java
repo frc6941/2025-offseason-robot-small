@@ -32,7 +32,7 @@ public class RobotContainer {
                         new SwerveModuleIOSJTU6(Constants.Swerve.kRealConfig, 2),
                         new SwerveModuleIOSJTU6(Constants.Swerve.kRealConfig, 3)
                 );
-                //sSwerveModuleIOSJTU6.startSyncThread();
+                SwerveModuleIOSJTU6.startSyncThread();
             }
             case SIM -> {
                 swerve = new Swerve(

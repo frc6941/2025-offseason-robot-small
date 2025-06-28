@@ -39,14 +39,14 @@ public class SwerveModule {
         // This ensures each module instance tracks changes independently
 
         // compute position for odometry
-//        int sampleCount = data.driveMotorPositionRadSamples.length;
-//        odometryPositions = new SwerveModulePosition[sampleCount];
-//
-//        for (int i = 0; i < data.driveMotorPositionRadSamples.length; i++)
-//            odometryPositions[i] = new SwerveModulePosition(
-//                    data.driveMotorPositionRadSamples[i] * swerveConfig.wheelDiameter.in(Meter) * 0.5,
-//                    new Rotation2d(data.steerMotorPositionRadSamples[i])
-//            );
+        int sampleCount = Math.min(data.driveMotorPositionRadSamples.length, data.steerMotorPositionRadSamples.length);
+        odometryPositions = new SwerveModulePosition[sampleCount];
+
+        for (int i = 0; i < sampleCount; i++)
+            odometryPositions[i] = new SwerveModulePosition(
+                    data.driveMotorPositionRadSamples[i] * swerveConfig.wheelDiameter.in(Meter) * 0.5,
+                    new Rotation2d(data.steerMotorPositionRadSamples[i])
+            );
     }
 
     public void runState(SwerveModuleState state) {
@@ -95,8 +95,9 @@ public class SwerveModule {
     }
 
     public SwerveModulePosition[] getSampledSwerveModulePositions() {
-        SwerveModulePosition[] positions = new SwerveModulePosition[data.driveMotorPositionRadSamples.length];
-        for (int i = 0; i < data.driveMotorPositionRadSamples.length; i++)
+        int sampleCount = Math.min(data.driveMotorPositionRadSamples.length, data.steerMotorPositionRadSamples.length);
+        SwerveModulePosition[] positions = new SwerveModulePosition[sampleCount];
+        for (int i = 0; i < sampleCount; i++)
             positions[i] = new SwerveModulePosition(
                     swerveConfig.wheelDiameter.times(data.driveMotorPositionRadSamples[i] * 0.5),
                     new Rotation2d(data.steerMotorPositionRadSamples[i])

@@ -125,7 +125,7 @@ public class Constants {
                 .moduleConfigs(new SwerveConfig.SwerveModuleConfig[]{
                         kModuleCompFL,kModuleCompFR,kModuleCompBL,kModuleCompBR
                 })
-                .odometryFrequency(Hertz.of(50))
+                .odometryFrequency(Hertz.of(40))
                 .driveStatorCurrentLimit(Amps.of(110))
                 .steerStatorCurrentLimit(Amps.of(110))
                 .canivoreCanBusName(CANIVORE_CAN_BUS_NAME)
@@ -141,11 +141,11 @@ public class Constants {
 
         @NTParameter(tableName = kParameterTag + "/" + kSwerveModuleTag, isTuning = Constants.kTuning)
         private final static class SwerveModuleParams {
-            static final double driveKp = 0;
+            static final double driveKp = 1;
             static final double driveKi = 0.0;
-            static final double driveKd = 0.0;
-            static final double driveKs = 0.5;
-            static final double driveKv = 1.3;
+            static final double driveKd = 0;
+            static final double driveKs = 0;
+            static final double driveKv = 0;
             static final double driveKa = 0.0;
             static final boolean driveIsBrake = true;
 

@@ -24,8 +24,11 @@ import frc.robot.Constants;
 import frc.robot.SwerveModuleParamsNT;
 import lib.ironpulse.swerve.SwerveConfig;
 import lib.ironpulse.swerve.SwerveModuleIO;
+import lib.ironpulse.utils.PhoenixSynchronizationThread;
+import lib.ironpulse.utils.PhoenixUtils;
 import org.littletonrobotics.junction.Logger;
 
+import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -34,7 +37,7 @@ import static edu.wpi.first.units.Units.*;
 public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
     // sync thread for all modules
     private static final ReentrantLock syncLock = new ReentrantLock();
-    //private static PhoenixSynchronizationThread syncThread;
+    private static PhoenixSynchronizationThread syncThread;
     private final TalonFX driveMotor;
     private final TalonFX steerMotor;
     private final CANcoder encoder;
@@ -89,6 +92,8 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         this.moduleConfig = config.moduleConfigs[idx];
         this.moduleID = idx;
 
+        if (syncThread == null)
+            syncThread = new PhoenixSynchronizationThread(syncLock, config.odometryFrequency);
 
         // initialize and config motors
         driveMotor = new TalonFX(moduleConfig.driveMotorId, config.canivoreCanBusName);
@@ -97,14 +102,33 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         configureDriveMotor();
         configureSteerMotor();
 
-
+        // register signals, refresh in robotPeriodic
+        PhoenixUtils.registerSignals(
+                true,
+                drivePosition,
+                driveVelocity,
+                driveVoltage,
+                driveSupplyCurrentAmps,
+                driveTorqueCurrentAmps,
+                driveTemperatureCel,
+                steerPosition,
+                steerVelocity,
+                steerVoltage,
+                steerSupplyCurrentAmps,
+                steerTorqueCurrentAmps,
+                steerTemperatureCel
+        );
 
         driveMotor.clearStickyFaults();
         steerMotor.clearStickyFaults();
 
-
         driveMotor.optimizeBusUtilization();
         steerMotor.optimizeBusUtilization();
+    }
+
+    public static void startSyncThread() {
+        if (syncThread != null && !syncThread.isAlive())
+            syncThread.start();
     }
 
 
@@ -130,7 +154,7 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         driveConfig.Slot0.kA = SwerveModuleParamsNT.driveKa();
 
         // apply configuration
-        //PhoenixUtils.tryUntilOk(5, () -> driveMotor.getConfigurator().apply(driveConfig, 0.25));
+        PhoenixUtils.tryUntilOk(5, () -> driveMotor.getConfigurator().apply(driveConfig, 0.25));
         driveMotor.getConfigurator().apply(driveConfig);
         driveMotor.optimizeBusUtilization();
 
@@ -155,7 +179,13 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         // Low priority signals for diagnostics (10Hz = 100ms)
         driveTemperatureCel.setUpdateFrequency(10.0);
         
-        //drivePositionQueue = syncThread.registerSignal(drivePosition.clone());
+        // Initialize position sampling queues
+        if (syncThread != null && drivePosition != null) {
+            drivePositionQueue = syncThread.registerSignal(drivePosition.clone());
+        }
+        if (drivePositionQueue == null) {
+            drivePositionQueue = new ArrayDeque<>();
+        }
     }
 
     private void configureSteerMotor() {
@@ -193,7 +223,7 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         steerConfig.ClosedLoopGeneral.ContinuousWrap = true;
 
         // apply configuration
-        //PhoenixUtils.tryUntilOk(5, () -> steerMotor.getConfigurator().apply(steerConfig, 0.25));
+        PhoenixUtils.tryUntilOk(5, () -> steerMotor.getConfigurator().apply(steerConfig, 0.25));
         steerMotor.getConfigurator().apply(steerConfig);
         encoder.getConfigurator().apply(encoderConfig);
 
@@ -218,16 +248,25 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         
         // Low priority signals for diagnostics (10Hz = 100ms)
         steerTemperatureCel.setUpdateFrequency(10.0);
+        
+        // Initialize position sampling queues
+        if (syncThread != null && drivePosition != null) {
+            drivePositionQueue = syncThread.registerSignal(drivePosition.clone());
+        }
+        if (drivePositionQueue == null) {
+            drivePositionQueue = new ArrayDeque<>();
+        }
+        
+        if (syncThread != null && steerPosition != null) {
+            steerPositionQueue = syncThread.registerSignal(steerPosition.clone());
+        }
+        if (steerPositionQueue == null) {
+            steerPositionQueue = new ArrayDeque<>();
+        }
     }
 
     @Override
     public void updateInputs(SwerveModuleIOInputs inputs) {
-        BaseStatusSignal.refreshAll(
-                drivePosition, driveVelocity, driveVoltage,
-                driveSupplyCurrentAmps, driveTorqueCurrentAmps, driveTemperatureCel,
-                steerPosition, steerVelocity, steerVoltage,
-                steerSupplyCurrentAmps, steerTorqueCurrentAmps, steerTemperatureCel
-                );
         // drive motor inputs
         inputs.driveMotorConnected = BaseStatusSignal.isAllGood(
                 drivePosition, driveVelocity, driveVoltage,
@@ -239,6 +278,16 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         inputs.driveMotorSupplyCurrentAmpere = driveSupplyCurrentAmps.getValueAsDouble();
         inputs.driveMotorTorqueCurrentAmpere = driveTorqueCurrentAmps.getValueAsDouble();
         inputs.driveMotorTemperatureCel = driveTemperatureCel.getValueAsDouble();
+
+        // drive position samples
+        if (drivePositionQueue != null && !drivePositionQueue.isEmpty()) {
+            inputs.driveMotorPositionRadSamples = drivePositionQueue.stream().mapToDouble(
+                    this::driveMotorRotationsToMechanismRad).toArray();
+            drivePositionQueue.clear();
+        } else {
+            inputs.driveMotorPositionRadSamples = new double[]{inputs.driveMotorPositionRad};
+        }
+
         Logger.recordOutput("steerPosition" + moduleID, steerMotorRotationsToMechanismRad(steerMotor.getPosition().getValueAsDouble()));
 
 
@@ -253,6 +302,24 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         inputs.steerMotorSupplyCurrentAmpere = steerSupplyCurrentAmps.getValueAsDouble();
         inputs.steerMotorTorqueCurrentAmpere = steerTorqueCurrentAmps.getValueAsDouble();
         inputs.steerMotorTemperatureCel = steerTemperatureCel.getValueAsDouble();
+
+        // steer motor samples  
+        if (steerPositionQueue != null && !steerPositionQueue.isEmpty()) {
+            inputs.steerMotorPositionRadSamples = steerPositionQueue.stream().mapToDouble(
+                    this::steerMotorRotationsToMechanismRad).toArray();
+            steerPositionQueue.clear();
+        } else {
+            inputs.steerMotorPositionRadSamples = new double[]{inputs.steerMotorPositionRad};
+        }
+
+        // Ensure both sample arrays have the same length for safety
+        int driveLength = inputs.driveMotorPositionRadSamples.length;
+        int steerLength = inputs.steerMotorPositionRadSamples.length;
+        if (driveLength != steerLength) {
+            // Use the current position for both if lengths don't match
+            inputs.driveMotorPositionRadSamples = new double[]{inputs.driveMotorPositionRad};
+            inputs.steerMotorPositionRadSamples = new double[]{inputs.steerMotorPositionRad};
+        }
 
         // Update PID values only when they change (per-module change detection)
         if (Constants.kTuning) {
