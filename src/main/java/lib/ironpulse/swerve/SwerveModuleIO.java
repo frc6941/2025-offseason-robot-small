@@ -28,29 +28,13 @@ public interface SwerveModuleIO {
     }
 
     // config
-    default void configDriveKp(double kp) {
-    }
-    default void configDriveKi(double ki) {
-    }
-    default void configDriveKd(double kd) {
+    default void configDriveController(double kp, double ki, double kd, double ks, double kv, double ka) {
     }
     default void configDriveFF(SimpleMotorFeedforward ff) {
     }
-    default void configDriveKs(double ks) {
-    }
-    default void configDriveKv(double kv) {
-    }
-    default void configDriveKa(double ka) {
-    }
     default void configDriveBrake(boolean isBreak) {
     }
-    default void configSteerKp(double kp) {
-    }
-    default void configSteerKi(double ki) {
-    }
-    default void configSteerKd(double kd) {
-    }
-    default void configSteerKs(double ks) {
+    default void configSteerController(double kp, double ki, double kd, double ks) {
     }
     default void configSteerBrake(boolean isBreak) {
     }
