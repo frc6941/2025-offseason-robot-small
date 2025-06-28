@@ -23,6 +23,13 @@ public class Constants {
     public static enum RobotType {
         PRAC, COMP, SIM
     }
+    public static final RobotType kRobotType = Robot.isReal()?RobotType.PRAC:RobotType.SIM;
+    public static final boolean kTuning = true;
+    public static final double kDtS = 0.01;
+    public static final String kParameterTag = "Params";
+    public static final String CANIVORE_CAN_BUS_NAME = "6941Canivore0";
+    public static final int PIGEON_ID = 14;
+
 
     /* -------------------------------------------------------------------------- */
     /*                               Swerve Settings                              */
@@ -122,6 +129,7 @@ public class Constants {
                 .driveStatorCurrentLimit(Amps.of(110))
                 .steerStatorCurrentLimit(Amps.of(110))
                 .canivoreCanBusName(CANIVORE_CAN_BUS_NAME)
+                .pigeonId(PIGEON_ID)
                 .build();
 
         static {

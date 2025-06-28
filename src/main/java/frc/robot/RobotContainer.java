@@ -10,6 +10,7 @@ import lib.ironpulse.swerve.Swerve;
 import lib.ironpulse.swerve.SwerveCommands;
 import lib.ironpulse.swerve.sim.ImuIOSim;
 import lib.ironpulse.swerve.sim.SwerveModuleIOSim;
+import lib.ironpulse.swerve.sjtu6.ImuIOPigeon;
 import lib.ironpulse.swerve.sjtu6.SwerveModuleIOSJTU6;
 
 import static edu.wpi.first.units.Units.*;
@@ -26,7 +27,7 @@ public class RobotContainer {
         switch (Constants.kRobotType) {
             case PRAC -> {
                 swerve = new Swerve(
-                        Constants.Swerve.kRealConfig, new ImuIOSim(),
+                        Constants.Swerve.kRealConfig, new ImuIOPigeon(Constants.Swerve.kRealConfig),
                         new SwerveModuleIOSJTU6(Constants.Swerve.kRealConfig, 0),
                         new SwerveModuleIOSJTU6(Constants.Swerve.kRealConfig, 1),
                         new SwerveModuleIOSJTU6(Constants.Swerve.kRealConfig, 2),
