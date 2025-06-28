@@ -35,8 +35,6 @@ public class SwerveModule {
     }
 
     public void periodic() {
-        // Note: Tuning is now handled directly in each module's updateInputs() method
-        // This ensures each module instance tracks changes independently
 
         // compute position for odometry
         int sampleCount = Math.min(data.driveMotorPositionRadSamples.length, data.steerMotorPositionRadSamples.length);

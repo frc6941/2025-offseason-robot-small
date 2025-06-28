@@ -130,6 +130,15 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         if (syncThread != null && !syncThread.isAlive())
             syncThread.start();
     }
+    
+    // Getters for shared sync resources (used by IMU to ensure synchronized sampling)
+    public static ReentrantLock getSyncLock() {
+        return syncLock;
+    }
+    
+    public static PhoenixSynchronizationThread getSyncThread() {
+        return syncThread;
+    }
 
 
 

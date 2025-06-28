@@ -26,6 +26,7 @@ public class Constants {
     public static final double kDtS = 0.01;
     public static final String kParameterTag = "Params";
     public static final String CANIVORE_CAN_BUS_NAME = "6941Canivore0";
+    public static final int PIGEON_ID = 14;
 
 
     /* -------------------------------------------------------------------------- */
@@ -129,6 +130,7 @@ public class Constants {
                 .driveStatorCurrentLimit(Amps.of(110))
                 .steerStatorCurrentLimit(Amps.of(110))
                 .canivoreCanBusName(CANIVORE_CAN_BUS_NAME)
+                .pigeonId(PIGEON_ID)
                 .build();
 
 
