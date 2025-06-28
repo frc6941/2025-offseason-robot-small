@@ -51,13 +51,19 @@ public class RobotContainer {
 
     private void configBindings() {
         swerve.setDefaultCommand(SwerveCommands.driveWithJoystick(
-            swerve, () -> driverController.getLeftY(), () -> driverController.getLeftX(),
-            () -> driverController.getRightX(), () -> RobotStateRecorder.getInstance().getTransform(
-                        Seconds.of(Timer.getTimestamp()),
-                        DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue).equals(
-                                DriverStation.Alliance.Blue) ? RobotStateRecorder.kFrameDriverStationBlue : RobotStateRecorder.kFrameDriverStationRed,
-                        TransformRecorder.kFrameRobot
-                ).orElse(new Pose3d()), MetersPerSecond.of(0.05), DegreesPerSecond.of(5.0)
+            swerve, 
+            () -> driverController.getLeftY(), 
+            () -> driverController.getLeftX(),
+            () -> driverController.getRightX(), 
+            () -> RobotStateRecorder.getInstance().getTransform(
+                Seconds.of(Timer.getTimestamp()),
+                DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue).equals(
+                    DriverStation.Alliance.Blue) ? RobotStateRecorder.kFrameDriverStationBlue 
+                    : RobotStateRecorder.kFrameDriverStationRed,
+                TransformRecorder.kFrameRobot
+            ).orElse(new Pose3d()), 
+            MetersPerSecond.of(0.05), 
+            DegreesPerSecond.of(5.0)
         ));
     }
 

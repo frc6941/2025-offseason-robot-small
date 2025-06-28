@@ -90,8 +90,8 @@ public class ImuIOPigeon implements ImuIO {
     
     private void configureSignalFrequencies() {
         // High priority signals for control (100Hz = 10ms)
-        yaw.setUpdateFrequency(100.0);
-        yawVelocity.setUpdateFrequency(100.0);
+        yaw.setUpdateFrequency(config.odometryFrequency);
+        yawVelocity.setUpdateFrequency(config.odometryFrequency);
         
         // Medium priority signals for telemetry (50Hz = 20ms) 
         pitch.setUpdateFrequency(50.0);

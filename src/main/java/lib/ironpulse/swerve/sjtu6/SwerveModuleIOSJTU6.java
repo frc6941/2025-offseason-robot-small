@@ -212,8 +212,8 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
 
         // Configure signal update frequencies to prevent stale messages
         // High priority signals for control (100Hz = 10ms)
-        steerPosition.setUpdateFrequency(100.0);
-        steerVelocity.setUpdateFrequency(100.0);
+        steerPosition.setUpdateFrequency(config.odometryFrequency);
+        steerVelocity.setUpdateFrequency(config.odometryFrequency);
 
         // Medium priority signals for telemetry (50Hz = 20ms)
         steerVoltage.setUpdateFrequency(50.0);
