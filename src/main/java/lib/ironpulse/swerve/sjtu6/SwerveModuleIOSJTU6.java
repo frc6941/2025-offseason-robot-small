@@ -342,51 +342,30 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
     }
 
     @Override
-    public void configDriveKp(double kp) {
-        // PID gains are feedback (FB) - only modify kP
+    public void configDriveController(double kp, double ki, double kd, double ks, double kv, double ka) {
+        // Configure both PID and FF parameters at once for better atomicity
         driveFBConfig.Slot0.kP = kp;
-        driveMotor.getConfigurator().apply(driveFBConfig);
-    }
-
-    @Override
-    public void configDriveKi(double ki) {
-        // PID gains are feedback (FB) - only modify kI
         driveFBConfig.Slot0.kI = ki;
-        driveMotor.getConfigurator().apply(driveFBConfig);
-    }
-
-    @Override
-    public void configDriveKd(double kd) {
-        // PID gains are feedback (FB) - only modify kD
         driveFBConfig.Slot0.kD = kd;
+        
+        driveFFConfig.Slot0.kS = ks;
+        driveFFConfig.Slot0.kV = kv;
+        driveFFConfig.Slot0.kA = ka;
+        
+        // Apply both configurations
         driveMotor.getConfigurator().apply(driveFBConfig);
+        driveMotor.getConfigurator().apply(driveFFConfig);
+        System.out.println("Drive motor " + moduleID + " controller configured: kP=" + kp + ", kI=" + ki + ", kD=" + kd + ", kS=" + ks + ", kV=" + kv + ", kA=" + ka);
     }
 
     @Override
     public void configDriveFF(SimpleMotorFeedforward ff) {
-        // Feedforward gains are separate from feedback
+        // Feedforward gains from SimpleMotorFeedforward object
         driveFFConfig.Slot0.kS = ff.getKs();
         driveFFConfig.Slot0.kV = ff.getKv();
         driveFFConfig.Slot0.kA = ff.getKa();
         driveMotor.getConfigurator().apply(driveFFConfig);
-    }
-
-    @Override
-    public void configDriveKs(double ks) {
-        driveFFConfig.Slot0.kS = ks;
-        driveMotor.getConfigurator().apply(driveFFConfig);
-    }
-
-    @Override
-    public void configDriveKv(double kv) {
-        driveFFConfig.Slot0.kV = kv;
-        driveMotor.getConfigurator().apply(driveFFConfig);
-    }
-
-    @Override
-    public void configDriveKa(double ka) {
-        driveFFConfig.Slot0.kA = ka;
-        driveMotor.getConfigurator().apply(driveFFConfig);
+        System.out.println("Drive motor " + moduleID + " FF configured from SimpleMotorFeedforward: kS=" + ff.getKs() + ", kV=" + ff.getKv() + ", kA=" + ff.getKa());
     }
 
     @Override
@@ -397,31 +376,14 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
     }
 
     @Override
-    public void configSteerKp(double kp) {
-        // PID gains are feedback (FB) - only modify kP
+    public void configSteerController(double kp, double ki, double kd, double ks) {
+        // PID gains and static friction feedforward - set all parameters at once
         steerFBConfig.Slot0.kP = kp;
-        steerMotor.getConfigurator().apply(steerFBConfig);
-    }
-
-    @Override
-    public void configSteerKi(double ki) {
-        // PID gains are feedback (FB) - only modify kI
         steerFBConfig.Slot0.kI = ki;
-        steerMotor.getConfigurator().apply(steerFBConfig);
-    }
-
-    @Override
-    public void configSteerKd(double kd) {
-        // PID gains are feedback (FB) - only modify kD
         steerFBConfig.Slot0.kD = kd;
-        steerMotor.getConfigurator().apply(steerFBConfig);
-    }
-
-    @Override
-    public void configSteerKs(double ks) {
-        // Static friction feedforward - only modify kS
         steerFBConfig.Slot0.kS = ks;
         steerMotor.getConfigurator().apply(steerFBConfig);
+        System.out.println("Steer motor " + moduleID + " controller configured: kP=" + kp + ", kI=" + ki + ", kD=" + kd + ", kS=" + ks);
     }
 
     @Override

@@ -119,38 +119,30 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
     }
 
     @Override
-    public void configDriveKp(double kp) {
+    public void configDriveController(double kp, double ki, double kd, double ks, double kv, double ka) {
+        // Configure PID
         driveFB.setP(kp);
-    }
-
-    @Override
-    public void configDriveKi(double ki) {
         driveFB.setI(ki);
-    }
-
-    @Override
-    public void configDriveKd(double kd) {
         driveFB.setD(kd);
+        
+        // Configure FF
+        driveFF = new SimpleMotorFeedforward(ks, kv, ka);
+        System.out.println("Drive sim controller configured: kP=" + kp + ", kI=" + ki + ", kD=" + kd + ", kS=" + ks + ", kV=" + kv + ", kA=" + ka);
     }
 
     @Override
     public void configDriveFF(SimpleMotorFeedforward ff) {
         driveFF = ff;
+        System.out.println("Drive sim FF configured from SimpleMotorFeedforward: kS=" + ff.getKs() + ", kV=" + ff.getKv() + ", kA=" + ff.getKa());
     }
 
     @Override
-    public void configSteerKp(double kP) {
-        steerFB.setP(kP);
-    }
-
-    @Override
-    public void configSteerKi(double kI) {
-        steerFB.setI(kI);
-    }
-
-    @Override
-    public void configSteerKd(double kD) {
-        steerFB.setD(kD);
+    public void configSteerController(double kp, double ki, double kd, double ks) {
+        steerFB.setP(kp);
+        steerFB.setI(ki);
+        steerFB.setD(kd);
+        // Note: Static friction (ks) is not used in simulation
+        System.out.println("Steer sim controller configured: kP=" + kp + ", kI=" + ki + ", kD=" + kd + ", kS=" + ks + " (ks not used in sim)");
     }
 
 }
