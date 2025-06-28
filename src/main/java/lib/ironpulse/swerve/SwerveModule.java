@@ -1,13 +1,17 @@
 package lib.ironpulse.swerve;
 
 
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.measure.*;
+import frc.robot.Constants;
 import frc.robot.SwerveModuleParamsNT;
+import lib.ironpulse.utils.Logging;
 import lombok.Getter;
 import org.littletonrobotics.junction.Logger;
 
@@ -23,10 +27,26 @@ public class SwerveModule {
     private SwerveModulePosition[] odometryPositions;
 
     public SwerveModule(SwerveConfig swerveConfig, SwerveConfig.SwerveModuleConfig moduleConfig, SwerveModuleIO io) {
+        // initialize
         this.io = io;
         this.swerveConfig = swerveConfig;
         this.moduleConfig = moduleConfig;
         this.data = new SwerveModuleIOInputsAutoLogged();
+
+        // register parameter update
+        SwerveModuleParamsNT.Drive.kP.onChange(io::configDriveKp);
+        SwerveModuleParamsNT.Drive.kI.onChange(io::configDriveKi);
+        SwerveModuleParamsNT.Drive.kD.onChange(io::configDriveKd);
+        SwerveModuleParamsNT.Drive.kS.onChange(io::configDriveKs);
+        SwerveModuleParamsNT.Drive.kV.onChange(io::configDriveKv);
+        SwerveModuleParamsNT.Drive.kA.onChange(io::configDriveKa);
+        SwerveModuleParamsNT.Drive.isBrake.onChange(io::configDriveBrake);
+
+        SwerveModuleParamsNT.Steer.kP.onChange(io::configSteerKp);
+        SwerveModuleParamsNT.Steer.kI.onChange(io::configSteerKi);
+        SwerveModuleParamsNT.Steer.kD.onChange(io::configSteerKd);
+        SwerveModuleParamsNT.Steer.kS.onChange(io::configSteerKs);
+        SwerveModuleParamsNT.Steer.isBrake.onChange(io::configSteerBrake);
     }
 
     public void updateInputs() {

@@ -104,7 +104,6 @@ public class Swerve extends SubsystemBase {
             );
         }
         odometryLock.unlock();
-
         LoggedTracer.record(kSwerveTag + "/Inputs");
 
         // module periodic
