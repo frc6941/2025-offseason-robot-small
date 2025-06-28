@@ -17,67 +17,32 @@ import java.util.*;
 @SupportedOptions("DEBUG")
 @AutoService(Processor.class)
 public class NTParameterProcessor extends AbstractProcessor {
-    private static final Map<String, GetterSetterPair> NT_TYPES_TABLE = Map.ofEntries(
+    private static final Map<String, String> NT_TYPES_TABLE = Map.ofEntries(
             // Booleans
-            Map.entry("boolean", GetterSetterPair.of("getBoolean", "setBoolean")),
-            Map.entry("java.lang.Boolean", GetterSetterPair.of("getBoolean", "setBoolean")),
-            Map.entry("boolean[]", GetterSetterPair.of("getBooleanArray", "setBooleanArray")),
-            Map.entry("java.lang.Boolean[]", GetterSetterPair.of("getBooleanArray", "setBooleanArray")),
+            Map.entry("boolean", "Boolean"), Map.entry("java.lang.Boolean", "Boolean"),
+            Map.entry("boolean[]", "Boolean[]"), Map.entry("java.lang.Boolean[]", "Boolean[]"),
 
             // Integers
-            Map.entry("int", GetterSetterPair.of("getInteger", "setInteger")),
-            Map.entry("java.lang.Integer", GetterSetterPair.of("getInteger", "setInteger")),
-            Map.entry("int[]", GetterSetterPair.of("getIntegerArray", "setIntegerArray")),
-            Map.entry("java.lang.Integer[]", GetterSetterPair.of("getIntegerArray", "setIntegerArray")),
+            Map.entry("int", "Integer"), Map.entry("java.lang.Integer", "Integer"), Map.entry("int[]", "Integer[]"),
+            Map.entry("java.lang.Integer[]", "Integer[]"),
 
-            Map.entry("long", GetterSetterPair.of("getInteger", "setInteger")),
-            Map.entry("java.lang.Long", GetterSetterPair.of("getInteger", "setInteger")),
-            Map.entry("long[]", GetterSetterPair.of("getIntegerArray", "setIntegerArray")),
-            Map.entry("java.lang.Long[]", GetterSetterPair.of("getIntegerArray", "setIntegerArray")),
+            Map.entry("long", "Long"), Map.entry("java.lang.Long", "Long"), Map.entry("long[]", "Long[]"),
+            Map.entry("java.lang.Long[]", "Long[]"),
 
             // Floats
-            Map.entry("float", GetterSetterPair.of("getFloat", "setFloat")),
-            Map.entry("java.lang.Float", GetterSetterPair.of("getFloat", "setFloat")),
-            Map.entry("float[]", GetterSetterPair.of("getFloatArray", "setFloatArray")),
-            Map.entry("java.lang.Float[]", GetterSetterPair.of("getFloatArray", "setFloatArray")),
+            Map.entry("float", "Float"), Map.entry("java.lang.Float", "Float"), Map.entry("float[]", "Float[]"),
+            Map.entry("java.lang.Float[]", "Float[]"),
 
             // Doubles
-            Map.entry("double", GetterSetterPair.of("getDouble", "setDouble")),
-            Map.entry("java.lang.Double", GetterSetterPair.of("getDouble", "setDouble")),
-            Map.entry("double[]", GetterSetterPair.of("getDoubleArray", "setDoubleArray")),
-            Map.entry("java.lang.Double[]", GetterSetterPair.of("getDoubleArray", "setDoubleArray")),
+            Map.entry("double", "Double"), Map.entry("java.lang.Double", "Double"), Map.entry("double[]", "Double[]"),
+            Map.entry("java.lang.Double[]", "Double[]"),
 
             // Strings
-            Map.entry("java.lang.String", GetterSetterPair.of("getString", "setString")),
-            Map.entry("java.lang.String[]", GetterSetterPair.of("getStringArray", "setStringArray")),
+            Map.entry("java.lang.String", "String"), Map.entry("java.lang.String[]", "String[]"),
 
             // Raw bytes
-            Map.entry("byte[]", GetterSetterPair.of("getRaw", "setRaw"))
+            Map.entry("byte[]", "Byte[]")
     );
-
-    public static Boolean isTuning = false;
-
-    /**
-     * Handle processor options.
-     */
-    private void handleTuning(Element element) {
-        // annotation attribute takes highest precedence
-        NTParameter annotation = element.getAnnotation(NTParameter.class);
-        if (annotation != null && annotation.isTuning()) {
-            isTuning = true;
-            return;
-        }
-        // next, processor option -ADEBUG=true
-        String opt = processingEnv.getOptions().get("DEBUG");
-        if (opt != null) {
-            isTuning = Boolean.parseBoolean(opt);
-            return;
-        }
-        // finally, system property passed to compiler JVM
-        if (isTuning == null) {
-            isTuning = Boolean.getBoolean("lib.ntext.ntparameter.debug");
-        }
-    }
 
     /**
      * Main processing method for dealing with all the annotations.
@@ -97,7 +62,6 @@ public class NTParameterProcessor extends AbstractProcessor {
                 // Class-level annotation
                 TypeElement rootClass = (TypeElement) annotated;
                 annotatedClasses.add(rootClass);
-                handleTuning(rootClass);
                 validateFields(rootClass);
                 generateWrapper(rootClass);
             } else if (annotated.getKind() == ElementKind.FIELD) {
@@ -110,14 +74,13 @@ public class NTParameterProcessor extends AbstractProcessor {
                     continue;
                 }
 
-                handleTuning(field);
 
                 // Group fields by their containing class
                 classToFields.computeIfAbsent(containingClass, k -> new ArrayList<>()).add(field);
             } else {
                 processingEnv.getMessager().printMessage(
-                        Diagnostic.Kind.ERROR,
-                        "@lib.ntext.NTParameter can only be applied to classes or fields.", annotated
+                        Diagnostic.Kind.ERROR, "@lib.ntext.NTParameter can only be applied to classes or fields.",
+                        annotated
                 );
             }
         }
@@ -132,6 +95,7 @@ public class NTParameterProcessor extends AbstractProcessor {
                 continue;
             }
 
+            // Generate field wrappers
             generateFieldWrapper(containingClass, fields);
         }
 
@@ -187,8 +151,7 @@ public class NTParameterProcessor extends AbstractProcessor {
             String typeName = field.asType().toString();
             if (!NT_TYPES_TABLE.containsKey(typeName)) {
                 processingEnv.getMessager().printMessage(
-                        Diagnostic.Kind.ERROR,
-                        "Invalid field type '" + typeName + "' in class '" + className + "'.",
+                        Diagnostic.Kind.ERROR, "Invalid field type '" + typeName + "' in class '" + className + "'.",
                         field
                 );
                 throw new FieldTypeError("Invalid field type '" + typeName + "' in class '" + className + "'.");
@@ -212,6 +175,9 @@ public class NTParameterProcessor extends AbstractProcessor {
     /**
      * Generate wrapper for field-level annotations.
      */
+    /**
+     * Generate wrapper for field-level annotations.
+     */
     private void generateFieldWrapper(TypeElement containingClass, List<VariableElement> annotatedFields) {
         // Use the first field's annotation for table name, or derive from class name
         String tableName = null;
@@ -223,9 +189,7 @@ public class NTParameterProcessor extends AbstractProcessor {
             }
         }
 
-        if (tableName == null || tableName.isEmpty()) {
-            tableName = containingClass.getSimpleName().toString();
-        }
+        if (tableName == null) tableName = containingClass.getSimpleName().toString();
 
         String pkgName = processingEnv.getElementUtils().getPackageOf(containingClass).toString();
         String className = containingClass.getSimpleName() + "NT";
@@ -235,13 +199,39 @@ public class NTParameterProcessor extends AbstractProcessor {
         builder.append("package ").append(pkgName).append(";\n\n")
                 .append("import edu.wpi.first.networktables.NetworkTableEntry;\n")
                 .append("import edu.wpi.first.networktables.NetworkTableInstance;\n\n")
+                .append("import lib.ntext.NTParameterWrapper;\n\n")
                 .append("public class ").append(className).append(" {\n");
 
+        // Track field names for isAnyChanged()
+        List<String> fieldNames = new ArrayList<>();
+
         // Process only the annotated fields
-        buildFieldsContent(annotatedFields, tableName, builder, "  ");
+        for (VariableElement field : annotatedFields) {
+            String fieldName = field.getSimpleName().toString();
+            String typeName = NT_TYPES_TABLE.get(field.asType().toString());
+            Object defaultValue = field.getConstantValue();
+            String defaultLiteral = getDefaultLiteral(defaultValue, typeName);
+
+            builder.append("  public static final NTParameterWrapper<")
+                    .append(typeName).append("> ").append(fieldName)
+                    .append(" = new NTParameterWrapper<>(")
+                    .append("\"").append(tableName).append("/").append(fieldName).append("\", ")
+                    .append(defaultLiteral).append(");\n");
+
+            fieldNames.add(fieldName);
+        }
+
+        // Append isAnyChanged() if any fields exist
+        if (!fieldNames.isEmpty()) {
+            builder.append("\n  public static boolean isAnyChanged() {\n")
+                    .append("    return ")
+                    .append(String.join(" || ", fieldNames.stream().map(f -> f + ".hasChanged()").toList()))
+                    .append(";\n  }\n");
+        }
 
         // end, write as a generated java file
         builder.append("}\n");
+
         try {
             JavaFileObject file = processingEnv.getFiler().createSourceFile(pkgName + "." + className, containingClass);
             try (Writer writer = file.openWriter()) {
@@ -253,64 +243,6 @@ public class NTParameterProcessor extends AbstractProcessor {
         }
     }
 
-    /**
-     * Build content for specific fields (used for field-level annotations).
-     */
-    private void buildFieldsContent(List<VariableElement> fields, String tableName, StringBuilder builder,
-                                    String indent) {
-        String tableChain = ".getTable(\"" + tableName + "\")";
-
-        for (VariableElement field : fields) {
-            String fieldName = field.getSimpleName().toString();
-            String typeName = field.asType().toString();
-            String getterName = NT_TYPES_TABLE.get(typeName).getGetter();
-            String setterName = NT_TYPES_TABLE.get(typeName).getSetter();
-            Object defaultValue = field.getConstantValue();
-
-            String defaultLiteral = getDefaultLiteral(defaultValue, fieldName, getterName, typeName);
-
-            if (!isTuning) {
-                builder.append(indent).append("public static ").append(typeName).append(" ")
-                        .append(fieldName).append("() {\n")
-                        .append(indent).append("  return ").append(defaultLiteral).append(";\n")
-                        .append(indent).append("}\n");
-            } else {
-                // add getter with special handling for integers
-                if ("int".equals(typeName) || "java.lang.Integer".equals(typeName)) {
-                    builder.append(indent).append("public static int ").append(fieldName).append("() {\n")
-                            .append(indent).append("  return Math.toIntExact(NetworkTableInstance.getDefault()")
-                            .append(tableChain).append(".getEntry(\"").append(fieldName).append("\")")
-                            .append(".getInteger(").append(defaultLiteral).append("L)") // append L for long literal
-                            .append(");\n")
-                            .append(indent).append("}\n");
-                } else if ("int[]".equals(typeName) || "java.lang.Integer[]".equals(typeName)) {
-                    builder.append(indent).append("public static int[] ").append(fieldName).append("() {\n")
-                            .append(indent).append("  long[] longs = NetworkTableInstance.getDefault()")
-                            .append(tableChain).append(".getEntry(\"").append(fieldName).append("\")")
-                            .append(".getIntegerArray(new long[0]);\n")
-                            .append(indent).append("  int[] ints = new int[longs.length];\n")
-                            .append(indent).append(
-                                    "  for (int i = 0; i < longs.length; ++i) ints[i] = Math.toIntExact(longs[i]);\n")
-                            .append(indent).append("  return ints;\n")
-                            .append(indent).append("}\n");
-                } else {
-                    builder.append(indent).append("public static ").append(typeName).append(" ")
-                            .append(fieldName).append("() {\n")
-                            .append(indent).append("  return NetworkTableInstance.getDefault()")
-                            .append(tableChain).append(".getEntry(\"").append(fieldName).append("\")")
-                            .append(".").append(getterName).append("(").append(defaultLiteral).append(");\n")
-                            .append(indent).append("}\n");
-                }
-
-                // add static setter
-                builder.append(indent).append("static {\n");
-                builder.append(indent).append("  NetworkTableInstance.getDefault()")
-                        .append(tableChain).append(".getEntry(\"").append(fieldName).append("\")")
-                        .append(".").append(setterName).append("(").append(defaultLiteral).append(");\n");
-                builder.append(indent).append("}\n");
-            }
-        }
-    }
 
     /**
      * Entry method for generating corresponding network table method for the class.
@@ -324,10 +256,10 @@ public class NTParameterProcessor extends AbstractProcessor {
 
         // start builder, write header
         StringBuilder builder = new StringBuilder();
-        builder.append("package ").append(pkgName).append(";\n\n")
-                .append("import edu.wpi.first.networktables.NetworkTableEntry;\n")
-                .append("import edu.wpi.first.networktables.NetworkTableInstance;\n\n")
-                .append("public class ").append(className).append(" {\n");
+        builder.append("package ").append(pkgName).append(";\n\n").append(
+                "import edu.wpi.first.networktables.NetworkTableEntry;\n").append(
+                "import edu.wpi.first.networktables.NetworkTableInstance;\n\n").append(
+                "import lib.ntext.NTParameterWrapper;\n\n").append("public class ").append(className).append(" {\n");
 
         // do recursive adding
         buildClassContent(rootClass, tableName, builder, "  ", "");
@@ -348,155 +280,118 @@ public class NTParameterProcessor extends AbstractProcessor {
     /**
      * Get default literal value for a field.
      */
-    private String getDefaultLiteral(Object defaultValue, String fieldName, String getterName, String typeName) {
+    private String getDefaultLiteral(Object defaultValue, String typeName) {
         if (defaultValue != null) {
             if (defaultValue instanceof String s) {
                 return "\"" + s.replace("\"", "\\\"") + "\"";
             } else if (defaultValue instanceof Character c) {
                 return "'" + c + "'";
+            } else if (defaultValue instanceof Long) {
+                return defaultValue + "L";
+            } else if (defaultValue instanceof Float) {
+                return defaultValue + "f";
+            } else if (defaultValue instanceof Double) {
+                return defaultValue + "d";
             } else {
                 return defaultValue.toString();
             }
-        } else {
-            // Fallback: use field name as string default for getString or just empty/zero fallback
-            if (getterName.equals("getString")) {
-                return "\"" + fieldName + "\"";
-            } else if (getterName.startsWith("getBoolean")) {
+        }
+
+        // Fallbacks by type
+        switch (typeName) {
+            case "java.lang.String":
+                return "";
+            case "boolean":
+            case "java.lang.Boolean":
                 return "false";
-            } else if (getterName.startsWith("getInteger")) {
+            case "int":
+            case "java.lang.Integer":
+            case "long":
+            case "java.lang.Long":
                 return "0";
-            } else if (getterName.startsWith("getFloat")) {
+            case "float":
+            case "java.lang.Float":
                 return "0.0f";
-            } else if (getterName.startsWith("getDouble")) {
+            case "double":
+            case "java.lang.Double":
                 return "0.0";
-            } else if (getterName.endsWith("Array")) {
-                return "new " + typeName.replace("[]", "") + "[0]";
-            } else if (getterName.equals("getRaw")) {
+            case "byte[]":
                 return "new byte[0]";
-            } else {
-                return "null"; // fallback fallback
-            }
+            default:
+                if (typeName.endsWith("[]")) {
+                    return "new " + typeName.replace("[]", "") + "[0]";
+                } else {
+                    return "null";
+                }
         }
     }
 
     /**
-     * Recursive method for adding field wrapper methods to the java file.
+     * Recursive method for generating NTParameterWrapper fields and isAnyChanged() methods.
      *
-     * @param classElement current class.
-     * @param tablePath    current nt table path.
-     * @param builder      string builder.
-     * @param indent       current indentation.
-     * @param prefix       current table prefix.
+     * @param classElement current class
+     * @param tablePath    base NetworkTable path
+     * @param builder      output builder
+     * @param indent       indentation for current scope
+     * @param prefix       NetworkTable key prefix for nested fields (e.g., "Outer/Inner/")
      */
-    private void buildClassContent(TypeElement classElement, String tablePath, StringBuilder builder, String indent,
-                                   String prefix) {
+    private void buildClassContent(TypeElement classElement, String tablePath, StringBuilder builder,
+                                   String indent, String prefix) {
         List<VariableElement> fields = ElementFilter.fieldsIn(classElement.getEnclosedElements());
+        List<String> fieldNames = new ArrayList<>();
 
         for (VariableElement field : fields) {
             String fieldName = field.getSimpleName().toString();
-            String tableChain = buildTableChain(tablePath, prefix);
-            String typeName = field.asType().toString();
-            String getterName = NT_TYPES_TABLE.get(typeName).getGetter();
-            String setterName = NT_TYPES_TABLE.get(typeName).getSetter();
+            String typeName = NT_TYPES_TABLE.get(field.asType().toString());
             Object defaultValue = field.getConstantValue();
+            String defaultLiteral = getDefaultLiteral(defaultValue, typeName);
+            String fullKey = tablePath + "/" + prefix + fieldName;
 
-            String defaultLiteral = getDefaultLiteral(defaultValue, fieldName, getterName, typeName);
+            builder.append(indent).append("public static final NTParameterWrapper<").append(typeName).append("> ")
+                    .append(fieldName).append(" = new NTParameterWrapper<>(")
+                    .append("\"").append(fullKey).append("\", ").append(defaultLiteral).append(");\n");
 
-            if (!isTuning) {
-                builder.append(indent).append("public static ").append(typeName).append(" ")
-                        .append(fieldName).append("() {\n")
-                        .append(indent).append("  return ").append(defaultLiteral).append(";\n")
-                        .append(indent).append("}\n");
-            } else {
-                // add getter
-                // NOTE: special treatment for integer and related types are required, as NT4 only returns long
-                if ("int".equals(typeName) || "java.lang.Integer".equals(typeName)) {
-                    builder.append(indent).append("public static int ").append(fieldName).append("() {\n")
-                            .append(indent).append("  return Math.toIntExact(NetworkTableInstance.getDefault()")
-                            .append(tableChain).append(".getEntry(\"").append(fieldName).append("\")")
-                            .append(".getInteger(").append(defaultLiteral).append("L)") // append L for long literal
-                            .append(");\n")
-                            .append(indent).append("}\n");
-                } else if ("int[]".equals(typeName) || "java.lang.Integer[]".equals(typeName)) {
-                    builder.append(indent).append("public static int[] ").append(fieldName).append("() {\n")
-                            .append(indent).append("  long[] longs = NetworkTableInstance.getDefault()")
-                            .append(tableChain).append(".getEntry(\"").append(fieldName).append("\")")
-                            .append(".getIntegerArray(new long[0]);\n")
-                            .append(indent).append("  int[] ints = new int[longs.length];\n")
-                            .append(indent).append(
-                                    "  for (int i = 0; i < longs.length; ++i) ints[i] = Math.toIntExact(longs[i]);\n")
-                            .append(indent).append("  return ints;\n")
-                            .append(indent).append("}\n");
-                } else {
-                    builder.append(indent).append("public static ").append(typeName).append(" ")
-                            .append(fieldName).append("() {\n")
-                            .append(indent).append("  return NetworkTableInstance.getDefault()")
-                            .append(tableChain).append(".getEntry(\"").append(fieldName).append("\")")
-                            .append(".").append(getterName).append("(").append(defaultLiteral).append(");\n")
-                            .append(indent).append("}\n");
-                }
+            fieldNames.add(fieldName);
+        }
 
-                // add static setter
-                builder.append(indent).append("static {\n");
-                builder.append(indent).append("  NetworkTableInstance.getDefault()")
-                        .append(tableChain).append(".getEntry(\"").append(fieldName).append("\")")
-                        .append(".").append(setterName).append("(").append(defaultLiteral).append(");\n");
-                builder.append(indent).append("}\n");
-            }
+        if (!fieldNames.isEmpty()) {
+            builder.append("\n").append(indent).append("public static boolean isAnyChanged() {\n")
+                    .append(indent).append("  return ")
+                    .append(String.join(" || ", fieldNames.stream().map(f -> f + ".hasChanged()").toList()))
+                    .append(";\n").append(indent).append("}\n\n");
         }
 
         for (Element enclosed : classElement.getEnclosedElements()) {
             if (enclosed.getKind() == ElementKind.CLASS && enclosed instanceof TypeElement nested) {
                 String nestedName = nested.getSimpleName().toString();
                 builder.append(indent).append("public static class ").append(nestedName).append(" {\n");
-                buildClassContent(nested, tablePath, builder, indent + "  ", prefix + nestedName + ".");
+                buildClassContent(nested, tablePath, builder, indent + "  ", prefix + nestedName + "/");
                 builder.append(indent).append("}\n");
             }
         }
     }
 
-    private String buildTableChain(String rootTable, String nestedPrefix) {
-        StringBuilder result = new StringBuilder();
-        result.append(".getTable(\"").append(rootTable).append("\")");
-        for (String part : nestedPrefix.split("\\.")) {
-            if (!part.isEmpty()) {
-                result.append(".getSubTable(\"").append(part).append("\")");
-            }
-        }
-        return result.toString();
-    }
+    /**
+     * Build content for specific fields (used for field-level annotations).
+     */
+    private void buildFieldsContent(
+            List<VariableElement> fields, String tableName, StringBuilder builder, String indent) {
+        for (VariableElement field : fields) {
+            String fieldName = field.getSimpleName().toString();
+            String typeName = NT_TYPES_TABLE.get(field.asType().toString());
+            Object defaultValue = field.getConstantValue();
+            String defaultLiteral = getDefaultLiteral(defaultValue, typeName);
 
-    public static class AnnotationTargetError extends Error {
-        public AnnotationTargetError(String message) {
-            super(message);
+            builder.append(indent).append("public static final NTParameterWrapper<").append(typeName).append(
+                    "> ").append(fieldName).append(" = new NTParameterWrapper<>(").append("\"").append(
+                    tableName).append("/").append(fieldName).append("\", ").append(defaultLiteral).append(");\n");
+
         }
     }
 
     public static class FieldTypeError extends Error {
         public FieldTypeError(String message) {
             super(message);
-        }
-    }
-
-    private static class GetterSetterPair {
-        private final String getter;
-        private final String setter;
-
-        private GetterSetterPair(String getter, String setter) {
-            this.getter = getter;
-            this.setter = setter;
-        }
-
-        public static GetterSetterPair of(String getter, String setter) {
-            return new GetterSetterPair(getter, setter);
-        }
-
-        public String getGetter() {
-            return getter;
-        }
-
-        public String getSetter() {
-            return setter;
         }
     }
 }

@@ -2,7 +2,10 @@ package lib.ironpulse.swerve;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.units.measure.*;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface SwerveModuleIO {
@@ -32,6 +35,12 @@ public interface SwerveModuleIO {
     default void configDriveKd(double kd) {
     }
     default void configDriveFF(SimpleMotorFeedforward ff) {
+    }
+    default void configDriveKs(double ks) {
+    }
+    default void configDriveKv(double kv) {
+    }
+    default void configDriveKa(double ka) {
     }
     default void configDriveBrake(boolean isBreak) {
     }

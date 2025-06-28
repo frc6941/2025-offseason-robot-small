@@ -9,5 +9,4 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface NTParameter {
     String tableName() default "NTParameter";
-    boolean isTuning() default false;
 }
