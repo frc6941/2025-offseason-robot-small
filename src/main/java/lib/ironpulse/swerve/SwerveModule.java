@@ -34,20 +34,8 @@ public class SwerveModule {
     }
 
     public void periodic() {
-        // config io
-//        io.configDriveKp(SwerveModuleParamsNT.driveKp());
-//        io.configDriveKi(SwerveModuleParamsNT.driveKi());
-//        io.configDriveKd(SwerveModuleParamsNT.driveKd());
-//        io.configDriveFF(new SimpleMotorFeedforward(
-//                SwerveModuleParamsNT.driveKs(), SwerveModuleParamsNT.driveKv(),
-//                                                    SwerveModuleParamsNT.driveKa()
-//        ));
-//        io.configDriveBrake(SwerveModuleParamsNT.driveIsBrake());
-//
-//        io.configSteerKp(SwerveModuleParamsNT.steerKp());
-//        io.configSteerKi(SwerveModuleParamsNT.steerKi());
-//        io.configSteerKd(SwerveModuleParamsNT.steerKd());
-//        io.configSteerBrake(SwerveModuleParamsNT.steerIsBrake());
+        // Note: Tuning is now handled directly in each module's updateInputs() method
+        // This ensures each module instance tracks changes independently
 
         // compute position for odometry
 //        int sampleCount = data.driveMotorPositionRadSamples.length;

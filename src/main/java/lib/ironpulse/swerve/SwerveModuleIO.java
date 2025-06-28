@@ -41,6 +41,8 @@ public interface SwerveModuleIO {
     }
     default void configSteerKd(double kd) {
     }
+    default void configSteerKs(double ks) {
+    }
     default void configSteerBrake(boolean isBreak) {
     }
 
