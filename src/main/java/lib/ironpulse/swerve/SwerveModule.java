@@ -33,44 +33,20 @@ public class SwerveModule {
         this.moduleConfig = moduleConfig;
         this.data = new SwerveModuleIOInputsAutoLogged();
 
-        // register parameter update - use lambda functions to call combined methods
-        SwerveModuleParamsNT.Drive.kP.onChange((value) -> updateDriveController());
-        SwerveModuleParamsNT.Drive.kI.onChange((value) -> updateDriveController());
-        SwerveModuleParamsNT.Drive.kD.onChange((value) -> updateDriveController());
-        SwerveModuleParamsNT.Drive.kS.onChange((value) -> updateDriveController());
-        SwerveModuleParamsNT.Drive.kV.onChange((value) -> updateDriveController());
-        SwerveModuleParamsNT.Drive.kA.onChange((value) -> updateDriveController());
+        // register parameter update
+        SwerveModuleParamsNT.Drive.kP.onChange(io::configDriveKp);
+        SwerveModuleParamsNT.Drive.kI.onChange(io::configDriveKi);
+        SwerveModuleParamsNT.Drive.kD.onChange(io::configDriveKd);
+        SwerveModuleParamsNT.Drive.kS.onChange(io::configDriveKs);
+        SwerveModuleParamsNT.Drive.kV.onChange(io::configDriveKv);
+        SwerveModuleParamsNT.Drive.kA.onChange(io::configDriveKa);
         SwerveModuleParamsNT.Drive.isBrake.onChange(io::configDriveBrake);
 
-        SwerveModuleParamsNT.Steer.kP.onChange((value) -> updateSteerController());
-        SwerveModuleParamsNT.Steer.kI.onChange((value) -> updateSteerController());
-        SwerveModuleParamsNT.Steer.kD.onChange((value) -> updateSteerController());
-        SwerveModuleParamsNT.Steer.kS.onChange((value) -> updateSteerController());
+        SwerveModuleParamsNT.Steer.kP.onChange(io::configSteerKp);
+        SwerveModuleParamsNT.Steer.kI.onChange(io::configSteerKi);
+        SwerveModuleParamsNT.Steer.kD.onChange(io::configSteerKd);
+        SwerveModuleParamsNT.Steer.kS.onChange(io::configSteerKs);
         SwerveModuleParamsNT.Steer.isBrake.onChange(io::configSteerBrake);
-    }
-
-    /**
-     * Helper method to update drive controller parameters (PID + FF) by reading current TunableNumber values
-     */
-    private void updateDriveController() {
-        double kp = SwerveModuleParamsNT.Drive.kP.getValue();
-        double ki = SwerveModuleParamsNT.Drive.kI.getValue();
-        double kd = SwerveModuleParamsNT.Drive.kD.getValue();
-        double ks = SwerveModuleParamsNT.Drive.kS.getValue();
-        double kv = SwerveModuleParamsNT.Drive.kV.getValue();
-        double ka = SwerveModuleParamsNT.Drive.kA.getValue();
-        io.configDriveController(kp, ki, kd, ks, kv, ka);
-    }
-
-    /**
-     * Helper method to update steer controller parameters (PID + static friction) by reading current TunableNumber values
-     */
-    private void updateSteerController() {
-        double kp = SwerveModuleParamsNT.Steer.kP.getValue();
-        double ki = SwerveModuleParamsNT.Steer.kI.getValue();
-        double kd = SwerveModuleParamsNT.Steer.kD.getValue();
-        double ks = SwerveModuleParamsNT.Steer.kS.getValue();
-        io.configSteerController(kp, ki, kd, ks);
     }
 
     public void updateInputs() {
