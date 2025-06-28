@@ -2,6 +2,8 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Frequency;
 import lib.ironpulse.swerve.SwerveConfig;
 import lib.ironpulse.swerve.SwerveLimit;
 import lib.ironpulse.swerve.SwerveModuleLimit;
@@ -32,7 +34,6 @@ public class Constants {
         public static final String kSwerveTag = "Swerve";
         public static final String kSwerveModuleTag = "Swerve/SwerveModule";
 
-        public static final double deadband = 0.1;
         public static SwerveLimit kDefaultSwerveLimit = SwerveLimit.builder()
                 .maxLinearVelocity(MetersPerSecond.of(4.5))
                 .maxSkidAcceleration(MetersPerSecondPerSecond.of(22.0))
@@ -48,7 +49,7 @@ public class Constants {
 
                 public static SwerveConfig.SwerveModuleConfig kModuleCompFL = SwerveConfig.SwerveModuleConfig.builder()
                 .name("FL")
-                .location(new Translation2d(-0.5, 0.5))
+                .location(new Translation2d(0.5, 0.5))
                 .driveMotorId(4)
                 .steerMotorId(3)
                 .encoderId(10)
@@ -60,7 +61,7 @@ public class Constants {
                 .build();
         public static SwerveConfig.SwerveModuleConfig kModuleCompFR = SwerveConfig.SwerveModuleConfig.builder()
                 .name("FR")
-                .location(new Translation2d(-0.5, -0.5))
+                .location(new Translation2d(0.5, -0.5))
                 .driveMotorId(6)
                 .steerMotorId(5)
                 .encoderId(11)
@@ -72,7 +73,7 @@ public class Constants {
                 .build();
         public static SwerveConfig.SwerveModuleConfig kModuleCompBL = SwerveConfig.SwerveModuleConfig.builder()
                 .name("BL")
-                .location(new Translation2d(0.5, 0.5))
+                .location(new Translation2d(-0.5, 0.5))
                 .driveMotorId(2)
                 .steerMotorId(1)
                 .encoderId(0)
@@ -84,7 +85,7 @@ public class Constants {
                 .build();
         public static SwerveConfig.SwerveModuleConfig kModuleCompBR = SwerveConfig.SwerveModuleConfig.builder()
                 .name("BR")
-                .location(new Translation2d(0.5, -0.5))
+                .location(new Translation2d(-0.5, -0.5))
                 .driveMotorId(8)
                 .steerMotorId(7)
                 .encoderId(20)
@@ -132,17 +133,17 @@ public class Constants {
 
         @NTParameter(tableName = kParameterTag + "/" + kSwerveModuleTag, isTuning = Constants.kTuning)
         private final static class SwerveModuleParams {
-            static final double driveKp = 0.0;
+            static final double driveKp = 0.3;
             static final double driveKi = 0.0;
             static final double driveKd = 0.0;
-            static final double driveKs = 0.5;
-            static final double driveKv = 1.3;
+            static final double driveKs = 0.0;
+            static final double driveKv = 1.5;
             static final double driveKa = 0.0;
             static final boolean driveIsBrake = true;
 
-            static final double steerKp = 80.0;
+            static final double steerKp = 120.0;
             static final double steerKi = 0.2;
-            static final double steerKd = 0.0;
+            static final double steerKd = 0.005;
             static final boolean steerIsBrake = true;
         }
     }
