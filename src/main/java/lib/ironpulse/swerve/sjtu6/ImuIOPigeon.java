@@ -5,6 +5,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import lib.ironpulse.swerve.ImuIO;
@@ -41,6 +42,7 @@ public class ImuIOPigeon implements ImuIO {
         System.out.println("ImuIOPigeon: Initializing Pigeon2 with ID " + config.pigeonId);
         
         // Get the shared sync thread from swerve modules (it should already be created by now)
+        //TODO: consider maybe move this to module?
         syncThread = SwerveModuleIOSJTU6.getSyncThread();
         
         // Initialize Pigeon2
@@ -109,11 +111,11 @@ public class ImuIOPigeon implements ImuIO {
         
         // Current positions and velocities
         inputs.yawPosition = Rotation2d.fromDegrees(yaw.getValueAsDouble());
-        inputs.yawVelocityRadPerSec = yawVelocity.getValue().in(edu.wpi.first.units.Units.RadiansPerSecond);
+        inputs.yawVelocityRadPerSec = yawVelocity.getValue().in(Units.RadiansPerSecond);
         inputs.pitchPosition = Rotation2d.fromDegrees(pitch.getValueAsDouble());
-        inputs.pitchVelocityRadPerSec = pitchVelocity.getValue().in(edu.wpi.first.units.Units.RadiansPerSecond);
+        inputs.pitchVelocityRadPerSec = pitchVelocity.getValue().in(Units.RadiansPerSecond);
         inputs.rollPosition = Rotation2d.fromDegrees(roll.getValueAsDouble());
-        inputs.rollVelocityRadPerSec = rollVelocity.getValue().in(edu.wpi.first.units.Units.RadiansPerSecond);
+        inputs.rollVelocityRadPerSec = rollVelocity.getValue().in(Units.RadiansPerSecond);
         
         // Process odometry queues (same pattern as swerve modules)
         if (!yawPositionQueue.isEmpty() && !timestampQueue.isEmpty()) {
@@ -151,14 +153,6 @@ public class ImuIOPigeon implements ImuIO {
                     inputs.yawPosition.getRadians()
                 )
             };
-        }
-        
-        // Debug output (reduced frequency to avoid spam)
-        if (Math.random() < 0.01) { // ~1% of calls
-            System.out.println("ImuIOPigeon: Yaw=" + String.format("%.1f", inputs.yawPosition.getDegrees()) + 
-                              " deg, YawVel=" + String.format("%.2f", Math.toDegrees(inputs.yawVelocityRadPerSec)) + 
-                              " deg/s, Connected=" + inputs.connected +
-                              ", Samples=" + inputs.odometryYawTimestamps.length);
         }
     }
 } 

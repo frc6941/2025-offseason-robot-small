@@ -263,7 +263,7 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
             inputs.driveMotorPositionRadSamples = new double[]{inputs.driveMotorPositionRad};
         }
 
-        Logger.recordOutput("steerPosition" + moduleID, steerMotorRotationsToMechanismRad(steerMotor.getPosition().getValueAsDouble()));
+        //Logger.recordOutput("steerPosition" + moduleID, steerMotorRotationsToMechanismRad(steerMotor.getPosition().getValueAsDouble()));
 
 
         // steer motor inputs
@@ -292,6 +292,7 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         int driveLength = inputs.driveMotorPositionRadSamples.length;
         int steerLength = inputs.steerMotorPositionRadSamples.length;
         if (driveLength != steerLength) {
+            //TODO: maybe change the way we handle the array? this might cause gitter
             // Use the current position for both if lengths don't match
             inputs.driveMotorPositionRadSamples = new double[]{inputs.driveMotorPositionRad};
             inputs.steerMotorPositionRadSamples = new double[]{inputs.steerMotorPositionRad};
