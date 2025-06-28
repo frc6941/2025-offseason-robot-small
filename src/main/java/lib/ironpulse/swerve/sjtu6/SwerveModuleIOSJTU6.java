@@ -4,6 +4,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -13,10 +14,13 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
+
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.*;
+import frc.robot.Constants;
 import frc.robot.SwerveModuleParamsNT;
 import lib.ironpulse.swerve.SwerveConfig;
 import lib.ironpulse.swerve.SwerveModuleIO;
@@ -39,7 +43,7 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
     // control requests
     private final VelocityTorqueCurrentFOC driveVelocityRequest = new VelocityTorqueCurrentFOC(0);
     private final VoltageOut driveVoltageRequest = new VoltageOut(0);
-    private final PositionTorqueCurrentFOC steerPositionRequest = new PositionTorqueCurrentFOC(0);
+    private final PositionDutyCycle steerPositionRequest = new PositionDutyCycle(0);
     private final VoltageOut steerVoltageRequest = new VoltageOut(0);
     // configuration objects - separate FB and FF to avoid overwriting settings
     private final TalonFXConfiguration driveFBConfig = new TalonFXConfiguration();
@@ -64,6 +68,21 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
     private StatusSignal<Temperature> steerTemperatureCel;
 
     private int moduleID;
+
+    // Per-module cached tunable values to prevent unnecessary configuration updates
+    private double lastDriveKp = Double.NaN;
+    private double lastDriveKi = Double.NaN;
+    private double lastDriveKd = Double.NaN;
+    private double lastDriveKs = Double.NaN;
+    private double lastDriveKv = Double.NaN;
+    private double lastDriveKa = Double.NaN;
+    private boolean lastDriveIsBrake = true;
+    
+    private double lastSteerKp = Double.NaN;
+    private double lastSteerKi = Double.NaN;
+    private double lastSteerKd = Double.NaN;
+    private double lastSteerKs = Double.NaN;
+    private boolean lastSteerIsBrake = true;
 
     public SwerveModuleIOSJTU6(SwerveSJTU6Config config, int idx) {
         this.config = config;
@@ -166,6 +185,9 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         steerConfig.Slot0.kP = SwerveModuleParamsNT.steerKp();
         steerConfig.Slot0.kI = SwerveModuleParamsNT.steerKi();
         steerConfig.Slot0.kD = SwerveModuleParamsNT.steerKd();
+        steerConfig.Slot0.kS = SwerveModuleParamsNT.steerKs();
+        steerConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
+
 
         // continuous wrap for steering
         steerConfig.ClosedLoopGeneral.ContinuousWrap = true;
@@ -232,7 +254,132 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         inputs.steerMotorTorqueCurrentAmpere = steerTorqueCurrentAmps.getValueAsDouble();
         inputs.steerMotorTemperatureCel = steerTemperatureCel.getValueAsDouble();
 
+        // Update PID values only when they change (per-module change detection)
+        if (Constants.kTuning) {
+            updateTunableValuesIfChanged();
+        }
 
+    }
+
+    /**
+     * Updates tunable PID values only when they have changed for this specific module instance.
+     * This prevents unnecessary motor controller configuration calls.
+     */
+    private void updateTunableValuesIfChanged() {
+        boolean driveSlot0Changed = false;
+        boolean steerSlot0Changed = false;
+        boolean driveBrakeConfigChanged = false;
+        boolean steerBrakeConfigChanged = false;
+
+        // Check all drive slot0 parameters (PID + feedforward)
+        double currentDriveKp = SwerveModuleParamsNT.driveKp();
+        double currentDriveKi = SwerveModuleParamsNT.driveKi();
+        double currentDriveKd = SwerveModuleParamsNT.driveKd();
+        double currentDriveKs = SwerveModuleParamsNT.driveKs();
+        double currentDriveKv = SwerveModuleParamsNT.driveKv();
+        double currentDriveKa = SwerveModuleParamsNT.driveKa();
+        
+        if (currentDriveKp != lastDriveKp) {
+            lastDriveKp = currentDriveKp;
+            driveSlot0Changed = true;
+        }
+        if (currentDriveKi != lastDriveKi) {
+            lastDriveKi = currentDriveKi;
+            driveSlot0Changed = true;
+        }
+        if (currentDriveKd != lastDriveKd) {
+            lastDriveKd = currentDriveKd;
+            driveSlot0Changed = true;
+        }
+        if (currentDriveKs != lastDriveKs) {
+            lastDriveKs = currentDriveKs;
+            driveSlot0Changed = true;
+        }
+        if (currentDriveKv != lastDriveKv) {
+            lastDriveKv = currentDriveKv;
+            driveSlot0Changed = true;
+        }
+        if (currentDriveKa != lastDriveKa) {
+            lastDriveKa = currentDriveKa;
+            driveSlot0Changed = true;
+        }
+
+        // Check all steer slot0 parameters (PID + kS feedforward)
+        double currentSteerKp = SwerveModuleParamsNT.steerKp();
+        double currentSteerKi = SwerveModuleParamsNT.steerKi();
+        double currentSteerKd = SwerveModuleParamsNT.steerKd();
+        double currentSteerKs = SwerveModuleParamsNT.steerKs();
+        
+        if (currentSteerKp != lastSteerKp) {
+            lastSteerKp = currentSteerKp;
+            steerSlot0Changed = true;
+        }
+        if (currentSteerKi != lastSteerKi) {
+            lastSteerKi = currentSteerKi;
+            steerSlot0Changed = true;
+        }
+        if (currentSteerKd != lastSteerKd) {
+            lastSteerKd = currentSteerKd;
+            steerSlot0Changed = true;
+        }
+        if (currentSteerKs != lastSteerKs) {
+            lastSteerKs = currentSteerKs;
+            steerSlot0Changed = true;
+        }
+
+        // Check brake modes
+        boolean currentDriveIsBrake = SwerveModuleParamsNT.driveIsBrake();
+        boolean currentSteerIsBrake = SwerveModuleParamsNT.steerIsBrake();
+        
+        if (currentDriveIsBrake != lastDriveIsBrake) {
+            driveBrakeConfig.MotorOutput.NeutralMode = currentDriveIsBrake ? 
+                NeutralModeValue.Brake : NeutralModeValue.Coast;
+            lastDriveIsBrake = currentDriveIsBrake;
+            driveBrakeConfigChanged = true;
+        }
+        if (currentSteerIsBrake != lastSteerIsBrake) {
+            steerBrakeConfig.MotorOutput.NeutralMode = currentSteerIsBrake ? 
+                NeutralModeValue.Brake : NeutralModeValue.Coast;
+            lastSteerIsBrake = currentSteerIsBrake;
+            steerBrakeConfigChanged = true;
+        }
+
+        // Apply only the specific configurations that changed to avoid overwriting other settings
+        // Combine all drive slot0 parameters (PID + feedforward) into single application
+        if (driveSlot0Changed) {
+            var driveSlot0Config = new com.ctre.phoenix6.configs.Slot0Configs();
+            // Always set all parameters to current values (from either cache or current NT values)
+            driveSlot0Config.kP = SwerveModuleParamsNT.driveKp();
+            driveSlot0Config.kI = SwerveModuleParamsNT.driveKi();
+            driveSlot0Config.kD = SwerveModuleParamsNT.driveKd();
+            driveSlot0Config.kS = SwerveModuleParamsNT.driveKs();
+            driveSlot0Config.kV = SwerveModuleParamsNT.driveKv();
+            driveSlot0Config.kA = SwerveModuleParamsNT.driveKa();
+            driveSlot0Config.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
+            driveMotor.getConfigurator().apply(driveSlot0Config);
+        }
+        if (steerSlot0Changed) {
+            // Apply all steer slot0 parameters including kS
+            var steerSlot0Config = new com.ctre.phoenix6.configs.Slot0Configs();
+            steerSlot0Config.kP = SwerveModuleParamsNT.steerKp();
+            steerSlot0Config.kI = SwerveModuleParamsNT.steerKi();
+            steerSlot0Config.kD = SwerveModuleParamsNT.steerKd();
+            steerSlot0Config.kS = SwerveModuleParamsNT.steerKs();
+            steerSlot0Config.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
+            steerMotor.getConfigurator().apply(steerSlot0Config);
+        }
+        if (driveBrakeConfigChanged) {
+            // Only apply the motor output configuration
+            var driveMotorOutputConfig = new com.ctre.phoenix6.configs.MotorOutputConfigs();
+            driveMotorOutputConfig.NeutralMode = driveBrakeConfig.MotorOutput.NeutralMode;
+            driveMotor.getConfigurator().apply(driveMotorOutputConfig);
+        }
+        if (steerBrakeConfigChanged) {
+            // Only apply the motor output configuration
+            var steerMotorOutputConfig = new com.ctre.phoenix6.configs.MotorOutputConfigs();
+            steerMotorOutputConfig.NeutralMode = steerBrakeConfig.MotorOutput.NeutralMode;
+            steerMotor.getConfigurator().apply(steerMotorOutputConfig);
+        }
     }
 
     @Override
@@ -331,6 +478,13 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
     public void configSteerKd(double kd) {
         // PID gains are feedback (FB) - only modify kD
         steerFBConfig.Slot0.kD = kd;
+        steerMotor.getConfigurator().apply(steerFBConfig);
+    }
+
+    @Override
+    public void configSteerKs(double ks) {
+        // Static friction feedforward - only modify kS
+        steerFBConfig.Slot0.kS = ks;
         steerMotor.getConfigurator().apply(steerFBConfig);
     }
 
