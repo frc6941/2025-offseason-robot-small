@@ -124,16 +124,10 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
         driveFB.setP(kp);
         driveFB.setI(ki);
         driveFB.setD(kd);
-        
+            
         // Configure FF
         driveFF = new SimpleMotorFeedforward(ks, kv, ka);
         System.out.println("Drive sim controller configured: kP=" + kp + ", kI=" + ki + ", kD=" + kd + ", kS=" + ks + ", kV=" + kv + ", kA=" + ka);
-    }
-
-    @Override
-    public void configDriveFF(SimpleMotorFeedforward ff) {
-        driveFF = ff;
-        System.out.println("Drive sim FF configured from SimpleMotorFeedforward: kS=" + ff.getKs() + ", kV=" + ff.getKv() + ", kA=" + ff.getKa());
     }
 
     @Override

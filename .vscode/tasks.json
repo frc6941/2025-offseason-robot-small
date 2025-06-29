@@ -1,0 +1,111 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Robot Code",
+            "type": "shell",
+            "command": "./gradlew",
+            "args": ["build"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": "$gcc",
+            "detail": "Build the robot code"
+        },
+        {
+            "label": "Deploy Robot Code",
+            "type": "shell",
+            "command": "./gradlew",
+            "args": ["deploy"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": "$gcc",
+            "detail": "Deploy code to the robot"
+        },
+        {
+            "label": "Clean Build",
+            "type": "shell",
+            "command": "./gradlew",
+            "args": ["clean"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": "$gcc",
+            "detail": "Clean the build directory"
+        },
+        {
+            "label": "Build and Deploy",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Build",
+                "Deploy"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "detail": "Build then deploy the robot code"
+        },
+        {
+            "label": "Simulate Robot",
+            "type": "shell",
+            "command": "./gradlew",
+            "args": ["simulateJava"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": "$gcc",
+            "detail": "Run robot simulation"
+        },
+        {
+            "label": "Test",
+            "type": "shell",
+            "command": "./gradlew",
+            "args": ["test"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": "$gcc",
+            "detail": "Run unit tests"
+        }
+    ]
+} 

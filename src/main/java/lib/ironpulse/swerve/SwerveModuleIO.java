@@ -1,6 +1,5 @@
 package lib.ironpulse.swerve;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
@@ -29,8 +28,6 @@ public interface SwerveModuleIO {
 
     // config
     default void configDriveController(double kp, double ki, double kd, double ks, double kv, double ka) {
-    }
-    default void configDriveFF(SimpleMotorFeedforward ff) {
     }
     default void configDriveBrake(boolean isBreak) {
     }

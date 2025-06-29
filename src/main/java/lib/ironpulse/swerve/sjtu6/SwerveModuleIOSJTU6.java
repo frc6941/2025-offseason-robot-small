@@ -11,7 +11,6 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.*;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.*;
@@ -44,9 +43,8 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
     private final VoltageOut driveVoltageRequest = new VoltageOut(0);
     private final PositionDutyCycle steerPositionRequest = new PositionDutyCycle(0);
     private final VoltageOut steerVoltageRequest = new VoltageOut(0);
-    // configuration objects - separate FB and FF to avoid overwriting settings
-    private final TalonFXConfiguration driveFBConfig = new TalonFXConfiguration();
-    private final TalonFXConfiguration driveFFConfig = new TalonFXConfiguration();
+    // configuration objects
+    private final TalonFXConfiguration driveControlConfig = new TalonFXConfiguration();
     private final TalonFXConfiguration steerFBConfig = new TalonFXConfiguration();
     private final TalonFXConfiguration driveBrakeConfig = new TalonFXConfiguration();
     private final TalonFXConfiguration steerBrakeConfig = new TalonFXConfiguration();
@@ -344,30 +342,20 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
 
     @Override
     public void configDriveController(double kp, double ki, double kd, double ks, double kv, double ka) {
-        // Configure both PID and FF parameters at once for better atomicity
-        driveFBConfig.Slot0.kP = kp;
-        driveFBConfig.Slot0.kI = ki;
-        driveFBConfig.Slot0.kD = kd;
+        // Configure both PID and FF parameters in single config to avoid overwriting
+        driveControlConfig.Slot0.kP = kp;
+        driveControlConfig.Slot0.kI = ki;
+        driveControlConfig.Slot0.kD = kd;
+        driveControlConfig.Slot0.kS = ks;
+        driveControlConfig.Slot0.kV = kv;
+        driveControlConfig.Slot0.kA = ka;
         
-        driveFFConfig.Slot0.kS = ks;
-        driveFFConfig.Slot0.kV = kv;
-        driveFFConfig.Slot0.kA = ka;
-        
-        // Apply both configurations
-        driveMotor.getConfigurator().apply(driveFBConfig);
-        driveMotor.getConfigurator().apply(driveFFConfig);
+        // Apply single combined configuration
+        driveMotor.getConfigurator().apply(driveControlConfig);
         System.out.println("Drive motor " + moduleID + " controller configured: kP=" + kp + ", kI=" + ki + ", kD=" + kd + ", kS=" + ks + ", kV=" + kv + ", kA=" + ka);
     }
 
-    @Override
-    public void configDriveFF(SimpleMotorFeedforward ff) {
-        // Feedforward gains from SimpleMotorFeedforward object
-        driveFFConfig.Slot0.kS = ff.getKs();
-        driveFFConfig.Slot0.kV = ff.getKv();
-        driveFFConfig.Slot0.kA = ff.getKa();
-        driveMotor.getConfigurator().apply(driveFFConfig);
-        System.out.println("Drive motor " + moduleID + " FF configured from SimpleMotorFeedforward: kS=" + ff.getKs() + ", kV=" + ff.getKv() + ", kA=" + ff.getKa());
-    }
+
 
     @Override
     public void configDriveBrake(boolean isBrake) {
