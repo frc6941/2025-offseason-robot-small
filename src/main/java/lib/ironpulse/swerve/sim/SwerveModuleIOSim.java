@@ -7,6 +7,7 @@ import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.Constants;
 import lib.ironpulse.swerve.SwerveModuleIO;
+import lib.ironpulse.utils.Logging;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -127,7 +128,12 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
             
         // Configure FF
         driveFF = new SimpleMotorFeedforward(ks, kv, ka);
-        System.out.println("Drive sim controller configured: kP=" + kp + ", kI=" + ki + ", kD=" + kd + ", kS=" + ks + ", kV=" + kv + ", kA=" + ka);
+
+        Logging.info(
+                Constants.Swerve.kSwerveModuleTag,
+                "Module drive controller updated! kp: %.2f, ki: %.2f, kd: %.2f",
+                kp, ki, kd
+        );
     }
 
     @Override
@@ -135,8 +141,12 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
         steerFB.setP(kp);
         steerFB.setI(ki);
         steerFB.setD(kd);
-        // Note: Static friction (ks) is not used in simulation
-        System.out.println("Steer sim controller configured: kP=" + kp + ", kI=" + ki + ", kD=" + kd + ", kS=" + ks + " (ks not used in sim)");
+
+        Logging.info(
+                Constants.Swerve.kSwerveModuleTag,
+                "Module steer controller updated! kp: %.2f, ki: %.2f, kd: %.2f",
+                kp, ki, kd
+        );
     }
 
 }

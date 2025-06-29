@@ -41,10 +41,6 @@ public class NTParameterWrapper<T> {
         NTParameterRegistry.registerOnChange(this, currentPrevious);
     }
 
-    public void deleteOnChange() {
-        NTParameterRegistry.unregisterOnChange(this);
-    }
-
     @SuppressWarnings("unchecked")
     public void refresh() {
         prevValue = value;

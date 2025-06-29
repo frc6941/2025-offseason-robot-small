@@ -32,21 +32,6 @@ public class SwerveModule {
         this.swerveConfig = swerveConfig;
         this.moduleConfig = moduleConfig;
         this.data = new SwerveModuleIOInputsAutoLogged();
-
-        // register parameter update - use lambda functions to call combined methods
-        SwerveModuleParamsNT.Drive.kP.onChange((value) -> updateDriveController());
-        SwerveModuleParamsNT.Drive.kI.onChange((value) -> updateDriveController());
-        SwerveModuleParamsNT.Drive.kD.onChange((value) -> updateDriveController());
-        SwerveModuleParamsNT.Drive.kS.onChange((value) -> updateDriveController());
-        SwerveModuleParamsNT.Drive.kV.onChange((value) -> updateDriveController());
-        SwerveModuleParamsNT.Drive.kA.onChange((value) -> updateDriveController());
-        SwerveModuleParamsNT.Drive.isBrake.onChange(io::configDriveBrake);
-
-        SwerveModuleParamsNT.Steer.kP.onChange((value) -> updateSteerController());
-        SwerveModuleParamsNT.Steer.kI.onChange((value) -> updateSteerController());
-        SwerveModuleParamsNT.Steer.kD.onChange((value) -> updateSteerController());
-        SwerveModuleParamsNT.Steer.kS.onChange((value) -> updateSteerController());
-        SwerveModuleParamsNT.Steer.isBrake.onChange(io::configSteerBrake);
     }
 
     /**
@@ -79,7 +64,6 @@ public class SwerveModule {
     }
 
     public void periodic() {
-
         // compute position for odometry
         int sampleCount = Math.min(data.driveMotorPositionRadSamples.length, data.steerMotorPositionRadSamples.length);
         odometryPositions = new SwerveModulePosition[sampleCount];
@@ -89,6 +73,12 @@ public class SwerveModule {
                     data.driveMotorPositionRadSamples[i] * swerveConfig.wheelDiameter.in(Meter) * 0.5,
                     new Rotation2d(data.steerMotorPositionRadSamples[i])
             );
+
+        // run dynamic parameter updates
+        if (SwerveModuleParamsNT.Drive.isAnyChanged())
+            updateDriveController();
+        if (SwerveModuleParamsNT.Steer.isAnyChanged())
+            updateSteerController();
     }
 
     public void runState(SwerveModuleState state) {
