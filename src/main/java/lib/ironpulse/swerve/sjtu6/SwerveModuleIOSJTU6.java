@@ -45,9 +45,8 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
     private final VoltageOut steerVoltageRequest = new VoltageOut(0);
     // configuration objects
     private final TalonFXConfiguration driveControlConfig = new TalonFXConfiguration();
-    private final TalonFXConfiguration steerFBConfig = new TalonFXConfiguration();
-    private final TalonFXConfiguration driveBrakeConfig = new TalonFXConfiguration();
-    private final TalonFXConfiguration steerBrakeConfig = new TalonFXConfiguration();
+    private final TalonFXConfiguration steerControlConfig = new TalonFXConfiguration();
+
     // status signals
     private StatusSignal<Angle> drivePosition;
     private Queue<Double> drivePositionQueue;
@@ -122,19 +121,17 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
 
 
     private void configureDriveMotor() {
-        TalonFXConfiguration driveConfig = new TalonFXConfiguration();
-
         // motor output
-        driveConfig.MotorOutput.Inverted = moduleConfig.driveInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
-        driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        driveControlConfig.MotorOutput.Inverted = moduleConfig.driveInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+        driveControlConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         // current limits - reasonable defaults for SJTU6
-        driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        driveConfig.CurrentLimits.StatorCurrentLimit = config.driveStatorCurrentLimit.in(Amp);
+        driveControlConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        driveControlConfig.CurrentLimits.StatorCurrentLimit = config.driveStatorCurrentLimit.in(Amp);
 
         // apply configuration
-        PhoenixUtils.tryUntilOk(5, () -> driveMotor.getConfigurator().apply(driveConfig, 0.25));
-        driveMotor.getConfigurator().apply(driveConfig);
+        PhoenixUtils.tryUntilOk(5, () -> driveMotor.getConfigurator().apply(driveControlConfig, 0.25));
+        driveMotor.getConfigurator().apply(driveControlConfig);
         driveMotor.optimizeBusUtilization();
 
         // create signals
@@ -168,7 +165,6 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
     }
 
     private void configureSteerMotor() {
-        TalonFXConfiguration steerConfig = new TalonFXConfiguration();
         CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
 
         encoderConfig.MagnetSensor.SensorDirection = moduleConfig.encoderInverted ? SensorDirectionValue.Clockwise_Positive : SensorDirectionValue.CounterClockwise_Positive;
@@ -176,27 +172,27 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
 
 
         // motor output direction
-        steerConfig.MotorOutput.Inverted = moduleConfig.steerInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
-        steerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        steerControlConfig.MotorOutput.Inverted = moduleConfig.steerInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+        steerControlConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         // encoder settings
-        steerConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-        steerConfig.Feedback.FeedbackRemoteSensorID = moduleConfig.encoderId;
-        steerConfig.Feedback.RotorToSensorRatio = config.steerGearRatio;
+        steerControlConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+        steerControlConfig.Feedback.FeedbackRemoteSensorID = moduleConfig.encoderId;
+        steerControlConfig.Feedback.RotorToSensorRatio = config.steerGearRatio;
 
         // current limits
-        steerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        steerConfig.CurrentLimits.StatorCurrentLimit = config.steerStatorCurrentLimit.in(Amp);
+        steerControlConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        steerControlConfig.CurrentLimits.StatorCurrentLimit = config.steerStatorCurrentLimit.in(Amp);
 
         // PID configuration - use defaults, will be updated by periodic calls
-        steerConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
+        steerControlConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
 
         // continuous wrap for steering
-        steerConfig.ClosedLoopGeneral.ContinuousWrap = true;
+        steerControlConfig.ClosedLoopGeneral.ContinuousWrap = true;
 
         // apply configuration
-        PhoenixUtils.tryUntilOk(5, () -> steerMotor.getConfigurator().apply(steerConfig, 0.25));
-        steerMotor.getConfigurator().apply(steerConfig);
+        PhoenixUtils.tryUntilOk(5, () -> steerMotor.getConfigurator().apply(steerControlConfig, 0.25));
+        steerMotor.getConfigurator().apply(steerControlConfig);
         encoder.getConfigurator().apply(encoderConfig);
 
 
@@ -360,26 +356,26 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
     @Override
     public void configDriveBrake(boolean isBrake) {
         // Brake/coast setting is separate from PID/FF
-        driveBrakeConfig.MotorOutput.NeutralMode = isBrake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
-        driveMotor.getConfigurator().apply(driveBrakeConfig);
+        driveControlConfig.MotorOutput.NeutralMode = isBrake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
+        driveMotor.getConfigurator().apply(driveControlConfig);
     }
 
     @Override
     public void configSteerController(double kp, double ki, double kd, double ks) {
         // PID gains and static friction feedforward - set all parameters at once
-        steerFBConfig.Slot0.kP = kp;
-        steerFBConfig.Slot0.kI = ki;
-        steerFBConfig.Slot0.kD = kd;
-        steerFBConfig.Slot0.kS = ks;
-        steerMotor.getConfigurator().apply(steerFBConfig);
+        steerControlConfig.Slot0.kP = kp;
+        steerControlConfig.Slot0.kI = ki;
+        steerControlConfig.Slot0.kD = kd;
+        steerControlConfig.Slot0.kS = ks;
+        steerMotor.getConfigurator().apply(steerControlConfig);
         System.out.println("Steer motor " + moduleID + " controller configured: kP=" + kp + ", kI=" + ki + ", kD=" + kd + ", kS=" + ks);
     }
 
     @Override
     public void configSteerBrake(boolean isBrake) {
         // Brake/coast setting is separate from PID
-        steerBrakeConfig.MotorOutput.NeutralMode = isBrake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
-        steerMotor.getConfigurator().apply(steerBrakeConfig);
+        steerControlConfig.MotorOutput.NeutralMode = isBrake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
+        steerMotor.getConfigurator().apply(steerControlConfig);
     }
 
     // ========== UNIT CONVERSION METHODS ==========
