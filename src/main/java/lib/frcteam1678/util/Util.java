@@ -26,8 +26,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.RobotConstants;
-import frc.robot.subsystems.drive.Drive;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -141,11 +139,6 @@ public class Util {
 		}
 		double scaledValue = (value + (value < 0 ? deadband : -deadband)) / (1 - deadband);
 		return (Math.abs(value) > Math.abs(deadband)) ? scaledValue : 0;
-	}
-
-	public static Translation3d flipRedBlue(Translation3d original) {
-		return new Translation3d(
-				FieldLayout.kFieldLength.minus(original.getMeasureX()), original.getMeasureY(), original.getMeasureZ());
 	}
 
 	public static <T> Supplier<T> memoizeByIteration(IntSupplier iteration, Supplier<T> delegate) {
@@ -441,25 +434,6 @@ public class Util {
 		return Commands.defer(
 				() -> Commands.runOnce(() -> SmartDashboard.putNumber(message, Timer.getFPGATimestamp())),
 				getEmptySubsystemSet());
-	}
-
-	public static Distance getDistanceFromReef() {
-		Pose2d flippedReefPose = FieldLayout.handleAllianceFlip(
-				new Pose2d(FieldLayout.blueReefCenter, Rotation2d.kZero), RobotConstants.isRedAlliance);
-		return Units.Meters.of(flippedReefPose
-				.getTranslation()
-				.getDistance(Drive.mInstance.getPose().getTranslation()));
-	}
-
-	public static Rotation2d getAngleFromReef() {
-		Pose2d flippedReefPose = FieldLayout.handleAllianceFlip(
-				new Pose2d(FieldLayout.blueReefCenter, Rotation2d.kZero), RobotConstants.isRedAlliance);
-		Pose2d drivePose = Drive.mInstance.getPose();
-		return drivePose
-				.getTranslation()
-				.minus(flippedReefPose.getTranslation())
-				.getAngle()
-				.minus(drivePose.getRotation());
 	}
 
 	public static <M extends Measure<U>, U extends Unit> M min(M x, M y) {

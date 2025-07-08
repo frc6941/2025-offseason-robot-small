@@ -3,8 +3,13 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.SwerveModuleParamsNT.Drive;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.endeffector.EndEffector;
 import lib.ironpulse.rbd.TransformRecorder;
 import lib.ironpulse.swerve.Swerve;
 import lib.ironpulse.swerve.SwerveCommands;
@@ -14,13 +19,13 @@ import lib.ironpulse.swerve.sjtu6.ImuIOPigeon;
 import lib.ironpulse.swerve.sjtu6.SwerveModuleIOSJTU6;
 
 import static edu.wpi.first.units.Units.*;
-import static frc.robot.Constants.Elevator.motorNum;
 
-import java.text.BreakIterator;
 
 public class RobotContainer {
     // Subsystems
     Swerve swerve;
+    EndEffector endEffector = frc.robot.subsystems.endeffector.EndEffector.m_Instance;
+    Elevator elevator = frc.robot.subsystems.elevator.Elevator.m_Instance;
 
     // controllers
     CommandXboxController driverController = new CommandXboxController(Constants.Controller.kDriver);
@@ -28,6 +33,13 @@ public class RobotContainer {
 
     public RobotContainer() {
         
+        for (SubsystemBase s : new SubsystemBase[] {
+			endEffector,
+            elevator
+		}) {
+			SmartDashboard.putData(s);
+		}
+
         // if (motorNum%2!= 0) {
         //     throw new IllegalCallerException("Motor number must be even");
         // }
