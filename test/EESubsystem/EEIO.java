@@ -10,9 +10,6 @@ public interface EEIO {
     // Stop the actuator
     default void stop() {}
 
-    // Check if the actuator is currently moving
-    default boolean isMoving() { return false; }
-
     // Get the current position of the actuator (actual position)
     default double getCurrentPosition() { return 0.0; }
 }

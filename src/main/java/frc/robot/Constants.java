@@ -25,6 +25,7 @@ public class Constants {
     public static final double kDtS = 0.01;
     public static final String kParameterTag = "Params";
     public static final String CANIVORE_CAN_BUS_NAME = "10541Canivore0";
+    public static final String RIO_CAN_BUS_NAME = "rio";
     public static final int PIGEON_ID = 14;
     public static final double LOOPER_DT = 0.02;
 
