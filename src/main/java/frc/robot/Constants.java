@@ -11,6 +11,8 @@ import lib.ntext.NTParameter;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.HashMap;
+
 public class Constants {
     /* -------------------------------------------------------------------------- */
     /*                               Global Settings                              */
@@ -22,8 +24,9 @@ public class Constants {
     public static final boolean kTuning = true;
     public static final double kDtS = 0.01;
     public static final String kParameterTag = "Params";
-    public static final String CANIVORE_CAN_BUS_NAME = "6941Canivore0";
+    public static final String CANIVORE_CAN_BUS_NAME = "10541Canivore0";
     public static final int PIGEON_ID = 14;
+    public static final double LOOPER_DT = 0.02;
 
 
     /* -------------------------------------------------------------------------- */
@@ -163,4 +166,40 @@ public class Constants {
         public static final int kOperator = 1;
         public static final int kTest = 2;
     }
+
+    /* -------------------------------------------------------------------------- */
+    /*                              Elevator Settings                           */
+    /* -------------------------------------------------------------------------- */
+    public static class Elevator {
+        public static final int motorNum = 2;
+        public static final double ELEVATOR_SPOOL_DIAMETER = 0.04 + 0.003; //0.04m for spool diameter, 0.003 for rope diameter
+        public static final double ELEVATOR_GEAR_RATIO = 3.0;
+        //configs
+        @SuppressWarnings("unchecked")
+        public static final HashMap<String,Integer>[] kElevatorCanID = new HashMap[motorNum];
+
+        static {
+                for(int i=0;i<motorNum;i++){
+                        kElevatorCanID[i].put("MotorNum"+Integer.toString(i), i);
+                }
+        }
+
+        public static final String kElevatorTag= "Elevator/ElevatorNTParams";
+        @NTParameter(tableName = kParameterTag + "/" + kElevatorTag)
+        private static final class ElevatorNTParams {
+                private static final class ElevatorGearing {
+                        static final double kP = 0.0;
+                        static final double kI = 0.0;
+                        static final double kD = 0.0;
+                        static final double kS = 0.0;
+                        static final double kV = 0.0;
+                        static final double kA = 0.0;
+                        static final double kG = 0.0;
+                        static final boolean isBrake = true;
+                }
+                private static final double MAX_EXTENSION_METERS = 1.5;
+        }
+
+    }
 }
+

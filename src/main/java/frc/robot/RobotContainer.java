@@ -14,6 +14,9 @@ import lib.ironpulse.swerve.sjtu6.ImuIOPigeon;
 import lib.ironpulse.swerve.sjtu6.SwerveModuleIOSJTU6;
 
 import static edu.wpi.first.units.Units.*;
+import static frc.robot.Constants.Elevator.motorNum;
+
+import java.text.BreakIterator;
 
 public class RobotContainer {
     // Subsystems
@@ -24,6 +27,10 @@ public class RobotContainer {
     CommandGenericHID operatorController = new CommandGenericHID(Constants.Controller.kOperator);
 
     public RobotContainer() {
+        
+        // if (motorNum%2!= 0) {
+        //     throw new IllegalCallerException("Motor number must be even");
+        // }
         switch (Constants.kRobotType) {
             case PRAC -> {
                 swerve = new Swerve(
