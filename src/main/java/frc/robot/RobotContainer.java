@@ -8,8 +8,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.SwerveModuleParamsNT.Drive;
-import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.endeffector.EndEffector;
 import lib.ironpulse.rbd.TransformRecorder;
 import lib.ironpulse.swerve.Swerve;
 import lib.ironpulse.swerve.SwerveCommands;
@@ -24,22 +22,12 @@ import static edu.wpi.first.units.Units.*;
 public class RobotContainer {
     // Subsystems
     Swerve swerve;
-    EndEffector endEffector = frc.robot.subsystems.endeffector.EndEffector.m_Instance;
-    Elevator elevator = frc.robot.subsystems.elevator.Elevator.m_Instance;
-
     // controllers
     CommandXboxController driverController = new CommandXboxController(Constants.Controller.kDriver);
     CommandGenericHID operatorController = new CommandGenericHID(Constants.Controller.kOperator);
 
     public RobotContainer() {
         
-        for (SubsystemBase s : new SubsystemBase[] {
-			endEffector,
-            elevator
-		}) {
-			SmartDashboard.putData(s);
-		}
-
         // if (motorNum%2!= 0) {
         //     throw new IllegalCallerException("Motor number must be even");
         // }
