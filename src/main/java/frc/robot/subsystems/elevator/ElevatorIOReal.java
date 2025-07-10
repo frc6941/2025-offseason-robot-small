@@ -9,14 +9,13 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.*;
 import frc.robot.ElevatorCommonNT;
 
-import static frc.robot.Constants.ElevatorConstants.*;
-import static frc.robot.Ports.*;
+import static frc.robot.Constants.Elevator.*;
 import static frc.robot.ElevatorCommonNT.*;
-import static frc.robot.ElevatorCommonNT.ElevatorGainsClass.*;
+import static frc.robot.Ports.ELEVATOR_FOLLOWER;
+import static frc.robot.Ports.ELEVATOR_MAIN;
 
 
 public class ElevatorIOReal implements ElevatorIO {
@@ -42,8 +41,8 @@ public class ElevatorIOReal implements ElevatorIO {
     private double setpointMeters = 0;
 
     public ElevatorIOReal() {
-        this.leader = new TalonFX(ELEVATOR_MAIN.id,ELEVATOR_MAIN.bus);
-        this.follower = new TalonFX(ELEVATOR_FOLLOWER.id,ELEVATOR_FOLLOWER.bus);
+        this.leader = new TalonFX(ELEVATOR_MAIN.id, ELEVATOR_MAIN.bus);
+        this.follower = new TalonFX(ELEVATOR_FOLLOWER.id, ELEVATOR_FOLLOWER.bus);
 
         this.leaderConfigurator = leader.getConfigurator();
         this.followerConfigurator = follower.getConfigurator();

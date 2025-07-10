@@ -5,22 +5,17 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.elevator.ElevatorIOInputsAutoLogged;
 import lib.ironpulse.utils.LoggedTracer;
 import lombok.Getter;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-
-import static frc.robot.Constants.ElevatorConstants.*;
-import static frc.robot.Ports.*;
-import static frc.robot.ElevatorCommonNT.*;
-import static frc.robot.ElevatorCommonNT.ElevatorGainsClass.*;
-
 import java.util.function.DoubleSupplier;
 
-public class ElevatorSubsystem  {
+import static frc.robot.Constants.Elevator.ELEVATOR_ZEROING_FILTER_SIZE;
+import static frc.robot.ElevatorCommonNT.*;
+
+public class ElevatorSubsystem extends SubsystemBase {
     @Getter
     private final ElevatorIO io;
     private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
@@ -46,12 +41,12 @@ public class ElevatorSubsystem  {
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Elevator", inputs);
-        
+
         // Check if position exceeds maximum extension
         if (wantedPosition > MAX_EXTENSION_METERS.getValue()) {
             stopDueToLimit = true;
-            throw new IllegalArgumentException("Elevator setpoint " + wantedPosition + " exceeds maximum extension of " + 
-                MAX_EXTENSION_METERS.getValue() + " meters");
+            throw new IllegalArgumentException("Elevator setpoint " + wantedPosition + " exceeds maximum extension of " +
+                    MAX_EXTENSION_METERS.getValue() + " meters");
         } else if (stopDueToLimit) {
             // Reset stopDueToLimit if position is now valid
             stopDueToLimit = false;
@@ -81,34 +76,30 @@ public class ElevatorSubsystem  {
 
     public Command zeroElevator() {
         return Commands.startRun(
-            () -> {
-                zeroing = true;
-            },
-            () -> {
-                if (RobotBase.isReal()) {
-                    currentFilterValue = currentFilter.calculate(inputs.statorCurrentAmps);
-                    if (currentFilterValue <= ELEVATOR_ZEROING_CURRENT.getValue()) {
-                        io.setElevatorVoltage(-1);
-                    }
-                    if (currentFilterValue > ELEVATOR_ZEROING_CURRENT.getValue()) {
-                        io.setElevatorVoltage(0);
-                        io.resetElevatorPosition();
-                        zeroing = false;
-                    }
-                } else {
-                    io.setElevatorTarget(0);
-                    if (Math.abs(inputs.positionMeters) < 0.01) {
-                        zeroing = false;
-                    }
-                }
-            })
-            .until(() -> !zeroing)
-            .finallyDo(() -> {
-                zeroing = false;
-            });
-    }
-
-    public boolean isSafeToFlip() {
-        return (inputs.positionMeters > SAFE_HEIGHT_FLIP.getValue());
+                        () -> {
+                            zeroing = true;
+                        },
+                        () -> {
+                            if (RobotBase.isReal()) {
+                                currentFilterValue = currentFilter.calculate(inputs.statorCurrentAmps);
+                                if (currentFilterValue <= ELEVATOR_ZEROING_CURRENT.getValue()) {
+                                    io.setElevatorVoltage(-1);
+                                }
+                                if (currentFilterValue > ELEVATOR_ZEROING_CURRENT.getValue()) {
+                                    io.setElevatorVoltage(0);
+                                    io.resetElevatorPosition();
+                                    zeroing = false;
+                                }
+                            } else {
+                                io.setElevatorTarget(0);
+                                if (Math.abs(inputs.positionMeters) < 0.01) {
+                                    zeroing = false;
+                                }
+                            }
+                        })
+                .until(() -> !zeroing)
+                .finallyDo(() -> {
+                    zeroing = false;
+                });
     }
 }

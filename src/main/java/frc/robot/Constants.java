@@ -15,11 +15,6 @@ public class Constants {
     /* -------------------------------------------------------------------------- */
     /*                               Global Settings                              */
     /* -------------------------------------------------------------------------- */
-    public enum RobotType {
-        PRAC, COMP, SIM
-    }
-
-    public static final RobotType kRobotType = Robot.isReal() ? RobotType.PRAC : RobotType.SIM;
     public static final boolean kTuning = true;
     public static final double kDtS = 0.01;
     public static final String kParameterTag = "Params";
@@ -27,6 +22,7 @@ public class Constants {
     public static final String RIO_CAN_BUS_NAME = "rio";
     public static final int PIGEON_ID = 14;
     public static final double LOOPER_DT = 0.02;
+    public static final boolean TUNING = true;
 
 
     /* -------------------------------------------------------------------------- */
@@ -163,19 +159,16 @@ public class Constants {
     /* -------------------------------------------------------------------------- */
     /*                              Elevator Settings                           */
     /* -------------------------------------------------------------------------- */
-    public static class ElevatorConstants {
-        public static final int LEFT_ELEVATOR_MOTOR_ID = 50;
-        public static final int RIGHT_ELEVATOR_MOTOR_ID = 51;
-
-        public static final double ELEVATOR_SPOOL_DIAMETER = 0.04 + 0.003; //0.04m for spool diameter, 0.003 for rope diameter
-        public static final double ELEVATOR_GEAR_RATIO = 3.0;
-        public static final double ELEVATOR_DANGER_ZONE = 0.4180619200456253;
+    public static class Elevator {
+        public static final double ELEVATOR_SPOOL_DIAMETER = 0.04 + 0.003; //0.04m for spool diameter, 0.003 for rope diameter//TODO: change
+        public static final double ELEVATOR_GEAR_RATIO = 3.0;//TODO: change
+        public static final double ELEVATOR_DANGER_ZONE = 0.4180619200456253;//TODO: change
         public static final double ELEVATOR_DEFAULT_POSITION_WHEN_DISABLED = 0.0;//TODO: fixme
         public static final int ELEVATOR_ZEROING_FILTER_SIZE = 5;
 
-        public static final String kElevatorTag = "Elevator/ElevatorNTParams";
+        public static final String kTag = "Elevator";
 
-        @NTParameter(tableName = kParameterTag + "/" + kElevatorTag)
+        @NTParameter(tableName = kParameterTag + "/" + kTag)
         private static final class ElevatorCommon {
             private static final double ELEVATOR_GOAL_TOLERANCE = 0.02;
             private static final double motionAcceleration = 300.0;
@@ -201,27 +194,26 @@ public class Constants {
 
     }
 
-    public static final class EEConstants {
+    public static final class EndEffector {
 
-        public static final int END_EFFECTOR_ARM_ROLLER_MOTOR_ID = 22;
+        public static final int MOTOR_ID = 22;
 
         public static final int STATOR_CURRENT_LIMIT_AMPS = 80;
         public static final int SUPPLY_CURRENT_LIMIT_AMPS = 40;
         public static final boolean IS_BRAKE = true;
         public static final boolean IS_INVERT = false;
+        public static final double ROLLER_RATIO = 1.0;//TODO: change
 
-        public static final String kEETag = "EE/EENTParams";
+        public static final String kTag = "EndEffector";
 
-        @NTParameter(tableName = kParameterTag + "/" + kEETag)
-        public static class EECommon {
-            private static final class EEGearing {
-                public static final double END_EFFECTOR_ARM_ROLLER_KP = 0;
-                public static final double END_EFFECTOR_ARM_ROLLER_KI = 0;
-                public static final double END_EFFECTOR_ARM_ROLLER_KD = 0;
-                public static final double END_EFFECTOR_ARM_ROLLER_KA = 0;
-                public static final double END_EFFECTOR_ARM_ROLLER_KV = 0;
-                public static final double END_EFFECTOR_ARM_ROLLER_KS = 0;
-            }
+        @NTParameter(tableName = kParameterTag + "/" + kTag)
+        public static class EndEffectorParams {
+            public static final double ROLLER_KP = 0;
+            public static final double ROLLER_KI = 0;
+            public static final double ROLLER_KD = 0;
+            public static final double ROLLER_KA = 0;
+            public static final double ROLLER_KV = 0;
+            public static final double ROLLER_KS = 0;
 
             public static final double CORAL_INTAKE_VOLTAGE = 12.0;
             public static final double CORAL_OUTTAKE_VOLTAGE = -6.0;
@@ -230,9 +222,25 @@ public class Constants {
             public static final double CORAL_SHOOT_VOLTAGE = -12.0;
             public static final double CORAL_SHOOT_VOLTAGE_L1 = -2.0;
             public static final double CORAL_SHOOT_DELAY_TIME = 0.2;
-
         }
 
+    }
+
+    public static class Limelight {
+        public static final String LIMELIGHT_LEFT = "limelight-leftf";//TODO: change
+        public static final String LIMELIGHT_RIGHT = "limelight-rightf";//TODO: change
+        public static final double AREA_THRESHOLD = 0.1;
+        public static final String kTag = "LimeLight";
+
+        @NTParameter(tableName = kParameterTag + "/" + kTag)
+        public static class LimeLightParams {
+            public static final double OCULUS_RESET_AMBIGUITY_THRESHOLD = 0.15;
+        }
+    }
+
+    public static class Indicator {
+        public static final int LED_PORT = 0;//TODO: change
+        public static final int LED_BUFFER_LENGTH = 30;//TODO: change
     }
 }
 

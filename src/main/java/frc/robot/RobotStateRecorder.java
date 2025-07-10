@@ -1,11 +1,7 @@
 package frc.robot;
 
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator3d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import lib.ironpulse.rbd.TransformRecorder;
@@ -30,6 +26,14 @@ public class RobotStateRecorder extends TransformRecorder implements Subsystem {
             instance = new RobotStateRecorder();
         }
         return instance;
+    }
+
+    public static Pose3d getPoseWorldRobotCurrent() {
+        return RobotStateRecorder.getInstance().getTransform(
+                Seconds.of(Timer.getTimestamp()),
+                TransformRecorder.kFrameWorld,
+                TransformRecorder.kFrameRobot
+        ).orElse(new Pose3d());
     }
 
     @Override

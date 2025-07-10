@@ -18,6 +18,7 @@ public interface ElevatorIO {
     default double getElevatorVelocity() {
         return 0.0;
     }
+
     @AutoLog
     class ElevatorIOInputs {
         public double positionMeters = 0.0;
