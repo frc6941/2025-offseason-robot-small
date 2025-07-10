@@ -3,11 +3,8 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.SwerveModuleParamsNT.Drive;
 import lib.ironpulse.rbd.TransformRecorder;
 import lib.ironpulse.swerve.Swerve;
 import lib.ironpulse.swerve.SwerveCommands;
@@ -27,7 +24,7 @@ public class RobotContainer {
     CommandGenericHID operatorController = new CommandGenericHID(Constants.Controller.kOperator);
 
     public RobotContainer() {
-        
+
         // if (motorNum%2!= 0) {
         //     throw new IllegalCallerException("Motor number must be even");
         // }
@@ -58,20 +55,20 @@ public class RobotContainer {
 
     private void configBindings() {
         swerve.setDefaultCommand(SwerveCommands.driveWithJoystick(
-            swerve, 
-            () -> driverController.getLeftY(), 
-            () -> driverController.getLeftX(),
-            () -> driverController.getRightX(), 
-            //TODO: not working
-            () -> RobotStateRecorder.getInstance().getTransform(
-                Seconds.of(Timer.getTimestamp()),
-                DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue).equals(
-                    DriverStation.Alliance.Blue) ? RobotStateRecorder.kFrameDriverStationBlue 
-                    : RobotStateRecorder.kFrameDriverStationRed,
-                TransformRecorder.kFrameRobot
-            ).orElse(new Pose3d()), 
-            MetersPerSecond.of(0.05), 
-            DegreesPerSecond.of(5.0)
+                swerve,
+                () -> driverController.getLeftY(),
+                () -> driverController.getLeftX(),
+                () -> driverController.getRightX(),
+                //TODO: not working
+                () -> RobotStateRecorder.getInstance().getTransform(
+                        Seconds.of(Timer.getTimestamp()),
+                        DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue).equals(
+                                DriverStation.Alliance.Blue) ? RobotStateRecorder.kFrameDriverStationBlue
+                                : RobotStateRecorder.kFrameDriverStationRed,
+                        TransformRecorder.kFrameRobot
+                ).orElse(new Pose3d()),
+                MetersPerSecond.of(0.05),
+                DegreesPerSecond.of(5.0)
         ));
     }
 

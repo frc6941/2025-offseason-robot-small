@@ -2,7 +2,6 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
-import lib.frcteam1678.util.TunableNumber;
 import lib.ironpulse.swerve.SwerveConfig;
 import lib.ironpulse.swerve.SwerveLimit;
 import lib.ironpulse.swerve.SwerveModuleLimit;
@@ -12,16 +11,15 @@ import lib.ntext.NTParameter;
 
 import static edu.wpi.first.units.Units.*;
 
-import java.util.HashMap;
-
 public class Constants {
     /* -------------------------------------------------------------------------- */
     /*                               Global Settings                              */
     /* -------------------------------------------------------------------------- */
-    public static enum RobotType {
+    public enum RobotType {
         PRAC, COMP, SIM
     }
-    public static final RobotType kRobotType = Robot.isReal()?RobotType.PRAC:RobotType.SIM;
+
+    public static final RobotType kRobotType = Robot.isReal() ? RobotType.PRAC : RobotType.SIM;
     public static final boolean kTuning = true;
     public static final double kDtS = 0.01;
     public static final String kParameterTag = "Params";
@@ -37,7 +35,6 @@ public class Constants {
     public static final class Swerve {
         public static final String kSwerveTag = "Swerve";
         public static final String kSwerveModuleTag = "Swerve/SwerveModule";
-        public static final SwerveConfig kConfig;
         public static SwerveLimit kDefaultSwerveLimit = SwerveLimit.builder()
                 .maxLinearVelocity(MetersPerSecond.of(4.5))
                 .maxSkidAcceleration(MetersPerSecondPerSecond.of(22.0))
@@ -132,12 +129,6 @@ public class Constants {
                 .pigeonId(PIGEON_ID)
                 .build();
 
-        static {
-            switch (kRobotType) {
-                default -> kConfig = kSimConfig;
-            }
-        }
-
         @NTParameter(tableName = kParameterTag + "/" + kSwerveModuleTag)
         private final static class SwerveModuleParams {
             private final static class Drive {
@@ -172,7 +163,7 @@ public class Constants {
     /* -------------------------------------------------------------------------- */
     /*                              Elevator Settings                           */
     /* -------------------------------------------------------------------------- */
-     public static class ElevatorConstants {
+    public static class ElevatorConstants {
         public static final int LEFT_ELEVATOR_MOTOR_ID = 50;
         public static final int RIGHT_ELEVATOR_MOTOR_ID = 51;
 
@@ -182,33 +173,35 @@ public class Constants {
         public static final double ELEVATOR_DEFAULT_POSITION_WHEN_DISABLED = 0.0;//TODO: fixme
         public static final int ELEVATOR_ZEROING_FILTER_SIZE = 5;
 
-        public static final String kElevatorTag= "Elevator/ElevatorNTParams";
+        public static final String kElevatorTag = "Elevator/ElevatorNTParams";
+
         @NTParameter(tableName = kParameterTag + "/" + kElevatorTag)
         private static final class ElevatorCommon {
-                private static final double ELEVATOR_GOAL_TOLERANCE = 0.02;
-                private static final double motionAcceleration = 300.0;
-                private static final double motionCruiseVelocity = 100;
-        
-                private static final double motionJerk = 0.0;
-                private static final double MAX_EXTENSION_METERS = 1.41;
-                private static final double ELEVATOR_ZEROING_CURRENT = 40;
-                private static final double SAFE_HEIGHT_FLIP = 0.54;
-                private static class ElevatorGainsClass {
-                        private static final double ELEVATOR_KP = 2.5;
-                        private static final double ELEVATOR_KI = 0;
-                        private static final double ELEVATOR_KD = 0;
-                        private static final double ELEVATOR_KA = 0;
-                        private static final double ELEVATOR_KV = 0.08;// 0.107853495
-                        private static final double ELEVATOR_KS = 0.1;
-                        private static final double ELEVATOR_KG = 0.2;//0.3
-                    }
-                
+            private static final double ELEVATOR_GOAL_TOLERANCE = 0.02;
+            private static final double motionAcceleration = 300.0;
+            private static final double motionCruiseVelocity = 100;
+
+            private static final double motionJerk = 0.0;
+            private static final double MAX_EXTENSION_METERS = 1.41;
+            private static final double ELEVATOR_ZEROING_CURRENT = 40;
+            private static final double SAFE_HEIGHT_FLIP = 0.54;
+
+            private static class ElevatorGainsClass {
+                private static final double ELEVATOR_KP = 2.5;
+                private static final double ELEVATOR_KI = 0;
+                private static final double ELEVATOR_KD = 0;
+                private static final double ELEVATOR_KA = 0;
+                private static final double ELEVATOR_KV = 0.08;// 0.107853495
+                private static final double ELEVATOR_KS = 0.1;
+                private static final double ELEVATOR_KG = 0.2;//0.3
+            }
+
         }
-       
+
 
     }
 
-    public static final class EEConstants{
+    public static final class EEConstants {
 
         public static final int END_EFFECTOR_ARM_ROLLER_MOTOR_ID = 22;
 
@@ -217,10 +210,11 @@ public class Constants {
         public static final boolean IS_BRAKE = true;
         public static final boolean IS_INVERT = false;
 
-        public static final String kEETag= "EE/EENTParams";
+        public static final String kEETag = "EE/EENTParams";
+
         @NTParameter(tableName = kParameterTag + "/" + kEETag)
         public static class EECommon {
-            private static final class EEGearing{
+            private static final class EEGearing {
                 public static final double END_EFFECTOR_ARM_ROLLER_KP = 0;
                 public static final double END_EFFECTOR_ARM_ROLLER_KI = 0;
                 public static final double END_EFFECTOR_ARM_ROLLER_KD = 0;
@@ -228,14 +222,15 @@ public class Constants {
                 public static final double END_EFFECTOR_ARM_ROLLER_KV = 0;
                 public static final double END_EFFECTOR_ARM_ROLLER_KS = 0;
             }
+
             public static final double CORAL_INTAKE_VOLTAGE = 12.0;
             public static final double CORAL_OUTTAKE_VOLTAGE = -6.0;
             public static final double CORAL_PRESHOOT_VOLTAGE = -10.0;
             public static final double CORAL_HOLD_VOLTAGE = 0.5;
-            public static final double CORAL_SHOOT_VOLTAGE =  -12.0;
+            public static final double CORAL_SHOOT_VOLTAGE = -12.0;
             public static final double CORAL_SHOOT_VOLTAGE_L1 = -2.0;
             public static final double CORAL_SHOOT_DELAY_TIME = 0.2;
-            
+
         }
 
     }
