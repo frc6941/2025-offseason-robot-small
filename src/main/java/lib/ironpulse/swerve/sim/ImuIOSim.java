@@ -13,12 +13,12 @@ public class ImuIOSim implements ImuIO {
     @Override
     public void updateInputs(ImuIOInputs inputs) {
         inputs.connected = true;
-        inputs.yawPosition = new Rotation2d();
-        inputs.yawVelocityRadPerSec = 0.05;
+        inputs.yawPosition = inputs.yawPosition.plus(new Rotation2d(inputs.yawVelocityRadPerSecCmd));
+        inputs.yawVelocityRadPerSec = inputs.yawVelocityRadPerSecCmd;
         inputs.pitchPosition = new Rotation2d();
-        inputs.pitchVelocityRadPerSec = 0.05;
+        inputs.pitchVelocityRadPerSec = 0.0;
         inputs.rollPosition = new Rotation2d();
-        inputs.rollVelocityRadPerSec = 0.04;
+        inputs.rollVelocityRadPerSec = 0.0;
         inputs.odometryYawTimestamps = new double[]{Timer.getTimestamp()};
         inputs.odometryYawPositions = new Rotation2d[]{inputs.yawPosition};
         inputs.odometryRotations = new Rotation3d[]{

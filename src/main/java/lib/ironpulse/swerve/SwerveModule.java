@@ -1,22 +1,16 @@
 package lib.ironpulse.swerve;
 
 
-import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.measure.*;
-import frc.robot.Constants;
 import frc.robot.SwerveModuleParamsNT;
-import lib.ironpulse.utils.Logging;
 import lombok.Getter;
 import org.littletonrobotics.junction.Logger;
 
 import static edu.wpi.first.units.Units.*;
-import static frc.robot.Constants.Swerve.kSwerveModuleTag;
+import static lib.ironpulse.math.MathTools.unwrapAngle;
 
 public class SwerveModule {
     private final SwerveModuleIO io;
@@ -60,7 +54,7 @@ public class SwerveModule {
 
     public void updateInputs() {
         io.updateInputs(data);
-        Logger.processInputs(kSwerveModuleTag + "/" + moduleConfig.name, data);
+        Logger.processInputs(swerveConfig.name + "/Module/" + moduleConfig.name, data);
     }
 
     public void periodic() {
@@ -97,7 +91,7 @@ public class SwerveModule {
     }
 
     public void runStop() {
-        io.setDriveOpenLoop(Volts.zero());
+        io.setDriveVelocity(MetersPerSecond.zero());
         io.setSteerOpenLoop(Volts.zero());
     }
 
@@ -119,7 +113,7 @@ public class SwerveModule {
 
 
     public SwerveModuleState getSwerveModuleState() {
-        return new SwerveModuleState(getDriveVelocity(), new Rotation2d(getSteerAngle()));
+        return new SwerveModuleState(getDriveVelocity(), new Rotation2d(unwrapAngle(0.0, getSteerAngle().in(Radian))));
     }
 
     public SwerveModulePosition getSwerveModulePosition() {

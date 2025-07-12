@@ -75,9 +75,34 @@ public class TransformRecorder {
         putTransform(transform, time, from, to, false);
     }
 
+    public void resetTransform(String from, String to) {
+        frameTree.computeIfAbsent(from, TransformNode::new);
+        frameTree.computeIfAbsent(to, TransformNode::new);
+        TransformNode fromNode = frameTree.get(from);
+        fromNode.staticChildren.remove(to);
+        fromNode.dynamicChildren.remove(to);
+    }
+
+    public void resetStaticTransform(String from, String to) {
+        frameTree.computeIfAbsent(from, TransformNode::new);
+        frameTree.computeIfAbsent(to, TransformNode::new);
+        TransformNode fromNode = frameTree.get(from);
+        fromNode.staticChildren.remove(to);
+    }
+
+
+    public void resetDynamicTransform(String from, String to) {
+        frameTree.computeIfAbsent(from, TransformNode::new);
+        frameTree.computeIfAbsent(to, TransformNode::new);
+        TransformNode fromNode = frameTree.get(from);
+        fromNode.dynamicChildren.remove(to);
+    }
+
+
     public void putTransformWorldRobot(Pose2d transform, Time time) {
         putTransform(new Pose3d(transform), time, kFrameWorld, kFrameRobot);
     }
+
 
     public Pose2d getTransformWorldRobot(Time time) {
         return getTransform(time, kFrameWorld, kFrameRobot).orElseThrow().toPose2d();

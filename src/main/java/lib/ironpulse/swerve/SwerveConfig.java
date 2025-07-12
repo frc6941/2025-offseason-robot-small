@@ -8,6 +8,10 @@ import lombok.experimental.SuperBuilder;
 
 @SuperBuilder
 public class SwerveConfig {
+    // general
+    public final String name;
+    public final double dtS;
+
     // transmissions
     public final Distance wheelDiameter;
     public final double driveGearRatio;

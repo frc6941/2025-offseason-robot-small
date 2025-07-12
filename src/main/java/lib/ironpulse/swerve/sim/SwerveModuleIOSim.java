@@ -5,7 +5,6 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import frc.robot.Constants;
 import lib.ironpulse.swerve.SwerveModuleIO;
 import lib.ironpulse.utils.Logging;
 
@@ -77,8 +76,8 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
         // step simulation
         driveMotorSim.setInputVoltage(data.driveMotorVoltageVolt);
         steerMotorSim.setInputVoltage(data.steerMotorVoltageVolt);
-        driveMotorSim.update(Constants.kDtS);
-        steerMotorSim.update(Constants.kDtS);
+        driveMotorSim.update(config.dtS);
+        steerMotorSim.update(config.dtS);
     }
 
     @Override
@@ -130,7 +129,7 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
         driveFF = new SimpleMotorFeedforward(ks, kv, ka);
 
         Logging.info(
-                Constants.Swerve.kSwerveModuleTag,
+                config.name + "Module",
                 "Module drive controller updated! kp: %.2f, ki: %.2f, kd: %.2f",
                 kp, ki, kd
         );
@@ -143,7 +142,7 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
         steerFB.setD(kd);
 
         Logging.info(
-                Constants.Swerve.kSwerveModuleTag,
+                config.name + "Module",
                 "Module steer controller updated! kp: %.2f, ki: %.2f, kd: %.2f",
                 kp, ki, kd
         );

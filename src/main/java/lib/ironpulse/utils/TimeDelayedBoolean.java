@@ -44,4 +44,9 @@ public class TimeDelayedBoolean {
         timer.reset();
         return false;
     }
+
+    public boolean update(boolean value, double delaySeconds) {
+        setDelaySeconds(delaySeconds);
+        return update(value);
+    }
 }

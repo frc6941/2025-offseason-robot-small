@@ -9,6 +9,7 @@ package lib.ironpulse.utils;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
+
 import java.util.function.Supplier;
 
 public class PhoenixUtils {

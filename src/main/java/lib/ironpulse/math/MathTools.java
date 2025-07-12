@@ -29,6 +29,20 @@ public class MathTools {
     }
 
     /**
+     * Get the angle of a vector safely, return kZero if its magnitude is below tolerance.
+     *
+     * @param input the vector to take angle of.
+     * @return an {@link Rotation2d} with the correct direction, or kZero if too small.
+     */
+    public static Rotation2d toAngle(Translation2d input) {
+        double norm = input.getNorm();
+        if (Math.abs(norm) < TOLERANCE) {
+            return Rotation2d.kZero;
+        }
+        return input.getAngle();
+    }
+
+    /**
      * Clamp a vector's magnitude to a maximum value.
      *
      * @param input        the vector to clamp.
@@ -57,13 +71,16 @@ public class MathTools {
         return MathUtil.clamp(Math.abs(input), 0.0, maxMagnitude) * Math.signum(input);
     }
 
+    public static boolean epsilonEquals(double v1, double v2, double epsilon) {
+        return Math.abs(v1 - v2) < epsilon;
+    }
+
     public static boolean epsilonEquals(double v1, double v2) {
-        return Math.abs(v1 - v2) < TOLERANCE;
+        return epsilonEquals(v1, v2, TOLERANCE);
     }
 
     public static boolean epsilonEquals(Translation2d v1, Translation2d v2, double epsilon) {
-        return Math.abs(v1.getX() - v2.getX()) <= epsilon
-                && Math.abs(v1.getY() - v2.getY()) <= epsilon;
+        return Math.abs(v1.getX() - v2.getX()) <= epsilon && Math.abs(v1.getY() - v2.getY()) <= epsilon;
     }
 
     public static boolean epsilonEquals(Translation2d v1, Translation2d v2) {
@@ -81,9 +98,8 @@ public class MathTools {
     }
 
     public static boolean epsilonEquals(Twist2d t1, Twist2d t2, double epsilon) {
-        return Math.abs(t1.dx - t2.dx) <= epsilon
-                && Math.abs(t1.dy - t2.dy) <= epsilon
-                && Math.abs(t1.dtheta - t2.dtheta) <= epsilon;
+        return Math.abs(t1.dx - t2.dx) <= epsilon && Math.abs(t1.dy - t2.dy) <= epsilon && Math.abs(
+                t1.dtheta - t2.dtheta) <= epsilon;
     }
 
     public static boolean epsilonEquals(Twist2d t1, Twist2d t2) {
@@ -133,8 +149,7 @@ public class MathTools {
 
     public static Pose2d inverse(Pose2d pose) {
         Rotation2d rotationInverse = pose.getRotation().unaryMinus();
-        return new Pose2d(
-                pose.getTranslation().unaryMinus().rotateBy(rotationInverse), rotationInverse);
+        return new Pose2d(pose.getTranslation().unaryMinus().rotateBy(rotationInverse), rotationInverse);
     }
 
     /**
@@ -146,6 +161,13 @@ public class MathTools {
      */
     public static Pose2d toPose2d(Transform2d transform) {
         return new Pose2d(transform.getTranslation(), transform.getRotation());
+    }
+
+    public static Pose2d toPose2d(ChassisSpeeds speed) {
+        return new Pose2d(
+                new Translation2d(speed.vxMetersPerSecond, speed.vyMetersPerSecond),
+                new Rotation2d(speed.omegaRadiansPerSecond)
+        );
     }
 
     /**
@@ -207,9 +229,7 @@ public class MathTools {
      * @return The resulting translation
      */
     public static Twist2d toTwist2d(ChassisSpeeds speeds) {
-        return new Twist2d(
-                speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond
-        );
+        return new Twist2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
     }
 
     /**

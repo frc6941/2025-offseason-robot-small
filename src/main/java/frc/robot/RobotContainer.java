@@ -1,18 +1,21 @@
 package frc.robot;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.elevator.ElevatorIOReal;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endeffector.EndEffectorSubsystem;
+import frc.robot.subsystems.indicator.IndicatorIO;
 import frc.robot.subsystems.indicator.IndicatorIOARGB;
 import frc.robot.subsystems.indicator.IndicatorIOSim;
 import frc.robot.subsystems.indicator.IndicatorSubsystem;
@@ -128,28 +131,55 @@ public class RobotContainer {
     }
 
     private void configBindings() {
-        swerve.setDefaultCommand(SwerveCommands.driveWithJoystick(
-                swerve,
-                () -> driverController.getLeftY(),
-                () -> driverController.getLeftX(),
-                () -> driverController.getRightX(),
-                //TODO: not working
-                () -> RobotStateRecorder.getInstance().getTransform(
-                        Seconds.of(Timer.getTimestamp()),
-                        DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue).equals(
-                                DriverStation.Alliance.Blue) ? RobotStateRecorder.kFrameDriverStationBlue
-                                : RobotStateRecorder.kFrameDriverStationRed,
-                        TransformRecorder.kFrameRobot
-                ).orElse(new Pose3d()),
-                MetersPerSecond.of(0.05),
-                DegreesPerSecond.of(5.0)
-        ));
+        swerve.setDefaultCommand(
+                SwerveCommands.driveWithJoystick(
+                        swerve,
+                        () -> -driverController.getLeftY(),
+                        () -> -driverController.getLeftX(),
+                        () -> -driverController.getRightX(),
+                        RobotStateRecorder::getPoseDriverRobotCurrent,
+                        MetersPerSecond.of(0.04),
+                        DegreesPerSecond.of(3.0)));
+        driverController.start().onTrue(SwerveCommands.resetAngle(swerve, new Rotation2d())
+                .alongWith(Commands.runOnce(
+                        () -> {
+                            RobotStateRecorder.getInstance().resetTransform(
+                                    TransformRecorder.kFrameWorld,
+                                    TransformRecorder.kFrameRobot);
+                            indicatorSubsystem.setPattern(IndicatorIO.Patterns.RESET_ODOM);
+                        })));
+        driverController.leftBumper();//自动取 自动对正 到位 吸球
+        driverController.rightBumper();//自动放 ELEvator自动到位 强制射
+        driverController.leftTrigger();//手动intake
+        driverController.rightTrigger();//强制放
+        driverController.a();//L2
+        driverController.b();//EE反转
+        driverController.x();//L3
+        driverController.y();//L4
+        driverController.povLeft();//L
+        driverController.povRight();//R
+        driverController.povDown();//电梯归零
     }
 
     public void robotPeriodic() {
+        limelightSubsystem.estimatedPose.ifPresent(estimate -> {
+            if (estimate[0] != null) {
+                swerve.addVisionMeasurement(
+                        new Pose3d(estimate[0].pose()), estimate[0].timestampSeconds(), VecBuilder.fill(0.1, 0.1, 0.3, 9999.0));
+            }
+
+            if (estimate[1] != null) {
+                swerve.addVisionMeasurement(
+                        new Pose3d(estimate[1].pose()), estimate[1].timestampSeconds(), VecBuilder.fill(0.1, 0.1, 0.3, 9999.0));
+            }
+        });
+
         var now = Seconds.of(Timer.getTimestamp());
-        swerve.getEstimatedPositionAt(now).ifPresent(
-                pose -> RobotStateRecorder.getInstance().putTransform(
-                        pose, now, RobotStateRecorder.kFrameWorld, RobotStateRecorder.kFrameRobot));
+        RobotStateRecorder.getInstance().putTransform(
+                swerve.getEstimatedPose(), now,
+                TransformRecorder.kFrameWorld,
+                TransformRecorder.kFrameRobot);
+        RobotStateRecorder.putVelocityRobot(now, swerve.getChassisSpeeds());
+        RobotStateRecorder.periodic();
     }
 }

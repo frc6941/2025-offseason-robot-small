@@ -56,7 +56,7 @@ public class SwerveSetpointGenerator {
         // Special case: desiredState is a complete stop.
         // In this case, module angle is arbitrary, so just use the previous angle.
         boolean needToSteer = true;
-        if (epsilonEquals(toTwist2d(desiredChassisSpeed), new Twist2d())) {
+        if (epsilonEquals(toTwist2d(desiredChassisSpeed), new Twist2d(), 0.001)) {
             needToSteer = false;
             for (int i = 0; i < n; ++i) {
                 desiredModuleState[i].angle = prevSetpoint.moduleStates()[i].angle;
@@ -93,8 +93,8 @@ public class SwerveSetpointGenerator {
         }
 
         if (allModulesShouldFlip
-                && !epsilonEquals(toTwist2d(prevSetpoint.chassisSpeeds()), new Twist2d())
-                && !epsilonEquals(toTwist2d(desiredChassisSpeed), new Twist2d()))
+                && !epsilonEquals(toTwist2d(prevSetpoint.chassisSpeeds()), new Twist2d(), 0.001)
+                && !epsilonEquals(toTwist2d(desiredChassisSpeed), new Twist2d(), 0.001))
             // It will (likely) be faster to stop the robot, rotate the modules in place to the complement of desired, and accelerate again.
             return generate(new ChassisSpeeds(), prevSetpoint, dt);
 
@@ -123,7 +123,7 @@ public class SwerveSetpointGenerator {
             }
             overrideSteering.add(Optional.empty());
 
-            if (epsilonEquals(prevSetpoint.moduleStates()[i].speedMetersPerSecond, 0.0)) {
+            if (epsilonEquals(prevSetpoint.moduleStates()[i].speedMetersPerSecond, 0.0, 0.001)) {
                 // If module is stopped, we know that we will need to move straight to the final steering
                 // angle, so limit based purely on rotation in place.
                 if (epsilonEquals(desiredModuleState[i].speedMetersPerSecond, 0.0)) {
@@ -153,6 +153,7 @@ public class SwerveSetpointGenerator {
                     continue;
                 }
             }
+
             if (sMin == 0.0) {
                 // s can't get any lower. Save some CPU.
                 continue;
@@ -269,7 +270,7 @@ public class SwerveSetpointGenerator {
         if (Math.abs(diff) < maxVelStep) return 1.0;
         double offset = f0 + Math.signum(diff) * maxVelStep;
         Function2d func = (x, y) -> Math.hypot(x, y) - offset;
-        return findRoot(func, x0, y0, f0, x1, y1, f1, maxIterations);
+        return findRoot(func, x0, y0, f0 - offset, x1, y1, f1 - offset, maxIterations);
     }
 
     /**

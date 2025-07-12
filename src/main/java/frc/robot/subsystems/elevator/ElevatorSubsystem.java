@@ -1,10 +1,15 @@
 package frc.robot.subsystems.elevator;
 
+import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.ElevatorCommonNT;
 import lib.ironpulse.utils.LoggedTracer;
 import lombok.Getter;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -33,9 +38,31 @@ public class ElevatorSubsystem extends SubsystemBase {
     private boolean atGoal = false;
     @AutoLogOutput(key = "Elevator/stopDueToLimit")
     private boolean stopDueToLimit = false;
+    private final SysIdRoutine m_sysIdRoutine;
 
     public ElevatorSubsystem(ElevatorIO io) {
         this.io = io;
+        // Initialize SysId routine after io is set
+        this.m_sysIdRoutine = new SysIdRoutine(
+                new SysIdRoutine.Config(
+                        Units.Volts.of(ElevatorCommonNT.SYSID_RAMP_RATE_VOLTS_PER_SEC.getValue()).per(Units.Second), // Use default ramp rate (1 V/s) - can be adjusted via ElevatorConstants.SYSID_RAMP_RATE_VOLTS_PER_SEC
+                        Units.Volts.of(ElevatorCommonNT.SYSID_DYNAMIC_VOLTAGE.getValue()),
+                        null, // Use default timeout (10 s)
+                        // Log state with Phoenix SignalLogger class
+                        (state) -> SignalLogger.writeString("sysid-state", state.toString())
+                ),
+                new SysIdRoutine.Mechanism(
+                        (Voltage volts) -> {
+                            io.setElevatorVoltage(volts.in(Units.Volts));
+                            // Manually log the three required signals for SysId
+                            SignalLogger.writeDouble("sysid-elevator-voltage", inputs.motorVoltage, "V");
+                            SignalLogger.writeDouble("sysid-elevator-position", inputs.positionMeters, "m");
+                            SignalLogger.writeDouble("sysid-elevator-velocity", inputs.velocityMetersPerSec, "m/s");
+                        },
+                        null, // No log consumer needed - using manual logging above
+                        this
+                )
+        );
     }
 
     public void periodic() {

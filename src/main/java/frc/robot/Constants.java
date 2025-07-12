@@ -10,6 +10,7 @@ import lib.ironpulse.swerve.sjtu6.SwerveSJTU6Config;
 import lib.ntext.NTParameter;
 
 import static edu.wpi.first.units.Units.*;
+import static frc.robot.Ports.*;
 
 public class Constants {
     /* -------------------------------------------------------------------------- */
@@ -20,7 +21,6 @@ public class Constants {
     public static final String kParameterTag = "Params";
     public static final String CANIVORE_CAN_BUS_NAME = "10541Canivore0";
     public static final String RIO_CAN_BUS_NAME = "rio";
-    public static final int PIGEON_ID = 14;
     public static final double LOOPER_DT = 0.02;
     public static final boolean TUNING = true;
 
@@ -46,9 +46,9 @@ public class Constants {
         public static SwerveConfig.SwerveModuleConfig kModuleCompFL = SwerveConfig.SwerveModuleConfig.builder()
                 .name("FL")
                 .location(new Translation2d(0.5, 0.5))
-                .driveMotorId(4)
-                .steerMotorId(3)
-                .encoderId(10)
+                .driveMotorId(SWERVE_FLD.id)
+                .steerMotorId(SWERVE_FLS.id)
+                .encoderId(SWERVE_FLC.id)
                 .driveMotorEncoderOffset(Degree.of(50))
                 .steerMotorEncoderOffset(Rotations.of(-0.4536))
                 .driveInverted(true)
@@ -58,9 +58,9 @@ public class Constants {
         public static SwerveConfig.SwerveModuleConfig kModuleCompFR = SwerveConfig.SwerveModuleConfig.builder()
                 .name("FR")
                 .location(new Translation2d(0.5, -0.5))
-                .driveMotorId(6)
-                .steerMotorId(5)
-                .encoderId(11)
+                .driveMotorId(SWERVE_FRD.id)
+                .steerMotorId(SWERVE_FRS.id)
+                .encoderId(SWERVE_FRC.id)
                 .driveMotorEncoderOffset(Degree.of(50))
                 .steerMotorEncoderOffset(Rotations.of(-0.419921875))
                 .driveInverted(false)
@@ -70,9 +70,9 @@ public class Constants {
         public static SwerveConfig.SwerveModuleConfig kModuleCompBL = SwerveConfig.SwerveModuleConfig.builder()
                 .name("BL")
                 .location(new Translation2d(-0.5, 0.5))
-                .driveMotorId(2)
-                .steerMotorId(1)
-                .encoderId(0)
+                .driveMotorId(SWERVE_BLD.id)
+                .steerMotorId(SWERVE_BLS.id)
+                .encoderId(SWERVE_BLC.id)
                 .driveMotorEncoderOffset(Degree.of(50))
                 .steerMotorEncoderOffset(Rotations.of(-0.347412109375))
                 .driveInverted(true)
@@ -82,9 +82,9 @@ public class Constants {
         public static SwerveConfig.SwerveModuleConfig kModuleCompBR = SwerveConfig.SwerveModuleConfig.builder()
                 .name("BR")
                 .location(new Translation2d(-0.5, -0.5))
-                .driveMotorId(8)
-                .steerMotorId(7)
-                .encoderId(20)
+                .driveMotorId(SWERVE_BRD.id)
+                .steerMotorId(SWERVE_BRS.id)
+                .encoderId(SWERVE_BRC.id)
                 .driveMotorEncoderOffset(Degree.of(50))
                 .steerMotorEncoderOffset(Rotations.of(0.4609375))
                 .driveInverted(false)
@@ -92,6 +92,8 @@ public class Constants {
                 .encoderInverted(false)
                 .build();
         public static SwerveSimConfig kSimConfig = SwerveSimConfig.builder()
+                .name("Swerve")
+                .dtS(LOOPER_DT)
                 .wheelDiameter(Inch.of(4.01))
                 .driveGearRatio(7.0)
                 .steerGearRatio(20.0)
@@ -110,6 +112,8 @@ public class Constants {
                 })
                 .build();
         public static SwerveSJTU6Config kRealConfig = SwerveSJTU6Config.builder()
+                .name("Swerve")
+                .dtS(LOOPER_DT)
                 .wheelDiameter(Inch.of(4.01))
                 .driveGearRatio(6.7460317460317460317460317460317)
                 .steerGearRatio(21.428571428571428571428571428571)
@@ -122,7 +126,7 @@ public class Constants {
                 .driveStatorCurrentLimit(Amps.of(110))
                 .steerStatorCurrentLimit(Amps.of(110))
                 .canivoreCanBusName(CANIVORE_CAN_BUS_NAME)
-                .pigeonId(PIGEON_ID)
+                .pigeonId(PIGEON.id)
                 .build();
 
         @NTParameter(tableName = kParameterTag + "/" + kSwerveModuleTag)
@@ -179,6 +183,9 @@ public class Constants {
             private static final double ELEVATOR_ZEROING_CURRENT = 40;
             private static final double SAFE_HEIGHT_FLIP = 0.54;
 
+            private static final double SYSID_RAMP_RATE_VOLTS_PER_SEC = 1;
+            private static final double SYSID_DYNAMIC_VOLTAGE = 7;
+
             private static class ElevatorGainsClass {
                 private static final double ELEVATOR_KP = 2.5;
                 private static final double ELEVATOR_KI = 0;
@@ -188,15 +195,12 @@ public class Constants {
                 private static final double ELEVATOR_KS = 0.1;
                 private static final double ELEVATOR_KG = 0.2;//0.3
             }
-
         }
-
-
     }
 
     public static final class EndEffector {
 
-        public static final int MOTOR_ID = 22;
+        public static final int MOTOR_ID = END_EFFECTOR.id;
 
         public static final int STATOR_CURRENT_LIMIT_AMPS = 80;
         public static final int SUPPLY_CURRENT_LIMIT_AMPS = 40;
@@ -241,6 +245,37 @@ public class Constants {
     public static class Indicator {
         public static final int LED_PORT = 0;//TODO: change
         public static final int LED_BUFFER_LENGTH = 30;//TODO: change
+    }
+
+    public static class Photonvision {
+        public static final String[] PV_CAMERA_NAMES = {"pv-cam1"};
+        public static final boolean[] SNAPSHOT_ENABLED = {true};
+        public static final int SNAPSHOT_PERIOD = 5; //seconds
+        public static final String kPhotonVisionTag = "PhotonVision";
+        // Camera resolution constants (fixed hardware values)
+        public static final int CAMERA_RESOLUTION_X = 640;
+        public static final int CAMERA_RESOLUTION_Y = 480;
+
+        @NTParameter(tableName = "Params" + "/" + kPhotonVisionTag)
+        public final static class PhotonVisionParams {
+            // Camera physical configuration
+            public static final double CAMERA_HEIGHT_METERS = 1.0;
+            public static final double CAMERA_PITCH_DEGREES = -30.0;
+
+            // Camera field of view (FOV)
+            public static final double CAMERA_HORIZONTAL_FOV_DEGREES = 65.93;
+            public static final double CAMERA_VERTICAL_FOV_DEGREES = 51.89;
+
+            // Camera to robot transform (camera position relative to robot center)
+            public static final double CAMERA_TO_ROBOT_X = 0.14;  // 0.14m front
+            public static final double CAMERA_TO_ROBOT_Y = 0.0;   // 0.00m left
+            public static final double CAMERA_TO_ROBOT_Z = 1.0;  // 0.10m up
+            public static final double CAMERA_TO_ROBOT_ROTATION_DEGREES = 0.0;
+
+            // Distance estimation parameters
+            public static final double DISTANCE_SCALE_FACTOR = 1.0;
+            public static final double GROUND_HEIGHT_METERS = 0.0;
+        }
     }
 }
 
