@@ -59,7 +59,7 @@ public class ElevatorIOReal implements ElevatorIO {
 
         MotorOutputConfigs leaderMotorConfigs = new MotorOutputConfigs();
         leaderMotorConfigs.NeutralMode = NeutralModeValue.Brake;
-        leaderMotorConfigs.Inverted = InvertedValue.Clockwise_Positive;
+        leaderMotorConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
         MotorOutputConfigs followerMotorConfigs = new MotorOutputConfigs();
         followerMotorConfigs.NeutralMode = NeutralModeValue.Brake;
 

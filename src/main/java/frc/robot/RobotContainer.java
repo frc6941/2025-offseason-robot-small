@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.drivers.DestinationSupplier;
 import frc.robot.subsystems.elevator.ElevatorIOReal;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
@@ -45,6 +46,7 @@ public class RobotContainer {
     ElevatorSubsystem elevatorSubsystem;
     LimelightSubsystem limelightSubsystem;
     IndicatorSubsystem indicatorSubsystem;
+    DestinationSupplier destinationSupplier = DestinationSupplier.getInstance();
     //PhotonvisionSubsystem photonvisionSubsystem
 
     // controllers
@@ -151,14 +153,14 @@ public class RobotContainer {
         driverController.leftBumper();//自动取 自动对正 到位 吸球
         driverController.rightBumper();//自动放 ELEvator自动到位 强制射
         driverController.leftTrigger();//手动intake
-        driverController.rightTrigger();//强制放
-        driverController.a();//L2
-        driverController.b();//EE反转
-        driverController.x();//L3
-        driverController.y();//L4
+        driverController.rightTrigger().whileTrue(Commands.runOnce(() -> endEffectorSubsystem.setRollerVoltage(EndEffectorParamsNT.CORAL_SHOOT_VOLTAGE.getValue())));//强制放
+        driverController.a().onTrue(Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)).ignoringDisable(true));
+        driverController.b().onTrue(Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true))));//Elevator到位
+        driverController.x().onTrue(Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)).ignoringDisable(true));
+        driverController.y().onTrue(Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)).ignoringDisable(true));
         driverController.povLeft();//L
         driverController.povRight();//R
-        driverController.povDown();//电梯归零
+        driverController.povDown().onTrue(elevatorSubsystem.zeroElevator());//电梯归零
     }
 
     public void robotPeriodic() {

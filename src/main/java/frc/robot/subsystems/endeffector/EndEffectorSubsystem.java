@@ -14,8 +14,6 @@ import lombok.Setter;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-import java.util.function.DoubleSupplier;
-
 public class EndEffectorSubsystem extends SubsystemBase {
     public static final String NAME = "EndEffectorArm";
     private final RollerIOInputsAutoLogged armRollerIOInputs = new RollerIOInputsAutoLogged();
@@ -91,8 +89,8 @@ public class EndEffectorSubsystem extends SubsystemBase {
         LoggedTracer.record("EndEffectorArm");
     }
 
-    public void setRollerVoltage(DoubleSupplier voltage) {
-        rollerIO.setVoltage(voltage.getAsDouble());
+    public void setRollerVoltage(double voltage) {
+        rollerIO.setVoltage(voltage);
     }
 
     public void stopRoller() {

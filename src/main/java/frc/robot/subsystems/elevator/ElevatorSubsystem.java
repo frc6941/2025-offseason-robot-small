@@ -15,8 +15,6 @@ import lombok.Getter;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-import java.util.function.DoubleSupplier;
-
 import static frc.robot.Constants.Elevator.ELEVATOR_ZEROING_FILTER_SIZE;
 import static frc.robot.ElevatorCommonNT.*;
 
@@ -93,8 +91,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         return inputs.positionMeters;
     }
 
-    public void setElevatorPosition(DoubleSupplier position) {
-        wantedPosition = position.getAsDouble();
+    public void setElevatorPosition(double position) {
+        wantedPosition = position;
     }
 
     public boolean elevatorAtGoal(double offset) {

@@ -2,6 +2,10 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.DistanceUnit;
+import edu.wpi.first.units.LinearAccelerationUnit;
+import edu.wpi.first.units.LinearVelocityUnit;
+import edu.wpi.first.units.Measure;
 import lib.ironpulse.swerve.SwerveConfig;
 import lib.ironpulse.swerve.SwerveLimit;
 import lib.ironpulse.swerve.SwerveModuleLimit;
@@ -23,6 +27,7 @@ public class Constants {
     public static final String RIO_CAN_BUS_NAME = "rio";
     public static final double LOOPER_DT = 0.02;
     public static final boolean TUNING = true;
+    public static final boolean disableHAL = false;
 
 
     /* -------------------------------------------------------------------------- */
@@ -186,6 +191,13 @@ public class Constants {
             private static final double SYSID_RAMP_RATE_VOLTS_PER_SEC = 1;
             private static final double SYSID_DYNAMIC_VOLTAGE = 7;
 
+            public static final double L2_EXTENSION_METERS = 0.4;
+            public static final double L3_EXTENSION_METERS = 0.545;
+            public static final double L4_EXTENSION_METERS = 1;
+            public static final double P1_EXTENSION_METERS = 0.55;
+            public static final double P2_EXTENSION_METERS = 0.88;
+            public static final double INTAKE_EXTENSION_METERS = 0.55;
+
             private static class ElevatorGainsClass {
                 private static final double ELEVATOR_KP = 2.5;
                 private static final double ELEVATOR_KI = 0;
@@ -223,8 +235,7 @@ public class Constants {
             public static final double CORAL_OUTTAKE_VOLTAGE = -6.0;
             public static final double CORAL_PRESHOOT_VOLTAGE = -10.0;
             public static final double CORAL_HOLD_VOLTAGE = 0.5;
-            public static final double CORAL_SHOOT_VOLTAGE = -12.0;
-            public static final double CORAL_SHOOT_VOLTAGE_L1 = -2.0;
+            public static final double CORAL_SHOOT_VOLTAGE = 12.0;
             public static final double CORAL_SHOOT_DELAY_TIME = 0.2;
         }
 
@@ -276,6 +287,30 @@ public class Constants {
             public static final double DISTANCE_SCALE_FACTOR = 1.0;
             public static final double GROUND_HEIGHT_METERS = 0.0;
         }
+    }
+
+    public static final class ReefAimCommand {
+        public static final String kTag = "ReefAimConstants";
+
+        public static final Measure<LinearVelocityUnit> MAX_AIMING_SPEED = MetersPerSecond.of(3.5);
+        public static final Measure<LinearAccelerationUnit> MAX_AIMING_ACCELERATION = MetersPerSecondPerSecond.of(10);
+        public static final Measure<DistanceUnit> PIPE_TO_TAG = Meters.of(0.164308503);
+
+        @NTParameter(tableName = "Params" + "/" + kTag)
+        public final static class ReefAimCommandParams {
+            public static final double HEXAGON_DANGER_ZONE_OFFSET = 0.24;
+            public static final double MAX_DISTANCE_REEF_LINEUP = 0.75;
+            public static final double ROBOT_TO_PIPE_METERS = 0.59;
+            public static final double X_TOLERANCE_METERS = 0.01;
+            public static final double Y_TOLERANCE_METERS = 0.01;
+            public static final double RAISE_LIMIT_METERS = 1;
+            public static final double OMEGA_TOLERANCE_DEGREES = 1;
+            public static final double Edge_Case_Max_Delta = 0.3;
+            public static final double ROBOT_TO_ALGAE_METERS = 0.489;
+            public static final double ALGAE_TO_TAG_METERS = 0;
+            public static final double HEXAGON_DANGER_DEGREES = 45;
+        }
+
     }
 }
 
