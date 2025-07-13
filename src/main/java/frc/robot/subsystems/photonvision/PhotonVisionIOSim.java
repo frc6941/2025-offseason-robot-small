@@ -1,5 +1,7 @@
 package frc.robot.subsystems.photonvision;
 
+import edu.wpi.first.math.geometry.Pose3d;
+
 import static frc.robot.Constants.Photonvision.PV_CAMERA_NAMES;
 
 public class PhotonVisionIOSim implements PhotonVisionIO {
@@ -19,22 +21,14 @@ public class PhotonVisionIOSim implements PhotonVisionIO {
         inputs.name = name;
         inputs.id = id;
         inputs.hasTargets = false;
-        inputs.targetCount = 0;
-        inputs.latencyMs = 0;
         inputs.timestampMs = System.currentTimeMillis();
 
-        // Empty arrays for no targets
-        inputs.targetYaw = new double[0];
-        inputs.targetPitch = new double[0];
-        inputs.targetArea = new double[0];
-        inputs.targetSkew = new double[0];
-        inputs.targetPoseAmbiguity = new double[0];
-        inputs.targetFiducialId = new int[0];
-        inputs.targetPixelX = new double[0];
-        inputs.targetPixelY = new double[0];
-
-        // TODO: Implement simulation with random target detections based on alliance color
-        // This could include generating simulated raw detection data for testing
+        inputs.hasFreshData = false;
+        inputs.bestPose = new Pose3d();
+        inputs.altPose = new Pose3d();
+        inputs.bestPoseReprojErr = 0;
+        inputs.altPoseReprojErr = 0;
+        inputs.ambiguity = 0;
     }
 
     @Override

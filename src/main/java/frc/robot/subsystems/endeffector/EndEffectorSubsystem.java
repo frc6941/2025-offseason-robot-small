@@ -1,10 +1,10 @@
 package frc.robot.subsystems.endeffector;
 
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.EndEffectorParamsNT;
+import frc.robot.subsystems.beambreak.BeambreakIO;
 import frc.robot.subsystems.beambreak.BeambreakIOInputsAutoLogged;
 import frc.robot.subsystems.roller.RollerIO;
 import frc.robot.subsystems.roller.RollerIOInputsAutoLogged;
@@ -18,11 +18,13 @@ public class EndEffectorSubsystem extends SubsystemBase {
     public static final String NAME = "EndEffectorArm";
     private final RollerIOInputsAutoLogged armRollerIOInputs = new RollerIOInputsAutoLogged();
 
-    private final BeambreakIOInputsAutoLogged coralBeambreakInputs = new BeambreakIOInputsAutoLogged();
-    private final BeambreakIOInputsAutoLogged algaeBeambreakInputs = new BeambreakIOInputsAutoLogged();
+    private final BeambreakIOInputsAutoLogged frontBeambreakInputs = new BeambreakIOInputsAutoLogged();
+    private final BeambreakIOInputsAutoLogged endBeambreakInputs = new BeambreakIOInputsAutoLogged();
 
     // Roller motor control
     private final RollerIO rollerIO;
+    private final BeambreakIO frontBeamBreakIO;
+    private final BeambreakIO endBeamBreakIO;
 
     @Getter
     @AutoLogOutput(key = "EndEffectorArm/setPoint")
@@ -30,21 +32,22 @@ public class EndEffectorSubsystem extends SubsystemBase {
     @Getter
     @AutoLogOutput(key = "EndEffectorArm/atGoal")
     private boolean atGoal = false;
-    @AutoLogOutput(key = "EndEffectorArm/stopDueToLimit")
-    private boolean stopDueToLimit = false;
-
     @Getter
     @Setter
-    @AutoLogOutput(key = "EndEffectorArm/hasCoral")
-    private boolean hasCoral = false;
+    @AutoLogOutput(key = "EndEffectorArm/frontEE")
+    private boolean frontEE = false;
     @Getter
     @Setter
-    @AutoLogOutput(key = "EndEffectorArm/hasAlgae")
-    private boolean hasAlgae = false;
+    @AutoLogOutput(key = "EndEffectorArm/endEE")
+    private boolean endEE = false;
 
     public EndEffectorSubsystem(
-            RollerIO rollerIO) {
+            RollerIO rollerIO,
+            BeambreakIO frontBeamBreakIO,
+            BeambreakIO endBeamBreakEndIO) {
         this.rollerIO = rollerIO;
+        this.frontBeamBreakIO = frontBeamBreakIO;
+        this.endBeamBreakIO = endBeamBreakEndIO;
 
         // Apply initial PID gains using NTParam values
         rollerIO.updateConfigs(
@@ -60,18 +63,16 @@ public class EndEffectorSubsystem extends SubsystemBase {
     public void periodic() {
         // Update inputs from hardware
         rollerIO.updateInputs(armRollerIOInputs);
+        frontBeamBreakIO.updateInputs(frontBeambreakInputs);
+        endBeamBreakIO.updateInputs(endBeambreakInputs);
         if (RobotBase.isReal()) {
-            // Update gamepiece tracking
-            //TODO: add Debouncer or filter to prevent false positives
-            hasCoral = coralBeambreakInputs.isBeambreakOn;
-            hasAlgae = algaeBeambreakInputs.isBeambreakOn;
-            SmartDashboard.putBoolean("GamePiece/EEHasCoral", hasCoral);
-            SmartDashboard.putBoolean("GamePiece/EEHasAlgae", hasAlgae);
+            frontEE = frontBeambreakInputs.isBeambreakOn;
+            endEE = endBeambreakInputs.isBeambreakOn;
         }
 
         // Process and log inputs
-        Logger.processInputs(NAME + "/Coral Beambreak", coralBeambreakInputs);
-        Logger.processInputs(NAME + "/Algae Beambreak", algaeBeambreakInputs);
+        Logger.processInputs(NAME + "/Front Beambreak", frontBeambreakInputs);
+        Logger.processInputs(NAME + "/End Beambreak", endBeambreakInputs);
         Logger.processInputs(NAME + "/Roller", armRollerIOInputs);
 
         // Update tunable numbers if tuning is enabled
@@ -95,5 +96,9 @@ public class EndEffectorSubsystem extends SubsystemBase {
 
     public void stopRoller() {
         rollerIO.stop();
+    }
+
+    public boolean intakeFinished() {
+        return endEE && frontEE;
     }
 } 

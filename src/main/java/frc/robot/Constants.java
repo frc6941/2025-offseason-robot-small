@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.DistanceUnit;
@@ -56,7 +58,7 @@ public class Constants {
                 .encoderId(SWERVE_FLC.id)
                 .driveMotorEncoderOffset(Degree.of(50))
                 .steerMotorEncoderOffset(Rotations.of(-0.4536))
-                .driveInverted(true)
+                .driveInverted(false)
                 .steerInverted(true)
                 .encoderInverted(false)
                 .build();
@@ -68,7 +70,7 @@ public class Constants {
                 .encoderId(SWERVE_FRC.id)
                 .driveMotorEncoderOffset(Degree.of(50))
                 .steerMotorEncoderOffset(Rotations.of(-0.419921875))
-                .driveInverted(false)
+                .driveInverted(true)
                 .steerInverted(true)
                 .encoderInverted(false)
                 .build();
@@ -80,7 +82,7 @@ public class Constants {
                 .encoderId(SWERVE_BLC.id)
                 .driveMotorEncoderOffset(Degree.of(50))
                 .steerMotorEncoderOffset(Rotations.of(-0.347412109375))
-                .driveInverted(true)
+                .driveInverted(false)
                 .steerInverted(true)
                 .encoderInverted(false)
                 .build();
@@ -92,7 +94,7 @@ public class Constants {
                 .encoderId(SWERVE_BRC.id)
                 .driveMotorEncoderOffset(Degree.of(50))
                 .steerMotorEncoderOffset(Rotations.of(0.4609375))
-                .driveInverted(false)
+                .driveInverted(true)
                 .steerInverted(true)
                 .encoderInverted(false)
                 .build();
@@ -191,12 +193,12 @@ public class Constants {
             private static final double SYSID_RAMP_RATE_VOLTS_PER_SEC = 1;
             private static final double SYSID_DYNAMIC_VOLTAGE = 7;
 
-            public static final double L2_EXTENSION_METERS = 0.4;
-            public static final double L3_EXTENSION_METERS = 0.545;
+            public static final double L2_EXTENSION_METERS = 0.485;
+            public static final double L3_EXTENSION_METERS = 0.6;
             public static final double L4_EXTENSION_METERS = 1;
             public static final double P1_EXTENSION_METERS = 0.55;
             public static final double P2_EXTENSION_METERS = 0.88;
-            public static final double INTAKE_EXTENSION_METERS = 0.55;
+            public static final double INTAKE_EXTENSION_METERS = 0.0;
 
             private static class ElevatorGainsClass {
                 private static final double ELEVATOR_KP = 2.5;
@@ -259,34 +261,16 @@ public class Constants {
     }
 
     public static class Photonvision {
-        public static final String[] PV_CAMERA_NAMES = {"pv-cam1"};
-        public static final boolean[] SNAPSHOT_ENABLED = {true};
+        public static final String[] PV_CAMERA_NAMES = {"LeftCamera", "RightCamera"};
+        public static final boolean[] SNAPSHOT_ENABLED = {false, false};
         public static final int SNAPSHOT_PERIOD = 5; //seconds
-        public static final String kPhotonVisionTag = "PhotonVision";
-        // Camera resolution constants (fixed hardware values)
-        public static final int CAMERA_RESOLUTION_X = 640;
-        public static final int CAMERA_RESOLUTION_Y = 480;
-
-        @NTParameter(tableName = "Params" + "/" + kPhotonVisionTag)
-        public final static class PhotonVisionParams {
-            // Camera physical configuration
-            public static final double CAMERA_HEIGHT_METERS = 1.0;
-            public static final double CAMERA_PITCH_DEGREES = -30.0;
-
-            // Camera field of view (FOV)
-            public static final double CAMERA_HORIZONTAL_FOV_DEGREES = 65.93;
-            public static final double CAMERA_VERTICAL_FOV_DEGREES = 51.89;
-
-            // Camera to robot transform (camera position relative to robot center)
-            public static final double CAMERA_TO_ROBOT_X = 0.14;  // 0.14m front
-            public static final double CAMERA_TO_ROBOT_Y = 0.0;   // 0.00m left
-            public static final double CAMERA_TO_ROBOT_Z = 1.0;  // 0.10m up
-            public static final double CAMERA_TO_ROBOT_ROTATION_DEGREES = 0.0;
-
-            // Distance estimation parameters
-            public static final double DISTANCE_SCALE_FACTOR = 1.0;
-            public static final double GROUND_HEIGHT_METERS = 0.0;
-        }
+        public static Pose3d[] ROBOT_RELATIVE_TO_CMAERA = new Pose3d[]{
+                new Pose3d(-0.29051, -0.29248, -0.19732, new Rotation3d(0, 10, 17.9)),
+                new Pose3d(-0.29051, 0.29248, -0.19732, new Rotation3d(0, 10, -17.9))
+        };
+//        public static final String kPhotonVisionTag = "PhotonVision";
+//        @NTParameter(tableName = "Params" + "/" + kPhotonVisionTag)
+//        public final static class PhotonVisionParams {}
     }
 
     public static final class ReefAimCommand {
