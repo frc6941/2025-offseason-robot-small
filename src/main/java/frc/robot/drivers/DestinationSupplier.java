@@ -239,7 +239,7 @@ public class DestinationSupplier {
                 case L3 -> ElevatorCommonNT.L3_EXTENSION_METERS.getValue();
                 case L4 -> ElevatorCommonNT.L4_EXTENSION_METERS.getValue();
                 case INTAKE -> ElevatorCommonNT.INTAKE_EXTENSION_METERS.getValue();
-                default -> ElevatorCommonNT.L2_EXTENSION_METERS.getValue();
+                default -> ElevatorCommonNT.INTAKE_EXTENSION_METERS.getValue();
             };
         } else {
             return switch (currentElevSetpointAlgae) {
