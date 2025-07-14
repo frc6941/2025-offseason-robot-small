@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.endeffector.EndEffectorSubsystem;
 import frc.robot.subsystems.indicator.IndicatorSubsystem;
 import frc.robot.subsystems.indicator.IndicatorIO.Patterns;
+import frc.robot.EndEffectorParamsNT;
 
 public class ShootCommand extends Command{
     private final EndEffectorSubsystem endEffectorSubsystem;
