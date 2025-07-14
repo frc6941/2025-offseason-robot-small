@@ -11,8 +11,8 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import java.util.List;
 import java.util.Optional;
 
+import static frc.robot.Constants.Photonvision.CAMERA_RELATIVE_TO_ROBOT;
 import static frc.robot.Constants.Photonvision.PV_CAMERA_NAMES;
-import static frc.robot.Constants.Photonvision.ROBOT_RELATIVE_TO_CMAERA;
 
 public class PhotonVisionIOReal implements PhotonVisionIO {
 
@@ -48,9 +48,8 @@ public class PhotonVisionIOReal implements PhotonVisionIO {
             inputs.timestampMs = (long) (latestResult.getTimestampSeconds() * 1000);
             if (inputs.hasTargets) {
                 Rotation2d oriDegrees = RobotStateRecorder.getPoseWorldRobotCurrent().toPose2d().getRotation();
-                pose1 = ROBOT_RELATIVE_TO_CMAERA[id].plus(multiTagResult.get().estimatedPose.best);
-                pose2 = ROBOT_RELATIVE_TO_CMAERA[id].plus(multiTagResult.get().estimatedPose.alt);
-
+                pose1 = new Pose3d(multiTagResult.get().estimatedPose.best.getTranslation(), multiTagResult.get().estimatedPose.best.getRotation()).transformBy(CAMERA_RELATIVE_TO_ROBOT[id].inverse());
+                pose2 = new Pose3d(multiTagResult.get().estimatedPose.alt.getTranslation(), multiTagResult.get().estimatedPose.alt.getRotation()).transformBy(CAMERA_RELATIVE_TO_ROBOT[id].inverse());
                 if (pose1.toPose2d().getRotation().minus(oriDegrees).getDegrees() < pose2.toPose2d().getRotation().minus(oriDegrees).getDegrees()) {
                     Logger.recordOutput("PhotonVision Target" + id, new Pose3d(multiTagResult.get().estimatedPose.best.getTranslation(), multiTagResult.get().estimatedPose.best.getRotation()));
                     inputs.bestPose = pose1;

@@ -1,7 +1,7 @@
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.DistanceUnit;
@@ -264,9 +264,9 @@ public class Constants {
         public static final String[] PV_CAMERA_NAMES = {"LeftCamera", "RightCamera"};
         public static final boolean[] SNAPSHOT_ENABLED = {false, false};
         public static final int SNAPSHOT_PERIOD = 5; //seconds
-        public static Pose3d[] ROBOT_RELATIVE_TO_CMAERA = new Pose3d[]{
-                new Pose3d(-0.29051, -0.29248, -0.19732, new Rotation3d(0, 10, 17.9)),
-                new Pose3d(-0.29051, 0.29248, -0.19732, new Rotation3d(0, 10, -17.9))
+        public static Transform3d[] CAMERA_RELATIVE_TO_ROBOT = new Transform3d[]{
+                new Transform3d(0.29051, 0.29248, 0.19732, new Rotation3d(0, 10, -17.9)),
+                new Transform3d(0.29051, -0.29248, 0.19732, new Rotation3d(0, 10, 17.9))
         };
 //        public static final String kPhotonVisionTag = "PhotonVision";
 //        @NTParameter(tableName = "Params" + "/" + kPhotonVisionTag)
