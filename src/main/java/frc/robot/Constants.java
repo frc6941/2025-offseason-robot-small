@@ -201,13 +201,13 @@ public class Constants {
             public static final double INTAKE_EXTENSION_METERS = 0.0;
 
             private static class ElevatorGainsClass {
-                private static final double ELEVATOR_KP = 2.5;
+                private static final double ELEVATOR_KP = 2.8;
                 private static final double ELEVATOR_KI = 0;
                 private static final double ELEVATOR_KD = 0;
                 private static final double ELEVATOR_KA = 0;
                 private static final double ELEVATOR_KV = 0.08;// 0.107853495
                 private static final double ELEVATOR_KS = 0.1;
-                private static final double ELEVATOR_KG = 0.2;//0.3
+                private static final double ELEVATOR_KG = 0.35;//0.3
             }
         }
     }
@@ -234,6 +234,7 @@ public class Constants {
             public static final double ROLLER_KS = 0;
 
             public static final double CORAL_INTAKE_VOLTAGE = 12.0;
+            public static final double CORAL_INDEX_VOLTAGE = 6.0;
             public static final double CORAL_OUTTAKE_VOLTAGE = -6.0;
             public static final double CORAL_PRESHOOT_VOLTAGE = -10.0;
             public static final double CORAL_HOLD_VOLTAGE = 0.5;

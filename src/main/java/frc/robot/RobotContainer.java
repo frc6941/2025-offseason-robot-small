@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.drivers.DestinationSupplier;
 import frc.robot.subsystems.beambreak.BeambreakIOReal;
 import frc.robot.subsystems.beambreak.BeambreakIOSim;
@@ -75,8 +76,8 @@ public class RobotContainer {
                             Constants.EndEffector.SUPPLY_CURRENT_LIMIT_AMPS,
                             Constants.EndEffector.IS_INVERT,
                             Constants.EndEffector.IS_BRAKE),
-                    new BeambreakIOReal(0),
-                    new BeambreakIOReal(2));
+                    new BeambreakIOReal(2),
+                    new BeambreakIOReal(0));
             photonVisionSubsystem = new PhotonVisionSubsystem(
                     new PhotonVisionIOReal(0),
                     new PhotonVisionIOReal(1)
@@ -102,7 +103,7 @@ public class RobotContainer {
                             new SimpleMotorFeedforward(0.0, 0.24),
                             new ProfiledPIDController(0.5, 0.0, 0.0,
                                     new TrapezoidProfile.Constraints(15, 1))),
-                    new BeambreakIOSim(0),
+                    new BeambreakIOSim(3),
                     new BeambreakIOSim(2));
         }
     }
@@ -127,7 +128,7 @@ public class RobotContainer {
                         })));
         driverController.leftBumper();//自动取 自动对正 到位 吸球
         driverController.rightBumper();//自动放 ELEvator自动到位 强制射
-        driverController.leftTrigger();//手动intake
+        driverController.leftTrigger().whileTrue(new IntakeCommand(elevatorSubsystem,endEffectorSubsystem));//手动intake
         driverController.rightTrigger().whileTrue(Commands.runOnce(() -> endEffectorSubsystem.setRollerVoltage(EndEffectorParamsNT.CORAL_SHOOT_VOLTAGE.getValue())));//强制放
         driverController.a().onTrue(Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)).ignoringDisable(true));
         driverController.b().onTrue(Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true))));//Elevator到位
