@@ -21,8 +21,9 @@ public class IntakeCommand extends Command {
 
     @Override
     public void initialize() {
-        endEffectorSubsystem.setRollerVoltage(EndEffectorParamsNT.CORAL_INTAKE_VOLTAGE.getValue());
-        elevatorSubsystem.setElevatorPosition(ElevatorCommonNT.INTAKE_EXTENSION_METERS.getValue());
+        endEffectorSubsystem.setRollerVoltage(EndEffectorParamsNT.CORAL_INTAKE_VOLTAGE.getValue()); 
+        destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.INTAKE);  
+        elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true));
     }
 
     @Override
@@ -30,7 +31,9 @@ public class IntakeCommand extends Command {
         if(endEffectorSubsystem.hasCoral()){
             endEffectorSubsystem.setRollerVoltage(EndEffectorParamsNT.CORAL_INDEX_VOLTAGE.getValue());
         }
+        
     }
+
 
     @Override
     public boolean isFinished() {
@@ -39,7 +42,7 @@ public class IntakeCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        endEffectorSubsystem.stopRoller();
+        endEffectorSubsystem.stopRoller();;
     }
 
 

@@ -126,7 +126,7 @@ public class RobotContainer {
                                     TransformRecorder.kFrameRobot);
                             indicatorSubsystem.setPattern(IndicatorIO.Patterns.RESET_ODOM);
                         })));
-        driverController.leftBumper();//自动取 自动对正 到位 吸球
+        driverController.leftBumper();//自动取 自动对正 到位 吸球[]\
         driverController.rightBumper();//自动放 ELEvator自动到位 强制射
         driverController.leftTrigger().whileTrue(new IntakeCommand(elevatorSubsystem,endEffectorSubsystem));//手动intake
         driverController.rightTrigger().whileTrue(Commands.runOnce(() -> endEffectorSubsystem.setRollerVoltage(EndEffectorParamsNT.CORAL_SHOOT_VOLTAGE.getValue())));//强制放

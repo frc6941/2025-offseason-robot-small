@@ -210,7 +210,7 @@ public class DestinationSupplier {
      */
     public void updateElevatorSetpoint(elevatorSetpoint setpoint) {
         switch (setpoint) {
-            case L2, L3, L4:
+            case L2, L3, L4, INTAKE:
                 currentElevSetpointCoral = setpoint;
                 Logger.recordOutput("DestinationSupplier/currentElevSetpointCoral", setpoint);
                 SmartDashboard.putString("DestinationSupplier/currentElevSetpointCoral", setpoint.toString());
@@ -238,6 +238,7 @@ public class DestinationSupplier {
                 case L2 -> ElevatorCommonNT.L2_EXTENSION_METERS.getValue();
                 case L3 -> ElevatorCommonNT.L3_EXTENSION_METERS.getValue();
                 case L4 -> ElevatorCommonNT.L4_EXTENSION_METERS.getValue();
+                case INTAKE -> ElevatorCommonNT.INTAKE_EXTENSION_METERS.getValue();
                 default -> ElevatorCommonNT.L2_EXTENSION_METERS.getValue();
             };
         } else {
@@ -262,6 +263,6 @@ public class DestinationSupplier {
     }
 
     public enum elevatorSetpoint {
-        L2, L3, L4, P1, P2
+        L2, L3, L4, P1, P2, INTAKE
     }
 }
