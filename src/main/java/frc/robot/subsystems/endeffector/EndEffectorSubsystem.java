@@ -99,6 +99,10 @@ public class EndEffectorSubsystem extends SubsystemBase {
     }
 
     public boolean intakeFinished() {
-        return endEE && frontEE;
+        return endEE && !frontEE;
+    }
+
+    public boolean hasCoral() {
+        return endEE || frontEE;
     }
 } 
