@@ -52,7 +52,7 @@ public class Constants {
                 .build();
         public static SwerveConfig.SwerveModuleConfig kModuleCompFL = SwerveConfig.SwerveModuleConfig.builder()
                 .name("FL")
-                .location(new Translation2d(0.5, 0.5))
+                .location(new Translation2d(0.29, 0.29))
                 .driveMotorId(SWERVE_FLD.id)
                 .steerMotorId(SWERVE_FLS.id)
                 .encoderId(SWERVE_FLC.id)
@@ -64,7 +64,7 @@ public class Constants {
                 .build();
         public static SwerveConfig.SwerveModuleConfig kModuleCompFR = SwerveConfig.SwerveModuleConfig.builder()
                 .name("FR")
-                .location(new Translation2d(0.5, -0.5))
+                .location(new Translation2d(0.29, -0.29))
                 .driveMotorId(SWERVE_FRD.id)
                 .steerMotorId(SWERVE_FRS.id)
                 .encoderId(SWERVE_FRC.id)
@@ -76,7 +76,7 @@ public class Constants {
                 .build();
         public static SwerveConfig.SwerveModuleConfig kModuleCompBL = SwerveConfig.SwerveModuleConfig.builder()
                 .name("BL")
-                .location(new Translation2d(-0.5, 0.5))
+                .location(new Translation2d(-0.29, 0.29))
                 .driveMotorId(SWERVE_BLD.id)
                 .steerMotorId(SWERVE_BLS.id)
                 .encoderId(SWERVE_BLC.id)
@@ -88,7 +88,7 @@ public class Constants {
                 .build();
         public static SwerveConfig.SwerveModuleConfig kModuleCompBR = SwerveConfig.SwerveModuleConfig.builder()
                 .name("BR")
-                .location(new Translation2d(-0.5, -0.5))
+                .location(new Translation2d(-0.29, -0.29))
                 .driveMotorId(SWERVE_BRD.id)
                 .steerMotorId(SWERVE_BRS.id)
                 .encoderId(SWERVE_BRC.id)
