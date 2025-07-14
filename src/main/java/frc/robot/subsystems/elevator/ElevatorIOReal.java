@@ -121,7 +121,7 @@ public class ElevatorIOReal implements ElevatorIO {
         inputs.supplyCurrentAmps = supplyLeft.getValueAsDouble();
         inputs.tempCelsius = tempLeft.getValueAsDouble();
         inputs.motorVoltage = leader.getMotorVoltage().getValueAsDouble();
-        if (ElevatorCommonNT.isAnyChanged()) {
+        if (ElevatorGainsClass.isAnyChanged()){
             slot0Configs.kA = ElevatorGainsClass.ELEVATOR_KA.getValue();
             slot0Configs.kS = ElevatorGainsClass.ELEVATOR_KS.getValue();
             slot0Configs.kV = ElevatorGainsClass.ELEVATOR_KV.getValue();
@@ -129,13 +129,13 @@ public class ElevatorIOReal implements ElevatorIO {
             slot0Configs.kI = ElevatorGainsClass.ELEVATOR_KI.getValue();
             slot0Configs.kD = ElevatorGainsClass.ELEVATOR_KD.getValue();
             slot0Configs.kG = ElevatorGainsClass.ELEVATOR_KG.getValue();
-
+            leaderConfigurator.apply(slot0Configs);
+            followerConfigurator.apply(slot0Configs);
+        }
+        if (ElevatorCommonNT.isAnyChanged()) {
             motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.getValue();
             motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.getValue();
             motionMagicConfigs.MotionMagicJerk = motionJerk.getValue();
-
-            leaderConfigurator.apply(slot0Configs);
-            followerConfigurator.apply(slot0Configs);
             leaderConfigurator.apply(motionMagicConfigs);
             followerConfigurator.apply(motionMagicConfigs);
         }
