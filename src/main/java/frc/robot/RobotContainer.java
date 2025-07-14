@@ -118,14 +118,15 @@ public class RobotContainer {
                         RobotStateRecorder::getPoseDriverRobotCurrent,
                         MetersPerSecond.of(0.04),
                         DegreesPerSecond.of(3.0)));
-        driverController.start().onTrue(SwerveCommands.resetAngle(swerve, new Rotation2d())
-                .alongWith(Commands.runOnce(
-                        () -> {
-                            RobotStateRecorder.getInstance().resetTransform(
-                                    TransformRecorder.kFrameWorld,
-                                    TransformRecorder.kFrameRobot);
-                            indicatorSubsystem.setPattern(IndicatorIO.Patterns.RESET_ODOM);
-                        })));
+        driverController.start().onTrue(
+                SwerveCommands.resetAngle(swerve, new Rotation2d())
+                        .alongWith(Commands.runOnce(
+                                () -> {
+                                    RobotStateRecorder.getInstance().resetTransform(
+                                            TransformRecorder.kFrameWorld,
+                                            TransformRecorder.kFrameRobot);
+                                    indicatorSubsystem.setPattern(IndicatorIO.Patterns.RESET_ODOM);
+                                })));
         driverController.leftBumper();//自动取 自动对正 到位 吸球
         driverController.rightBumper();//自动放 ELEvator自动到位 强制射
         driverController.leftTrigger().whileTrue(new IntakeCommand(elevatorSubsystem,endEffectorSubsystem));//手动intake
@@ -140,12 +141,12 @@ public class RobotContainer {
     }
 
     public void robotPeriodic() {
-        photonVisionSubsystem.estimatedPose.ifPresent(
-                pose3d -> swerve.addVisionMeasurement(
-                        pose3d,
-                        photonVisionSubsystem.timestampSeconds,
-                        VecBuilder.fill(0.1, 0.1, 0.3, 9999.0)));
-
+        if (photonVisionSubsystem.estimatedPose != null) {
+            swerve.addVisionMeasurement(
+                    photonVisionSubsystem.estimatedPose,
+                    photonVisionSubsystem.timestampSeconds,
+                    VecBuilder.fill(0.1, 0.1, 0.3, Double.MAX_VALUE));
+        }
         var now = Seconds.of(Timer.getTimestamp());
         RobotStateRecorder.getInstance().putTransform(
                 swerve.getEstimatedPose(), now,

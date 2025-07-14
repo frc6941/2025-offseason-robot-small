@@ -14,6 +14,8 @@ public interface PhotonVisionIO {
 
     void takeOutputSnapshot();
 
+    void setRefPose(Pose3d refPose);
+
     @AutoLog
     class PhotonVisionIOInputs {
         public String name;
@@ -21,13 +23,14 @@ public interface PhotonVisionIO {
         public boolean connected = false;
         public boolean hasTargets = false;
         public boolean hasFreshData = false;  // Indicates if this update contains new vision data
-        public long timestampMs = 0;
+        public double timestampSec = 0;
 
-        public Pose3d bestPose = new Pose3d();
-        public double bestPoseReprojErr = 0;
-        public double ambiguity = 0;
-        public Pose3d altPose = new Pose3d();
-        public double altPoseReprojErr = 0;
+        public Pose3d estimatePose = new Pose3d();
+        public estimateStrategy strategyUsed = estimateStrategy.None;
+    }
+
+    public enum estimateStrategy {
+        None, MULTI_TAG, SINGLE_TAG,
     }
 
 }

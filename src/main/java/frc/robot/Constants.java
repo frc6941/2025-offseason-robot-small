@@ -244,18 +244,6 @@ public class Constants {
 
     }
 
-    public static class Limelight {
-        public static final String LIMELIGHT_LEFT = "limelight-leftf";//TODO: change
-        public static final String LIMELIGHT_RIGHT = "limelight-rightf";//TODO: change
-        public static final double AREA_THRESHOLD = 0.1;
-        public static final String kTag = "LimeLight";
-
-        @NTParameter(tableName = kParameterTag + "/" + kTag)
-        public static class LimeLightParams {
-            public static final double OCULUS_RESET_AMBIGUITY_THRESHOLD = 0.15;
-        }
-    }
-
     public static class Indicator {
         public static final int LED_PORT = 0;//TODO: change
         public static final int LED_BUFFER_LENGTH = 30;//TODO: change
@@ -266,8 +254,8 @@ public class Constants {
         public static final boolean[] SNAPSHOT_ENABLED = {false, false};
         public static final int SNAPSHOT_PERIOD = 5; //seconds
         public static Transform3d[] CAMERA_RELATIVE_TO_ROBOT = new Transform3d[]{
-                new Transform3d(0.29051, 0.29248, 0.19732, new Rotation3d(0, 10, -17.9)),
-                new Transform3d(0.29051, -0.29248, 0.19732, new Rotation3d(0, 10, 17.9))
+                new Transform3d(0.29051, 0.29248, 0.19732, new Rotation3d(Math.toRadians(0), Math.toRadians(-10), Math.toRadians(-17.9))),
+                new Transform3d(0.29051, -0.29248, 0.19732, new Rotation3d(Math.toRadians(0), Math.toRadians(-10), Math.toRadians(17.9)))
         };
 //        public static final String kPhotonVisionTag = "PhotonVision";
 //        @NTParameter(tableName = "Params" + "/" + kPhotonVisionTag)
