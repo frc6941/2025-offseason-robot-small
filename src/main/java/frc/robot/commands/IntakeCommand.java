@@ -42,7 +42,9 @@ public class IntakeCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        endEffectorSubsystem.stopRoller();;
+        endEffectorSubsystem.stopRoller();
+        destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2);  
+        elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true));
     }
 
 
