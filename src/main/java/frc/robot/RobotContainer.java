@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.ReefAimCommand;
 import frc.robot.drivers.DestinationSupplier;
 import frc.robot.subsystems.beambreak.BeambreakIOReal;
 import frc.robot.subsystems.beambreak.BeambreakIOSim;
@@ -82,7 +83,6 @@ public class RobotContainer {
                     new PhotonVisionIOReal(0),
                     new PhotonVisionIOReal(1)
             );
-            //photonVisionSubsystem = new PhotonVisionSubsystem(new PhotonVisionIOReal(0));
         } else {
             swerve = new Swerve(
                     Constants.Swerve.kSimConfig,
@@ -112,8 +112,8 @@ public class RobotContainer {
         swerve.setDefaultCommand(
                 SwerveCommands.driveWithJoystick(
                         swerve,
-                        () -> driverController.getLeftY(),
-                        () -> driverController.getLeftX(),
+                        () -> -driverController.getLeftY(),
+                        () -> -driverController.getLeftX(),
                         () -> -driverController.getRightX(),
                         RobotStateRecorder::getPoseDriverRobotCurrent,
                         MetersPerSecond.of(0.04),
@@ -128,8 +128,8 @@ public class RobotContainer {
                                     indicatorSubsystem.setPattern(IndicatorIO.Patterns.RESET_ODOM);
                                 })));
         driverController.leftBumper();//自动取 自动对正 到位 吸球
-        driverController.rightBumper();//自动放 ELEvator自动到位 强制射
-        driverController.leftTrigger().whileTrue(new IntakeCommand(elevatorSubsystem,endEffectorSubsystem));//手动intake
+        driverController.rightBumper().whileTrue(new ReefAimCommand(swerve, indicatorSubsystem));//自动放 ELEvator自动到位 强制射
+        driverController.leftTrigger().whileTrue(new IntakeCommand(elevatorSubsystem, endEffectorSubsystem));//手动intake
         driverController.rightTrigger().whileTrue(Commands.runOnce(() -> endEffectorSubsystem.setRollerVoltage(EndEffectorParamsNT.CORAL_SHOOT_VOLTAGE.getValue())));//强制放
         driverController.a().onTrue(Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)).ignoringDisable(true));
         driverController.b().onTrue(Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true))));//Elevator到位

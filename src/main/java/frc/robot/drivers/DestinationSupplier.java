@@ -23,14 +23,14 @@ public class DestinationSupplier {
     private static DestinationSupplier instance;
     @Getter
     private elevatorSetpoint currentElevSetpointCoral = elevatorSetpoint.L2;
-
+    @Getter
+    private boolean coralRight = false;
     @Getter
     @Setter
     public boolean useSuperCycle = true;
     @Getter
     @Setter
     private int targetTagID = 0;
-    private boolean coralRight = false;
     private boolean useCoral = false;
     @Getter
     private elevatorSetpoint currentElevSetpointAlgae = elevatorSetpoint.P1;
