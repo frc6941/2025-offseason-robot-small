@@ -40,13 +40,13 @@ public class Constants {
         public static final String kSwerveModuleTag = "Swerve/SwerveModule";
         public static SwerveLimit kDefaultSwerveLimit = SwerveLimit.builder()
                 .maxLinearVelocity(MetersPerSecond.of(4.5))
-                .maxSkidAcceleration(MetersPerSecondPerSecond.of(22.0))
+                .maxSkidAcceleration(MetersPerSecondPerSecond.of(12.0))
                 .maxAngularVelocity(RadiansPerSecond.of(10.0))
                 .maxAngularAcceleration(RadiansPerSecondPerSecond.of(15.0))
                 .build();
         public static SwerveModuleLimit kDefaultSwerveModuleLimit = SwerveModuleLimit.builder()
                 .maxDriveVelocity(MetersPerSecond.of(4.5))
-                .maxDriveAcceleration(MetersPerSecondPerSecond.of(25.0))
+                .maxDriveAcceleration(MetersPerSecondPerSecond.of(10.0))
                 .maxSteerAngularVelocity(RadiansPerSecond.of(200.0))
                 .maxSteerAngularAcceleration(RadiansPerSecondPerSecond.of(300.0))
                 .build();
@@ -131,7 +131,7 @@ public class Constants {
                 })
                 .odometryFrequency(Hertz.of(100))
                 .driveStatorCurrentLimit(Amps.of(110))
-                .steerStatorCurrentLimit(Amps.of(110))
+                .steerStatorCurrentLimit(Amps.of(40))
                 .canivoreCanBusName(CANIVORE_CAN_BUS_NAME)
                 .pigeonId(PIGEON.id)
                 .build();
@@ -139,7 +139,7 @@ public class Constants {
         @NTParameter(tableName = kParameterTag + "/" + kSwerveModuleTag)
         private final static class SwerveModuleParams {
             private final static class Drive {
-                static final double kP = 1;
+                static final double kP = 8;
                 static final double kI = 0.0;
                 static final double kD = 0.0;
                 static final double kS = 0;
