@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -24,7 +23,6 @@ import frc.robot.subsystems.indicator.IndicatorIO;
 import frc.robot.subsystems.indicator.IndicatorIOARGB;
 import frc.robot.subsystems.indicator.IndicatorIOSim;
 import frc.robot.subsystems.indicator.IndicatorSubsystem;
-import frc.robot.subsystems.indicator.IndicatorIO.Patterns;
 import frc.robot.subsystems.photonvision.PhotonVisionIOReal;
 import frc.robot.subsystems.photonvision.PhotonVisionIOSim;
 import frc.robot.subsystems.photonvision.PhotonVisionSubsystem;
@@ -85,7 +83,6 @@ public class RobotContainer {
                     new PhotonVisionIOReal(0),
                     new PhotonVisionIOReal(1)
             );
-            //photonVisionSubsystem = new PhotonVisionSubsystem(new PhotonVisionIOReal(0));
         } else {
             swerve = new Swerve(
                     Constants.Swerve.kSimConfig,
@@ -115,40 +112,65 @@ public class RobotContainer {
         swerve.setDefaultCommand(
                 SwerveCommands.driveWithJoystick(
                         swerve,
-                        () -> driverController.getLeftY(),
-                        () -> driverController.getLeftX(),
+                        () -> -driverController.getLeftY(),
+                        () -> -driverController.getLeftX(),
                         () -> -driverController.getRightX(),
                         RobotStateRecorder::getPoseDriverRobotCurrent,
                         MetersPerSecond.of(0.04),
                         DegreesPerSecond.of(3.0)));
-        driverController.start().onTrue(SwerveCommands.resetAngle(swerve, new Rotation2d())
-                .alongWith(Commands.runOnce(
-                        () -> {
-                            RobotStateRecorder.getInstance().resetTransform(
-                                    TransformRecorder.kFrameWorld,
-                                    TransformRecorder.kFrameRobot);
-                            indicatorSubsystem.setPattern(IndicatorIO.Patterns.RESET_ODOM);
-                        })));
-        driverController.leftBumper();//自动取 自动对正 到位 吸球[]\
-        driverController.rightBumper();//自动放 ELEvator自动到位 强制射
-        driverController.leftTrigger().whileTrue(new IntakeCommand(elevatorSubsystem,endEffectorSubsystem, indicatorSubsystem));//手动intake
-        driverController.rightTrigger().whileTrue(new ShootCommand(endEffectorSubsystem, indicatorSubsystem));//强制放
-        driverController.a().onTrue(Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)).ignoringDisable(true));
-        driverController.b().onTrue(Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true))));//Elevator到位
-        driverController.x().onTrue(Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)).ignoringDisable(true));
-        driverController.y().onTrue(Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)).ignoringDisable(true));
-        driverController.leftStick();//L
-        driverController.rightStick();//R
-        driverController.povDown().onTrue(elevatorSubsystem.zeroElevator());//电梯归零
+        driverController.start().onTrue(
+                SwerveCommands.resetAngle(swerve, new Rotation2d())
+                        .alongWith(Commands.runOnce(
+                                () -> {
+                                    RobotStateRecorder.getInstance().resetTransform(
+                                            TransformRecorder.kFrameWorld,
+                                            TransformRecorder.kFrameRobot);
+                                    indicatorSubsystem.setPattern(IndicatorIO.Patterns.RESET_ODOM);
+                                })));
+        // driverController.leftBumper();//自动取 自动对正 到位 吸球
+        // driverController.rightBumper().whileTrue(new ReefAimCommand(swerve));//自动放 ELEvator自动到位 强制射
+        // driverController.leftTrigger().whileTrue(new ManualIntakeCommand(elevatorSubsystem, endEffectorSubsystem));//手动intake
+        // driverController.rightTrigger().whileTrue(new ManualShootCommand(elevatorSubsystem, endEffectorSubsystem));//强制放
+        // driverController.a().onTrue(Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)).ignoringDisable(true));
+        // driverController.b().onTrue(Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true))));//Elevator到位
+        // driverController.x().onTrue(Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)).ignoringDisable(true));
+        // driverController.y().onTrue(Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)).ignoringDisable(true));
+        // driverController.leftStick();//L
+        // driverController.rightStick();//R
+        // driverController.povDown().onTrue(elevatorSubsystem.zeroElevator());//电梯归零
+        driverController.rightBumper().onTrue(new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem));//手动intake
+                        driverController.rightTrigger().whileTrue(new ShootCommand(endEffectorSubsystem, indicatorSubsystem));//强制放
+                        // driverController.povLeft().onTrue(
+                        //         Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)));
+                        // driverController.leftTrigger().onTrue(
+                        //         Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)));
+                        // driverController.leftBumper().onTrue(
+                        //         Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)));
+                        driverController.povLeft().whileTrue(Commands.sequence(
+                                Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)),
+                                Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true)))))
+                                .onFalse(new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem
+                                ));
+                        driverController.leftTrigger().whileTrue(Commands.sequence(
+                                Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)),
+                                Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true)))))
+                                .onFalse(new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem));
+                        driverController.leftBumper().whileTrue(Commands.sequence(
+                                Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
+                                Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true)))))
+                                .onFalse(new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem));
+                        // driverController.rightBumper().onTrue(Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true))));//Elevator到位
+                        driverController.y().onTrue(elevatorSubsystem.zeroElevator());//电梯归零
+
     }
 
     public void robotPeriodic() {
-        photonVisionSubsystem.estimatedPose.ifPresent(
-                pose3d -> swerve.addVisionMeasurement(
-                        pose3d,
-                        photonVisionSubsystem.timestampSeconds,
-                        VecBuilder.fill(0.1, 0.1, 0.3, 9999.0)));
-
+        if (photonVisionSubsystem.estimatedPose != null) {
+            swerve.addVisionMeasurement(
+                    photonVisionSubsystem.estimatedPose,
+                    photonVisionSubsystem.timestampSeconds,
+                    VecBuilder.fill(0.1, 0.1, 0.3, Double.MAX_VALUE));
+        }
         var now = Seconds.of(Timer.getTimestamp());
         RobotStateRecorder.getInstance().putTransform(
                 swerve.getEstimatedPose(), now,
