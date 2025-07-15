@@ -193,9 +193,9 @@ public class Constants {
             private static final double SYSID_RAMP_RATE_VOLTS_PER_SEC = 1;
             private static final double SYSID_DYNAMIC_VOLTAGE = 7;
 
-            public static final double L2_EXTENSION_METERS = 0.485;
-            public static final double L3_EXTENSION_METERS = 0.6;
-            public static final double L4_EXTENSION_METERS = 1;
+            public static final double L2_EXTENSION_METERS = 0.5;
+            public static final double L3_EXTENSION_METERS = 0.9;
+            public static final double L4_EXTENSION_METERS = 1.5;
             public static final double P1_EXTENSION_METERS = 0.55;
             public static final double P2_EXTENSION_METERS = 0.88;
             public static final double INTAKE_EXTENSION_METERS = 0.0;
@@ -240,6 +240,7 @@ public class Constants {
             public static final double CORAL_HOLD_VOLTAGE = 0.5;
             public static final double CORAL_SHOOT_VOLTAGE = 12.0;
             public static final double CORAL_SHOOT_DELAY_TIME = 0.2;
+            public static final double ALGAE_POKE_VOLTAGE = 6.0;
         }
 
     }

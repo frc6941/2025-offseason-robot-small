@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.ManualIntakeCommand;
 import frc.robot.commands.ManualShootCommand;
+import frc.robot.commands.PokeCommand;
 import frc.robot.commands.ReefAimCommand;
 import frc.robot.drivers.DestinationSupplier;
 import frc.robot.subsystems.beambreak.BeambreakIOReal;
@@ -128,17 +129,39 @@ public class RobotContainer {
                                             TransformRecorder.kFrameRobot);
                                     indicatorSubsystem.setPattern(IndicatorIO.Patterns.RESET_ODOM);
                                 })));
-        driverController.leftBumper();//自动取 自动对正 到位 吸球
-        driverController.rightBumper().whileTrue(new ReefAimCommand(swerve, indicatorSubsystem));//自动放 ELEvator自动到位 强制射
-        driverController.leftTrigger().whileTrue(new ManualIntakeCommand(elevatorSubsystem, endEffectorSubsystem));//手动intake
+        driverController.rightBumper().onTrue(new ManualIntakeCommand(elevatorSubsystem,endEffectorSubsystem));//手动intake
         driverController.rightTrigger().whileTrue(new ManualShootCommand(elevatorSubsystem, endEffectorSubsystem));//强制放
-        driverController.a().onTrue(Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)).ignoringDisable(true));
-        driverController.b().onTrue(Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true))));//Elevator到位
-        driverController.x().onTrue(Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)).ignoringDisable(true));
-        driverController.y().onTrue(Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)).ignoringDisable(true));
-        driverController.leftStick();//L
-        driverController.rightStick();//R
-        driverController.povDown().onTrue(elevatorSubsystem.zeroElevator());//电梯归零
+                                // driverController.povLeft().onTrue(
+                                //         Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)));
+                                // driverController.leftTrigger().onTrue(
+                                //         Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)));
+                                // driverController.leftBumper().onTrue(
+                                //         Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)));
+        driverController.povLeft().whileTrue(Commands.sequence(
+                                        Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)),
+                                        Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true)))))
+                                        .onFalse(new ManualIntakeCommand(elevatorSubsystem, endEffectorSubsystem));
+        driverController.leftTrigger().whileTrue(Commands.sequence(
+                                        Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)),
+                                        Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true)))))
+                                        .onFalse(new ManualIntakeCommand(elevatorSubsystem, endEffectorSubsystem));
+        driverController.leftBumper().whileTrue(Commands.sequence(
+                                        Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
+                                        Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true)))))
+                                        .onFalse(new ManualIntakeCommand(elevatorSubsystem, endEffectorSubsystem));
+                                // driverController.rightBumper().onTrue(Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true))));//Elevator到位
+        driverController.y().onTrue(elevatorSubsystem.zeroElevator());//电梯归零
+
+        driverController.leftStick().onTrue(
+                Commands.sequence(
+                        Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.P1)),
+                        new PokeCommand(endEffectorSubsystem, elevatorSubsystem)));
+
+        driverController.rightStick().onTrue(
+                                Commands.sequence(
+                                        Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.P2)),
+                                        new PokeCommand(endEffectorSubsystem, elevatorSubsystem)));
+        
     }
 
     public void robotPeriodic() {
