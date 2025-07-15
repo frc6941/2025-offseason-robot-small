@@ -82,7 +82,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
 
         // Update tunable numbers if tuning is enabled
         if (Constants.TUNING && EndEffectorParamsNT.isAnyChanged()) {
-            // Update roller PID gains if tuning is enabled
+            // Update roller PID gains if tuning is enabled\[]
             rollerIO.updateConfigs(
                     EndEffectorParamsNT.ROLLER_KP.getValue(),
                     EndEffectorParamsNT.ROLLER_KI.getValue(),

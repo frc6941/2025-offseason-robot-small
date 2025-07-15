@@ -10,13 +10,14 @@ import frc.robot.subsystems.endeffector.EndEffectorSubsystem;
 import frc.robot.subsystems.indicator.IndicatorSubsystem;
 import frc.robot.subsystems.indicator.IndicatorIO.Patterns;
 
-public class IntakeCommand extends Command {
+public class ManualIntakeCommand extends Command {
     private final ElevatorSubsystem elevatorSubsystem;
     private final EndEffectorSubsystem endEffectorSubsystem;
     private final IndicatorSubsystem indicatorSubsystem;
     DestinationSupplier destinationSupplier = DestinationSupplier.getInstance();
 
     public IntakeCommand(ElevatorSubsystem elevatorSubsystem, EndEffectorSubsystem endEffectorSubsystem, IndicatorSubsystem indicatorSubsystem) {
+    public ManualIntakeCommand(ElevatorSubsystem elevatorSubsystem, EndEffectorSubsystem endEffectorSubsystem) {
         this.elevatorSubsystem = elevatorSubsystem;
         this.endEffectorSubsystem = endEffectorSubsystem;
         this.indicatorSubsystem = indicatorSubsystem;
@@ -26,19 +27,17 @@ public class IntakeCommand extends Command {
     @Override
     public void initialize() {
         indicatorSubsystem.setPattern(Patterns.INTAKE);
-        endEffectorSubsystem.setRollerVoltage(EndEffectorParamsNT.CORAL_INTAKE_VOLTAGE.getValue()); 
-        destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.INTAKE);  
+        endEffectorSubsystem.setRollerVoltage(EndEffectorParamsNT.CORAL_INTAKE_VOLTAGE.getValue());
+        destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.INTAKE);
         elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true));
     }
 
     @Override
     public void execute() {
-        if(endEffectorSubsystem.hasCoral()){
+        if (endEffectorSubsystem.hasCoral()) {
             endEffectorSubsystem.setRollerVoltage(EndEffectorParamsNT.CORAL_INDEX_VOLTAGE.getValue());
         }
-        
     }
-
 
     @Override
     public boolean isFinished() {
@@ -49,7 +48,7 @@ public class IntakeCommand extends Command {
     public void end(boolean interrupted) {
         endEffectorSubsystem.stopRoller();
         indicatorSubsystem.setPattern(Patterns.NORMAL);
-        destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2);  
+        destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2);
         elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true));
     }
 

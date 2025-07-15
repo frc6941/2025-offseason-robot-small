@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.DistanceUnit;
@@ -40,19 +41,19 @@ public class Constants {
         public static final String kSwerveModuleTag = "Swerve/SwerveModule";
         public static SwerveLimit kDefaultSwerveLimit = SwerveLimit.builder()
                 .maxLinearVelocity(MetersPerSecond.of(4.5))
-                .maxSkidAcceleration(MetersPerSecondPerSecond.of(22.0))
+                .maxSkidAcceleration(MetersPerSecondPerSecond.of(12.0))
                 .maxAngularVelocity(RadiansPerSecond.of(10.0))
                 .maxAngularAcceleration(RadiansPerSecondPerSecond.of(15.0))
                 .build();
         public static SwerveModuleLimit kDefaultSwerveModuleLimit = SwerveModuleLimit.builder()
                 .maxDriveVelocity(MetersPerSecond.of(4.5))
-                .maxDriveAcceleration(MetersPerSecondPerSecond.of(25.0))
+                .maxDriveAcceleration(MetersPerSecondPerSecond.of(10.0))
                 .maxSteerAngularVelocity(RadiansPerSecond.of(200.0))
                 .maxSteerAngularAcceleration(RadiansPerSecondPerSecond.of(300.0))
                 .build();
         public static SwerveConfig.SwerveModuleConfig kModuleCompFL = SwerveConfig.SwerveModuleConfig.builder()
                 .name("FL")
-                .location(new Translation2d(0.5, 0.5))
+                .location(new Translation2d(0.29, 0.29))
                 .driveMotorId(SWERVE_FLD.id)
                 .steerMotorId(SWERVE_FLS.id)
                 .encoderId(SWERVE_FLC.id)
@@ -64,7 +65,7 @@ public class Constants {
                 .build();
         public static SwerveConfig.SwerveModuleConfig kModuleCompFR = SwerveConfig.SwerveModuleConfig.builder()
                 .name("FR")
-                .location(new Translation2d(0.5, -0.5))
+                .location(new Translation2d(0.29, -0.29))
                 .driveMotorId(SWERVE_FRD.id)
                 .steerMotorId(SWERVE_FRS.id)
                 .encoderId(SWERVE_FRC.id)
@@ -76,7 +77,7 @@ public class Constants {
                 .build();
         public static SwerveConfig.SwerveModuleConfig kModuleCompBL = SwerveConfig.SwerveModuleConfig.builder()
                 .name("BL")
-                .location(new Translation2d(-0.5, 0.5))
+                .location(new Translation2d(-0.29, 0.29))
                 .driveMotorId(SWERVE_BLD.id)
                 .steerMotorId(SWERVE_BLS.id)
                 .encoderId(SWERVE_BLC.id)
@@ -88,7 +89,7 @@ public class Constants {
                 .build();
         public static SwerveConfig.SwerveModuleConfig kModuleCompBR = SwerveConfig.SwerveModuleConfig.builder()
                 .name("BR")
-                .location(new Translation2d(-0.5, -0.5))
+                .location(new Translation2d(-0.29, -0.29))
                 .driveMotorId(SWERVE_BRD.id)
                 .steerMotorId(SWERVE_BRS.id)
                 .encoderId(SWERVE_BRC.id)
@@ -131,7 +132,7 @@ public class Constants {
                 })
                 .odometryFrequency(Hertz.of(100))
                 .driveStatorCurrentLimit(Amps.of(110))
-                .steerStatorCurrentLimit(Amps.of(70))
+                .steerStatorCurrentLimit(Amps.of(40))
                 .canivoreCanBusName(CANIVORE_CAN_BUS_NAME)
                 .pigeonId(PIGEON.id)
                 .build();
@@ -139,7 +140,7 @@ public class Constants {
         @NTParameter(tableName = kParameterTag + "/" + kSwerveModuleTag)
         private final static class SwerveModuleParams {
             private final static class Drive {
-                static final double kP = 1;
+                static final double kP = 8;
                 static final double kI = 0.0;
                 static final double kD = 0.0;
                 static final double kS = 0;
@@ -244,18 +245,6 @@ public class Constants {
 
     }
 
-    public static class Limelight {
-        public static final String LIMELIGHT_LEFT = "limelight-leftf";//TODO: change
-        public static final String LIMELIGHT_RIGHT = "limelight-rightf";//TODO: change
-        public static final double AREA_THRESHOLD = 0.1;
-        public static final String kTag = "LimeLight";
-
-        @NTParameter(tableName = kParameterTag + "/" + kTag)
-        public static class LimeLightParams {
-            public static final double OCULUS_RESET_AMBIGUITY_THRESHOLD = 0.15;
-        }
-    }
-
     public static class Indicator {
         public static final int LED_PORT = 0;//TODO: change
         public static final int LED_BUFFER_LENGTH = 30;//TODO: change
@@ -265,9 +254,9 @@ public class Constants {
         public static final String[] PV_CAMERA_NAMES = {"LeftCamera", "RightCamera"};
         public static final boolean[] SNAPSHOT_ENABLED = {false, false};
         public static final int SNAPSHOT_PERIOD = 5; //seconds
-        public static Pose3d[] ROBOT_RELATIVE_TO_CMAERA = new Pose3d[]{
-                new Pose3d(-0.29051, -0.29248, -0.19732, new Rotation3d(0, 10, 17.9)),
-                new Pose3d(-0.29051, 0.29248, -0.19732, new Rotation3d(0, 10, -17.9))
+        public static Transform3d[] CAMERA_RELATIVE_TO_ROBOT = new Transform3d[]{
+                new Transform3d(0.29051, 0.29248, 0.19732, new Rotation3d(Math.toRadians(0), Math.toRadians(-10), Math.toRadians(-17.9))),
+                new Transform3d(0.29051, -0.29248, 0.19732, new Rotation3d(Math.toRadians(0), Math.toRadians(-10), Math.toRadians(17.9)))
         };
 //        public static final String kPhotonVisionTag = "PhotonVision";
 //        @NTParameter(tableName = "Params" + "/" + kPhotonVisionTag)
@@ -281,8 +270,49 @@ public class Constants {
         public static final Measure<LinearAccelerationUnit> MAX_AIMING_ACCELERATION = MetersPerSecondPerSecond.of(10);
         public static final Measure<DistanceUnit> PIPE_TO_TAG = Meters.of(0.164308503);
 
-        @NTParameter(tableName = "Params" + "/" + kTag)
-        public final static class ReefAimCommandParams {
+        @NTParameter(tableName = "Params/" + kTag)
+        public static class ReefAimCommandParams {
+            static final double translationKp = 3.2;
+            static final double translationKi = 0.0;
+            static final double translationKiZone = 0.00;
+            static final double translationKd = 0.10;
+            static final double translationVelocityMaxFar = 4.6;
+            static final double translationVelocityMaxNear = 3.5;
+            static final double translationParamsChangeDistance = 1.5;
+            static final double translationAccelerationMax = 13.0;
+
+            static final double translationFastKp = 3.6;
+            static final double translationFastKi = 0.0;
+            static final double translationFastKiZone = 0.00;
+            static final double translationFastKd = 0.15;
+            static final double translationFastVelocityMaxFar = 4.6;
+            static final double translationFastVelocityMaxNear = 3.6;
+            static final double translationFastParamsChangeDistance = 1.8;
+
+            static final double rotationKp = 4.5;
+            static final double rotationKi = 0.0;
+            static final double rotationKiZone = 0.0;
+            static final double rotationKd = 0.1;
+            static final double rotationVelocityMax = 500.0;
+            static final double rotationAccelerationMax = 2000.0;
+
+            static final double xOnTargetMeter = 0.04;
+            static final double yOnTargetMeter = 0.02;
+            static final double xStationaryMetersPerSecond = 0.35;
+            static final double yStationaryMetersPerSecond = 0.25;
+
+            static final double xOnTargetFastMeter = 0.04;
+            static final double yOnTargetFastMeter = 0.035;
+            static final double xStationaryFastMetersPerSecond = 0.40;
+            static final double yStationaryFastMetersPerSecond = 0.30;
+
+            static final double imuStationaryDeg = 4.0;
+            static final double rotationOnTargetToleranceDegree = 1.5;
+            static final double rotationOnTargetVelocityToleranceDegreesPerSecond = 15.0;
+            static final double rotationAdjustmentMaxDegree = 0.0;
+
+            // old stuff
+
             public static final double HEXAGON_DANGER_ZONE_OFFSET = 0.24;
             public static final double MAX_DISTANCE_REEF_LINEUP = 0.75;
             public static final double ROBOT_TO_PIPE_METERS = 0.59;

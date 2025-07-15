@@ -21,18 +21,19 @@ public class PhotonVisionIOSim implements PhotonVisionIO {
         inputs.name = name;
         inputs.id = id;
         inputs.hasTargets = false;
-        inputs.timestampMs = System.currentTimeMillis();
+        inputs.timestampSec = System.currentTimeMillis();
 
         inputs.hasFreshData = false;
-        inputs.bestPose = new Pose3d();
-        inputs.altPose = new Pose3d();
-        inputs.bestPoseReprojErr = 0;
-        inputs.altPoseReprojErr = 0;
-        inputs.ambiguity = 0;
+        inputs.estimatePose = new Pose3d();
+        inputs.strategyUsed = estimateStrategy.None;
     }
 
     @Override
     public void takeOutputSnapshot() {
         // No-op for simulation
+    }
+
+    @Override
+    public void setRefPose(Pose3d refPose) {
     }
 }

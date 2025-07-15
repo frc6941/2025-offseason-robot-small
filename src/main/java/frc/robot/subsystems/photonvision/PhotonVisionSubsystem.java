@@ -3,9 +3,9 @@ package frc.robot.subsystems.photonvision;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotStateRecorder;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
-
-import java.util.Optional;
 
 import static frc.robot.Constants.Photonvision.SNAPSHOT_ENABLED;
 import static frc.robot.Constants.Photonvision.SNAPSHOT_PERIOD;
@@ -14,8 +14,9 @@ public class PhotonVisionSubsystem extends SubsystemBase {
 
     private final PhotonVisionIO[] ios;
     private final PhotonVisionIOInputsAutoLogged[] inputs;
-    private Timer snapshotTimer = new Timer();
-    public Optional<Pose3d> estimatedPose = Optional.empty();
+    private final Timer snapshotTimer = new Timer();
+    @AutoLogOutput(key = "PhotonVision/finalEstimatedPose")
+    public Pose3d estimatedPose = null;
     public double timestampSeconds = 0.0;
 
     public PhotonVisionSubsystem(PhotonVisionIO... ios) {
@@ -30,6 +31,7 @@ public class PhotonVisionSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         for (int i = 0; i < ios.length; i++) {
+            ios[i].setRefPose(RobotStateRecorder.getPoseWorldRobotCurrent());
             ios[i].updateInputs(inputs[i]);
             Logger.processInputs("PhotonVision/Inst" + i, inputs[i]);
         }
@@ -39,24 +41,51 @@ public class PhotonVisionSubsystem extends SubsystemBase {
             }
             snapshotTimer.reset();
         }
-        estimatedPose = determinePoseEstimate();
-        System.out.println(estimatedPose);
+        determinePoseEstimate();
     }
 
-    public Optional<Pose3d> determinePoseEstimate() {
+    public void determinePoseEstimate() {
 
         Pose3d bestPose = null;
-        double bestErr = Double.MAX_VALUE;
+        boolean multitagUsed = false;
+        int idSelected = -1;
         for (int i = 0; i < ios.length; i++) {
-            if (inputs[i].bestPoseReprojErr < bestErr) {
-                bestErr = inputs[i].bestPoseReprojErr;
-                bestPose = inputs[i].bestPose;
-                timestampSeconds = (double) inputs[i].timestampMs / 1000;
+            switch (inputs[i].strategyUsed) {
+                case MULTI_TAG: {
+                    if (!multitagUsed || replacePose(bestPose, inputs[i].estimatePose)) {
+                        multitagUsed = true;
+                        bestPose = inputs[i].estimatePose;
+                        idSelected = i;
+                    }
+                    break;
+                }
+                case SINGLE_TAG:
+                    if (!multitagUsed && (bestPose == null || replacePose(bestPose, inputs[i].estimatePose))) {
+                        bestPose = inputs[i].estimatePose;
+                        idSelected = i;
+                    }
+                    break;
+                default:
             }
+
         }
-        if (bestPose == null) {
-            return Optional.empty();
+        if (idSelected != -1) {
+            estimatedPose = inputs[idSelected].estimatePose;
+            timestampSeconds = inputs[idSelected].timestampSec;
+        } else {
+            estimatedPose = null;
+            timestampSeconds = 0.0;
         }
-        return Optional.of(bestPose);
+        return;
+    }
+
+    public boolean replacePose(Pose3d poseCompared, Pose3d poseSelected) {
+        Logger.recordOutput("PV/PoseC", poseCompared);
+        Logger.recordOutput("PV/PoseS", poseSelected);
+        return Math.abs(poseCompared.getRotation().minus(
+                RobotStateRecorder.getPoseWorldRobotCurrent().getRotation()).getAngle()) <
+                Math.abs(poseSelected.getRotation().minus(
+                        RobotStateRecorder.getPoseWorldRobotCurrent().getRotation()).getAngle());
     }
 }
+
