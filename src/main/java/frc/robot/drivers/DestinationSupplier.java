@@ -11,7 +11,7 @@ import frc.robot.Constants;
 import frc.robot.ElevatorCommonNT;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.Reef;
-import frc.robot.ReefAimCommandParamsNT;
+import frc.robot.NavToStationCommandParamsNT;
 import lombok.Getter;
 import lombok.Setter;
 import org.littletonrobotics.AllianceFlipUtil;
@@ -50,6 +50,23 @@ public class DestinationSupplier {
      * @return A modified goal pose that accounts for optimal approach positioning
      */
     public static Pose2d getDriveTarget(Pose2d robot, Pose2d goal) {
+//        Transform2d offset = new Transform2d(goal, new Pose2d(robot.getTranslation(), goal.getRotation()));
+//        double yDistance = Math.abs(offset.getY());
+//        double xDistance = Math.abs(offset.getX());
+//        double shiftXT =
+//                MathUtil.clamp(
+//                        (yDistance / (Reef.faceLength * 2)) + ((xDistance - 0.3) / (Reef.faceLength * 3)),
+//                        0.0,
+//                        1.0);
+//        double shiftYT = MathUtil.clamp(yDistance <= 0.2 ? 0.0 : -offset.getX() / Reef.faceLength, 0.0, 1.0);
+//        goal = goal.transformBy(
+//                new Transform2d(
+//                        shiftXT * NavToStationCommandParamsNT.MAX_DISTANCE_REEF_LINEUP.getValue(),
+//                        Math.copySign(shiftYT * NavToStationCommandParamsNT.MAX_DISTANCE_REEF_LINEUP.getValue() * 0.8, offset.getY()),
+//                        new Rotation2d()));
+//
+//        return goal;
+
         Transform2d offset = new Transform2d(goal, new Pose2d(robot.getTranslation(), goal.getRotation()));
         double yDistance = Math.abs(offset.getY());
         double xDistance = Math.abs(offset.getX());
@@ -59,10 +76,15 @@ public class DestinationSupplier {
                         0.0,
                         1.0);
         double shiftYT = MathUtil.clamp(yDistance <= 0.2 ? 0.0 : -offset.getX() / Reef.faceLength, 0.0, 1.0);
+
+        if (shiftXT < AimParamsNT.ShiftingTerminate.getValue())
+            shiftXT = 0.0;
+        if (shiftYT < AimParamsNT.ShiftingTerminate.getValue())
+            shiftYT = 0.0;
         goal = goal.transformBy(
                 new Transform2d(
-                        shiftXT * ReefAimCommandParamsNT.MAX_DISTANCE_REEF_LINEUP.getValue(),
-                        Math.copySign(shiftYT * ReefAimCommandParamsNT.MAX_DISTANCE_REEF_LINEUP.getValue() * 0.8, offset.getY()),
+                        shiftXT * AimParamsNT.MaxDistanceReefLineup.getValue(),
+                        Math.copySign(shiftYT * AimParamsNT.MaxDistanceReefLineup.getValue() * 0.8, offset.getY()),
                         new Rotation2d()));
 
         return goal;
@@ -78,7 +100,7 @@ public class DestinationSupplier {
     public static Pose2d getFinalCoralTarget(Pose2d goal, boolean rightReef) {
         goal = goal.transformBy(new Transform2d(
                 new Translation2d(
-                        ReefAimCommandParamsNT.ROBOT_TO_PIPE_METERS.getValue(),
+                        NavToStationCommandParamsNT.ROBOT_TO_PIPE_METERS.getValue(),
                         Constants.ReefAimCommand.PIPE_TO_TAG.magnitude() * (rightReef ? 1 : -1)),
                 new Rotation2d()));
         return goal;
@@ -112,7 +134,7 @@ public class DestinationSupplier {
         Logger.recordOutput("EdgeCase/DeltaDistance", secondMinDistance - minDistance);
         Logger.recordOutput("EdgeCase/ControllerX", ControllerX);
         Logger.recordOutput("EdgeCase/ControllerY", ControllerY);
-        if ((secondMinDistance - minDistance) < ReefAimCommandParamsNT.Edge_Case_Max_Delta.getValue()) {
+        if ((secondMinDistance - minDistance) < NavToStationCommandParamsNT.Edge_Case_Max_Delta.getValue()) {
             Logger.recordOutput("EdgeCase/IsEdgeCase", true);
             if (Math.abs(ControllerX) >= 0.05 || Math.abs(ControllerY) >= 0.05) {
                 minDistanceID = solveEdgeCase(ControllerX, ControllerY, minDistanceID, secondMinDistanceID);
@@ -163,7 +185,7 @@ public class DestinationSupplier {
                 minDistance = distance;
             }
         }
-        if ((secondMinDistance - minDistance) < ReefAimCommandParamsNT.Edge_Case_Max_Delta.getValue() && (Math.abs(ControllerX) >= 0.05 || Math.abs(ControllerY) >= 0.05)) {
+        if ((secondMinDistance - minDistance) < NavToStationCommandParamsNT.Edge_Case_Max_Delta.getValue() && (Math.abs(ControllerX) >= 0.05 || Math.abs(ControllerY) >= 0.05)) {
             minDistanceID = solveEdgeCase(ControllerX, ControllerY, minDistanceID, secondMinDistanceID);
         }
         return minDistanceID;

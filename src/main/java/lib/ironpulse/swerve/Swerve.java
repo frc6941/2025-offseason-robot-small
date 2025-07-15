@@ -155,7 +155,11 @@ public class Swerve extends SubsystemBase {
     }
 
     public void runStop() {
-        runTwist(new ChassisSpeeds());
+        for (int i = 0; i < config.moduleCount(); i++) {
+            var setpoint = setpointCurr.moduleStates()[i];
+            setpoint.speedMetersPerSecond = 0.0;
+            modules.get(i).runState(setpoint);
+        }
     }
 
     public void runStopAndLock() {

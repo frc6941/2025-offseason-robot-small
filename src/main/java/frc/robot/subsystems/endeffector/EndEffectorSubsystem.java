@@ -41,7 +41,6 @@ public class EndEffectorSubsystem extends SubsystemBase {
     @AutoLogOutput(key = "EndEffectorArm/endEE")
     private boolean endEE = false;
 
-    
 
     public EndEffectorSubsystem(
             RollerIO rollerIO,
@@ -76,8 +75,8 @@ public class EndEffectorSubsystem extends SubsystemBase {
         Logger.processInputs(NAME + "/Front Beambreak", frontBeambreakInputs);
         Logger.processInputs(NAME + "/End Beambreak", endBeambreakInputs);
         Logger.processInputs(NAME + "/Roller", armRollerIOInputs);
-        Logger.recordOutput(NAME+"/intakeFinished", intakeFinished());
-        Logger.recordOutput(NAME+"/hasCoral", hasCoral());
+        Logger.recordOutput(NAME + "/intakeFinished", intakeFinished());
+        Logger.recordOutput(NAME + "/hasCoral", hasCoral());
 
 
         // Update tunable numbers if tuning is enabled
@@ -99,7 +98,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
         rollerIO.setVoltage(voltage);
     }
 
-    public void hold(){
+    public void hold() {
         rollerIO.setVoltage(EndEffectorParamsNT.CORAL_HOLD_VOLTAGE.getValue());
     }
 
@@ -109,6 +108,10 @@ public class EndEffectorSubsystem extends SubsystemBase {
 
     public boolean intakeFinished() {
         return endEE && !frontEE;
+    }
+
+    public boolean coralInMiddle() {
+        return endEE && frontEE;
     }
 
     public boolean hasCoral() {

@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.pathplanner.lib.config.RobotConfig;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -13,6 +14,7 @@ import lib.ironpulse.swerve.SwerveLimit;
 import lib.ironpulse.swerve.SwerveModuleLimit;
 import lib.ironpulse.swerve.sim.SwerveSimConfig;
 import lib.ironpulse.swerve.sjtu6.SwerveSJTU6Config;
+import lib.ironpulse.utils.Logging;
 import lib.ntext.NTParameter;
 
 import static edu.wpi.first.units.Units.*;
@@ -30,6 +32,17 @@ public class Constants {
     public static final double LOOPER_DT = 0.02;
     public static final boolean TUNING = true;
     public static final boolean disableHAL = false;
+
+    // auto robot config
+    public static RobotConfig AUTO_ROBOT_CONFIG;
+
+    static {
+        try {
+            AUTO_ROBOT_CONFIG = RobotConfig.fromGUISettings();
+        } catch (Exception e) {
+            Logging.error("Constants", "Failed to load AUTO_ROBOT_CONFIG. %s", e.getMessage());
+        }
+    }
 
 
     /* -------------------------------------------------------------------------- */
@@ -140,19 +153,19 @@ public class Constants {
         private final static class SwerveModuleParams {
             private final static class Drive {
                 static final double kP = 8;
-                static final double kI = 0.0;
+                static final double kI = 0.12;
                 static final double kD = 0.0;
-                static final double kS = 0;
-                static final double kV = 0;
-                static final double kA = 0.0;
+                static final double kS = 0.0;
+                static final double kV = 0.1247;
+                static final double kA = 0.01215;
                 static final boolean isBrake = true;
             }
 
             private final static class Steer {
                 static final double kP = 10;
-                static final double kI = 0;
-                static final double kD = 0.1;
-                static final double kS = 0.022;
+                static final double kI = 0.001;
+                static final double kD = 0.15;
+                static final double kS = 0.005;
                 static final boolean isBrake = true;
             }
         }
@@ -164,7 +177,6 @@ public class Constants {
     public static class Controller {
         public static final int kManual = 0;
         public static final int kAuto = 1;
-        public static final int kTest = 2;
     }
 
     /* -------------------------------------------------------------------------- */
@@ -234,12 +246,14 @@ public class Constants {
             public static final double ROLLER_KS = 0;
 
             public static final double CORAL_INTAKE_VOLTAGE = 12.0;
-            public static final double CORAL_INDEX_VOLTAGE = 6.0;
+            public static final double CORAL_INDEX_VOLTAGE = 4.0;
             public static final double CORAL_OUTTAKE_VOLTAGE = -6.0;
             public static final double CORAL_PRESHOOT_VOLTAGE = -10.0;
             public static final double CORAL_HOLD_VOLTAGE = 0.5;
             public static final double CORAL_SHOOT_VOLTAGE = 12.0;
             public static final double CORAL_SHOOT_DELAY_TIME = 0.2;
+            public static final double REVERSE_POKE_VOLTAGE = 3.0;
+            public static final double ALGAE_POKE_VOLTAGE = 3.0;
         }
 
     }
@@ -254,7 +268,7 @@ public class Constants {
         public static final boolean[] SNAPSHOT_ENABLED = {false, false};
         public static final int SNAPSHOT_PERIOD = 5; //seconds
         public static Transform3d[] CAMERA_RELATIVE_TO_ROBOT = new Transform3d[]{
-                new Transform3d(0.29051, 0.29248, 0.19732, new Rotation3d(Math.toRadians(0), Math.toRadians(-10), Math.toRadians(-17.9))),
+                new Transform3d(0.19933, 0.30879, 0.3156, new Rotation3d(Math.toRadians(0), Math.toRadians(0), Math.toRadians(-20))),
                 new Transform3d(0.29051, -0.29248, 0.19732, new Rotation3d(Math.toRadians(0), Math.toRadians(-10), Math.toRadians(17.9)))
         };
 //        public static final String kPhotonVisionTag = "PhotonVision";
@@ -280,7 +294,7 @@ public class Constants {
             static final double translationParamsChangeDistance = 1.5;
             static final double translationAccelerationMax = 13.0;
 
-            static final double translationFastKp = 3.6;
+            static final double translationFastKp = 5.5;
             static final double translationFastKi = 0.0;
             static final double translationFastKiZone = 0.00;
             static final double translationFastKd = 0.15;
@@ -312,6 +326,58 @@ public class Constants {
 
             // old stuff
 
+            public static final double HEXAGON_DANGER_ZONE_OFFSET = 0.24;
+            public static final double MAX_DISTANCE_REEF_LINEUP = 0.75;
+            public static final double ROBOT_TO_PIPE_METERS = 0.59;
+            public static final double X_TOLERANCE_METERS = 0.01;
+            public static final double Y_TOLERANCE_METERS = 0.01;
+            public static final double RAISE_LIMIT_METERS = 1;
+            public static final double OMEGA_TOLERANCE_DEGREES = 1;
+            public static final double Edge_Case_Max_Delta = 0.3;
+            public static final double ROBOT_TO_ALGAE_METERS = 0.489;
+            public static final double ALGAE_TO_TAG_METERS = 0;
+            public static final double HEXAGON_DANGER_DEGREES = 45;
+        }
+
+    }
+
+    public static final class NavToStationCommand {
+        public static final String kTag = "NavToStationCommand";
+
+        public static final Measure<LinearVelocityUnit> MAX_AIMING_SPEED = MetersPerSecond.of(3.5);
+        public static final Measure<LinearAccelerationUnit> MAX_AIMING_ACCELERATION = MetersPerSecondPerSecond.of(10);
+        public static final Measure<DistanceUnit> PIPE_TO_TAG = Meters.of(0.164308503);
+
+        @NTParameter(tableName = "Params/" + kTag)
+        public static class NavToStationCommandParams {
+            static final double translationKp = 3.2;
+            static final double translationKi = 0.0;
+            static final double translationKiZone = 0.00;
+            static final double translationKd = 0.10;
+            static final double translationVelocityMaxFar = 4.6;
+            static final double translationVelocityMaxNear = 3.5;
+            static final double translationParamsChangeDistance = 1.5;
+            static final double translationAccelerationMax = 13.0;
+
+            static final double rotationKp = 4.5;
+            static final double rotationKi = 0.0;
+            static final double rotationKiZone = 0.0;
+            static final double rotationKd = 0.1;
+            static final double rotationVelocityMax = 500.0;
+            static final double rotationAccelerationMax = 2000.0;
+
+            static final double xOnTargetMeter = 0.04;
+            static final double yOnTargetMeter = 0.02;
+            static final double xStationaryMetersPerSecond = 0.35;
+            static final double yStationaryMetersPerSecond = 0.25;
+
+            static final double imuStationaryDeg = 4.0;
+            static final double rotationOnTargetToleranceDegree = 1.5;
+            static final double rotationOnTargetVelocityToleranceDegreesPerSecond = 15.0;
+            static final double rotationAdjustmentMaxDegree = 0.0;
+
+            static final double ROBOT_TO_STATION_METERS = 0.45;
+            // old stuff
             public static final double HEXAGON_DANGER_ZONE_OFFSET = 0.24;
             public static final double MAX_DISTANCE_REEF_LINEUP = 0.75;
             public static final double ROBOT_TO_PIPE_METERS = 0.59;

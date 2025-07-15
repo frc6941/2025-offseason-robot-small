@@ -8,8 +8,13 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.auto.AutoActions;
+import frc.robot.auto.AutoSelector;
+import frc.robot.auto.routines.Forward0CoralAuto;
+import frc.robot.auto.routines.LeftStationIntakeAuto;
+import frc.robot.commands.AutoIntakeCommand;
+import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.drivers.DestinationSupplier;
@@ -50,11 +55,27 @@ public class RobotContainer {
 
     // controllers
     CommandXboxController manualController = new CommandXboxController(Constants.Controller.kManual);
-    CommandGenericHID autoController = new CommandGenericHID(Constants.Controller.kAuto);
+    CommandXboxController autoController = new CommandXboxController(Constants.Controller.kAuto);
 
     public RobotContainer() {
         configSubsystems();
+        configAutos();
         configBindings();
+    }
+
+    private void configAutos() {
+        // How corals are labeled in auto:
+        //      G H
+        //    I     F
+        //  J         E
+        //  K         D
+        //    L     C
+        //      A B
+        //  Driver Station
+        AutoActions.init(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem);
+
+        AutoSelector.getInstance().registerAuto("Forward0CoralAuto", new Forward0CoralAuto());
+        AutoSelector.getInstance().registerAuto("LeftStationIntakeAuto", new LeftStationIntakeAuto());
     }
 
     private void configSubsystems() {
@@ -80,8 +101,8 @@ public class RobotContainer {
                     new BeambreakIOReal(2),
                     new BeambreakIOReal(0));
             photonVisionSubsystem = new PhotonVisionSubsystem(
-                    new PhotonVisionIOReal(0),
-                    new PhotonVisionIOReal(1)
+                    new PhotonVisionIOReal(0)//,
+                    //new PhotonVisionIOReal(1)
             );
         } else {
             swerve = new Swerve(
@@ -112,9 +133,9 @@ public class RobotContainer {
         swerve.setDefaultCommand(
                 SwerveCommands.driveWithJoystick(
                         swerve,
-                        () -> -manualController.getLeftY(),
-                        () -> -manualController.getLeftX(),
-                        () -> -manualController.getRightX(),
+                        () -> greaterInput(-manualController.getLeftY(), -autoController.getLeftY()),
+                        () -> greaterInput(-manualController.getLeftX(), -autoController.getLeftX()),
+                        () -> greaterInput(-manualController.getRightX(), -autoController.getRightX()),
                         RobotStateRecorder::getPoseDriverRobotCurrent,
                         MetersPerSecond.of(0.04),
                         DegreesPerSecond.of(3.0)));
@@ -127,6 +148,7 @@ public class RobotContainer {
                                             TransformRecorder.kFrameRobot);
                                     indicatorSubsystem.setPattern(IndicatorIO.Patterns.RESET_ODOM);
                                 })));
+        manualController.povDown().onTrue(elevatorSubsystem.zeroElevator());
         manualController.rightBumper().onTrue(new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem));//手动intake
         manualController.rightTrigger().whileTrue(new ShootCommand(endEffectorSubsystem, indicatorSubsystem));//强制放
         manualController.povLeft().whileTrue(Commands.sequence(
@@ -144,7 +166,44 @@ public class RobotContainer {
                 .onFalse(new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem));
         manualController.y().onTrue(elevatorSubsystem.zeroElevator());//电梯归零
 
+        autoController.start().onTrue(
+                SwerveCommands.resetAngle(swerve, new Rotation2d())
+                        .alongWith(Commands.runOnce(
+                                () -> {
+                                    RobotStateRecorder.getInstance().resetTransform(
+                                            TransformRecorder.kFrameWorld,
+                                            TransformRecorder.kFrameRobot);
+                                    indicatorSubsystem.setPattern(IndicatorIO.Patterns.RESET_ODOM);
+                                })));
+        autoController.rightBumper().whileTrue(new AutoIntakeCommand(swerve, endEffectorSubsystem, elevatorSubsystem, indicatorSubsystem));//手动intake
+        autoController.rightTrigger().whileTrue(new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, () -> false));//强制放
 
+        autoController.leftStick().onTrue(Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(false)));
+        autoController.rightStick().onTrue(Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(true)));
+
+        autoController.povLeft().whileTrue(new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem));
+        autoController.povRight().whileTrue(new AutoIntakeCommand(swerve, endEffectorSubsystem, elevatorSubsystem, indicatorSubsystem));
+
+        autoController.y().onTrue(elevatorSubsystem.zeroElevator());
+
+        autoController.leftTrigger().whileTrue(
+                Commands.sequence(
+                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)),
+                        new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, autoController.rightTrigger())
+                )
+        );
+        autoController.leftBumper().whileTrue(
+                Commands.sequence(
+                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)),
+                        new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, autoController.rightTrigger())
+                )
+        );
+        autoController.rightBumper().whileTrue(
+                Commands.sequence(
+                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
+                        new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, autoController.rightTrigger())
+                )
+        );
     }
 
     public void robotPeriodic() {
@@ -161,5 +220,10 @@ public class RobotContainer {
                 TransformRecorder.kFrameRobot);
         RobotStateRecorder.putVelocityRobot(now, swerve.getChassisSpeeds());
         RobotStateRecorder.periodic();
+    }
+
+    private double greaterInput(double input1, double input2) {
+        if (Math.abs(input1) > Math.abs(input2)) return input1;
+        return input2;
     }
 }
