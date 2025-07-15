@@ -10,9 +10,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.ManualIntakeCommand;
-import frc.robot.commands.ManualShootCommand;
-import frc.robot.commands.ReefAimCommand;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.ShootCommand;
 import frc.robot.drivers.DestinationSupplier;
 import frc.robot.subsystems.beambreak.BeambreakIOReal;
 import frc.robot.subsystems.beambreak.BeambreakIOSim;
@@ -50,8 +49,8 @@ public class RobotContainer {
     PhotonVisionSubsystem photonVisionSubsystem;
 
     // controllers
-    CommandXboxController driverController = new CommandXboxController(Constants.Controller.kDriver);
-    CommandGenericHID operatorController = new CommandGenericHID(Constants.Controller.kOperator);
+    CommandXboxController manualController = new CommandXboxController(Constants.Controller.kManual);
+    CommandGenericHID autoController = new CommandGenericHID(Constants.Controller.kAuto);
 
     public RobotContainer() {
         configSubsystems();
@@ -113,13 +112,13 @@ public class RobotContainer {
         swerve.setDefaultCommand(
                 SwerveCommands.driveWithJoystick(
                         swerve,
-                        () -> -driverController.getLeftY(),
-                        () -> -driverController.getLeftX(),
-                        () -> -driverController.getRightX(),
+                        () -> -manualController.getLeftY(),
+                        () -> -manualController.getLeftX(),
+                        () -> -manualController.getRightX(),
                         RobotStateRecorder::getPoseDriverRobotCurrent,
                         MetersPerSecond.of(0.04),
                         DegreesPerSecond.of(3.0)));
-        driverController.start().onTrue(
+        manualController.start().onTrue(
                 SwerveCommands.resetAngle(swerve, new Rotation2d())
                         .alongWith(Commands.runOnce(
                                 () -> {
@@ -128,17 +127,24 @@ public class RobotContainer {
                                             TransformRecorder.kFrameRobot);
                                     indicatorSubsystem.setPattern(IndicatorIO.Patterns.RESET_ODOM);
                                 })));
-        driverController.leftBumper();//自动取 自动对正 到位 吸球
-        driverController.rightBumper().whileTrue(new ReefAimCommand(swerve, indicatorSubsystem));//自动放 ELEvator自动到位 强制射
-        driverController.leftTrigger().whileTrue(new ManualIntakeCommand(elevatorSubsystem, endEffectorSubsystem));//手动intake
-        driverController.rightTrigger().whileTrue(new ManualShootCommand(elevatorSubsystem, endEffectorSubsystem));//强制放
-        driverController.a().onTrue(Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)).ignoringDisable(true));
-        driverController.b().onTrue(Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true))));//Elevator到位
-        driverController.x().onTrue(Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)).ignoringDisable(true));
-        driverController.y().onTrue(Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)).ignoringDisable(true));
-        driverController.leftStick();//L
-        driverController.rightStick();//R
-        driverController.povDown().onTrue(elevatorSubsystem.zeroElevator());//电梯归零
+        manualController.rightBumper().onTrue(new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem));//手动intake
+        manualController.rightTrigger().whileTrue(new ShootCommand(endEffectorSubsystem, indicatorSubsystem));//强制放
+        manualController.povLeft().whileTrue(Commands.sequence(
+                        Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)),
+                        Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true)))))
+                .onFalse(new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem
+                ));
+        manualController.leftTrigger().whileTrue(Commands.sequence(
+                        Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)),
+                        Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true)))))
+                .onFalse(new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem));
+        manualController.leftBumper().whileTrue(Commands.sequence(
+                        Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
+                        Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true)))))
+                .onFalse(new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem));
+        manualController.y().onTrue(elevatorSubsystem.zeroElevator());//电梯归零
+
+
     }
 
     public void robotPeriodic() {

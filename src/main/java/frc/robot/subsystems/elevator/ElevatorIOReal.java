@@ -24,6 +24,7 @@ public class ElevatorIOReal implements ElevatorIO {
     private final TalonFX follower;
 
     // Configurators
+    
     private final TalonFXConfigurator leaderConfigurator;
     private final TalonFXConfigurator followerConfigurator;
 

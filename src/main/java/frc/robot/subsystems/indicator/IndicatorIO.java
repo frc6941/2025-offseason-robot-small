@@ -4,6 +4,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.drivers.led.AddressableLEDPattern;
 import frc.robot.drivers.led.patterns.BlinkingPattern;
+import frc.robot.drivers.led.patterns.RainbowingPattern;
+import frc.robot.drivers.led.patterns.ScannerPattern;
+
 import org.littletonrobotics.junction.AutoLog;
 
 public interface IndicatorIO {
@@ -22,12 +25,13 @@ public interface IndicatorIO {
     default void reset() {}
 
     enum Patterns {
-        NORMAL(null),
+        NORMAL(new RainbowingPattern()),
         INTAKE(new BlinkingPattern(Color.kRed, 0.2)),
         AFTER_INTAKE(new BlinkingPattern(Color.kGreen, 0.02)),
         RESET_ODOM(new BlinkingPattern(Color.kWhite, 0.25)),
         AIMING(new BlinkingPattern(Color.kBlue, 0.25)),
-        AIMED(new BlinkingPattern(Color.kBlue, 0.02));
+        AIMED(new BlinkingPattern(Color.kBlue, 0.02)),
+        SHOOT(new ScannerPattern(Color.kRed, 5));
 
         public final AddressableLEDPattern pattern;
 

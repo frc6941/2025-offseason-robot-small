@@ -1,7 +1,7 @@
 package frc.robot.subsystems.indicator;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import lib.ironpulse.utils.LoggedTracer;
 import lombok.Getter;
 
 public class IndicatorSubsystem extends SubsystemBase {
@@ -33,14 +33,14 @@ public class IndicatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-//        switch (currentPattern) {
-//            case AFTER_INTAKE, RESET_ODOM, AIMED -> resetLed();
-//            default -> {
-//            }
-//        }
-//        io.updateInputs(inputs);
-//        Logger.processInputs("Indicator", inputs);
-//        LoggedTracer.record("Indicator");
+       switch (currentPattern) {
+           case AFTER_INTAKE, RESET_ODOM, AIMED -> resetLed();
+           default -> {
+           }
+       }
+       io.updateInputs(inputs);
+       org.littletonrobotics.junction.Logger.processInputs("Indicator", inputs);
+       LoggedTracer.record("Indicator");
     }
 
     private void resetLed() {

@@ -162,8 +162,8 @@ public class Constants {
     /*                              Controller Settings                           */
     /* -------------------------------------------------------------------------- */
     public static class Controller {
-        public static final int kDriver = 0;
-        public static final int kOperator = 1;
+        public static final int kManual = 0;
+        public static final int kAuto = 1;
         public static final int kTest = 2;
     }
 
@@ -186,16 +186,16 @@ public class Constants {
             private static final double motionCruiseVelocity = 100;
 
             private static final double motionJerk = 0.0;
-            private static final double MAX_EXTENSION_METERS = 1.41;
+            private static final double MAX_EXTENSION_METERS = 1.6;
             private static final double ELEVATOR_ZEROING_CURRENT = 40;
             private static final double SAFE_HEIGHT_FLIP = 0.54;
 
             private static final double SYSID_RAMP_RATE_VOLTS_PER_SEC = 1;
             private static final double SYSID_DYNAMIC_VOLTAGE = 7;
 
-            public static final double L2_EXTENSION_METERS = 0.485;
-            public static final double L3_EXTENSION_METERS = 0.6;
-            public static final double L4_EXTENSION_METERS = 1;
+            public static final double L2_EXTENSION_METERS = 0.5;
+            public static final double L3_EXTENSION_METERS = 0.9;
+            public static final double L4_EXTENSION_METERS = 1.5;
             public static final double P1_EXTENSION_METERS = 0.55;
             public static final double P2_EXTENSION_METERS = 0.88;
             public static final double INTAKE_EXTENSION_METERS = 0.0;
@@ -326,7 +326,5 @@ public class Constants {
         }
 
     }
-
-
 }
 
