@@ -182,12 +182,9 @@ public class Constants {
         @NTParameter(tableName = kParameterTag + "/" + kTag)
         private static final class ElevatorCommon {
             private static final double ELEVATOR_GOAL_TOLERANCE = 0.02;
-            private static final double motionAcceleration = 300.0;
-            private static final double motionCruiseVelocity = 100;
-
-            private static final double motionJerk = 0.0;
+            
             private static final double MAX_EXTENSION_METERS = 1.6;
-            private static final double ELEVATOR_ZEROING_CURRENT = 40;
+            private static final double ELEVATOR_ZEROING_CURRENT = 50.0;
             private static final double SAFE_HEIGHT_FLIP = 0.54;
 
             private static final double SYSID_RAMP_RATE_VOLTS_PER_SEC = 1;
@@ -200,14 +197,22 @@ public class Constants {
             public static final double P2_EXTENSION_METERS = 0.88;
             public static final double INTAKE_EXTENSION_METERS = 0.0;
 
+            public static final double motionAccelerationUp = 1000;
+            public static final double motionCruiseVelocityUp = 1000;
+            public static final double motionJerkUp = 0;
+
+            public static final double motionAccelerationDown = 300;
+            public static final double motionCruiseVelocityDown = 100;
+            public static final double motionJerkDown = 0;
+
             private static class ElevatorGainsClass {
-                private static final double ELEVATOR_KP = 2.8;
-                private static final double ELEVATOR_KI = 0;
-                private static final double ELEVATOR_KD = 0;
-                private static final double ELEVATOR_KA = 0;
-                private static final double ELEVATOR_KV = 0.08;// 0.107853495
-                private static final double ELEVATOR_KS = 0.1;
-                private static final double ELEVATOR_KG = 0.35;//0.3
+                private static final double ELEVATOR_KP = 3.0;
+                private static final double ELEVATOR_KI = 0.100000;
+                private static final double ELEVATOR_KD = 0.100000;
+                private static final double ELEVATOR_KA = 0.003000;
+                private static final double ELEVATOR_KV = 0.005000;// 0.107853495
+                private static final double ELEVATOR_KS = 0.7;
+                private static final double ELEVATOR_KG = 0.350000;//0.3
             }
         }
     }
