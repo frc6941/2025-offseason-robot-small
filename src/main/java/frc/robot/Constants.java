@@ -194,17 +194,17 @@ public class Constants {
         @NTParameter(tableName = kParameterTag + "/" + kTag)
         private static final class ElevatorCommon {
             private static final double ELEVATOR_GOAL_TOLERANCE = 0.02;
-            
-            private static final double MAX_EXTENSION_METERS = 1.6;
+
+            private static final double MAX_EXTENSION_METERS = 1.68;
             private static final double ELEVATOR_ZEROING_CURRENT = 50.0;
             private static final double SAFE_HEIGHT_FLIP = 0.54;
 
             private static final double SYSID_RAMP_RATE_VOLTS_PER_SEC = 1;
             private static final double SYSID_DYNAMIC_VOLTAGE = 7;
 
-            public static final double L2_EXTENSION_METERS = 0.5;
-            public static final double L3_EXTENSION_METERS = 0.9;
-            public static final double L4_EXTENSION_METERS = 1.5;
+            public static final double L2_EXTENSION_METERS = 0.485;
+            public static final double L3_EXTENSION_METERS = 0.93;
+            public static final double L4_EXTENSION_METERS = 1.68;
             public static final double P1_EXTENSION_METERS = 0.55;
             public static final double P2_EXTENSION_METERS = 0.88;
             public static final double INTAKE_EXTENSION_METERS = 0.0;
@@ -290,7 +290,7 @@ public class Constants {
 
         @NTParameter(tableName = "Params/" + kTag)
         public static class ReefAimCommandParams {
-            static final double translationKp = 3.2;
+            static final double translationKp = 2.8;
             static final double translationKi = 0.0;
             static final double translationKiZone = 0.00;
             static final double translationKd = 0.10;
