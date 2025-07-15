@@ -31,7 +31,7 @@ public class DestinationSupplier {
     @Getter
     @Setter
     private int targetTagID = 0;
-    private boolean useCoral = false;
+    private boolean useCoral = true;
     @Getter
     private elevatorSetpoint currentElevSetpointAlgae = elevatorSetpoint.P1;
 

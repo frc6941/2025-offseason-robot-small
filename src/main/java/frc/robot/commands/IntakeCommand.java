@@ -1,23 +1,20 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
-import frc.robot.ElevatorCommonNT;
 import frc.robot.EndEffectorParamsNT;
 import frc.robot.drivers.DestinationSupplier;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endeffector.EndEffectorSubsystem;
-import frc.robot.subsystems.indicator.IndicatorSubsystem;
 import frc.robot.subsystems.indicator.IndicatorIO.Patterns;
+import frc.robot.subsystems.indicator.IndicatorSubsystem;
 
-public class ManualIntakeCommand extends Command {
+public class IntakeCommand extends Command {
     private final ElevatorSubsystem elevatorSubsystem;
     private final EndEffectorSubsystem endEffectorSubsystem;
     private final IndicatorSubsystem indicatorSubsystem;
     DestinationSupplier destinationSupplier = DestinationSupplier.getInstance();
 
     public IntakeCommand(ElevatorSubsystem elevatorSubsystem, EndEffectorSubsystem endEffectorSubsystem, IndicatorSubsystem indicatorSubsystem) {
-    public ManualIntakeCommand(ElevatorSubsystem elevatorSubsystem, EndEffectorSubsystem endEffectorSubsystem) {
         this.elevatorSubsystem = elevatorSubsystem;
         this.endEffectorSubsystem = endEffectorSubsystem;
         this.indicatorSubsystem = indicatorSubsystem;

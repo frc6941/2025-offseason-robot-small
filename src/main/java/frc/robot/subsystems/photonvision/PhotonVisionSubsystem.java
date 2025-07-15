@@ -7,6 +7,8 @@ import frc.robot.RobotStateRecorder;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
+import java.util.Optional;
+
 import static frc.robot.Constants.Photonvision.SNAPSHOT_ENABLED;
 import static frc.robot.Constants.Photonvision.SNAPSHOT_PERIOD;
 
@@ -80,12 +82,11 @@ public class PhotonVisionSubsystem extends SubsystemBase {
     }
 
     public boolean replacePose(Pose3d poseCompared, Pose3d poseSelected) {
-        Logger.recordOutput("PV/PoseC", poseCompared);
-        Logger.recordOutput("PV/PoseS", poseSelected);
+//        Logger.recordOutput("PV/PoseC", poseCompared);
+//        Logger.recordOutput("PV/PoseS", poseSelected);
         return Math.abs(poseCompared.getRotation().minus(
                 RobotStateRecorder.getPoseWorldRobotCurrent().getRotation()).getAngle()) <
                 Math.abs(poseSelected.getRotation().minus(
                         RobotStateRecorder.getPoseWorldRobotCurrent().getRotation()).getAngle());
     }
 }
-

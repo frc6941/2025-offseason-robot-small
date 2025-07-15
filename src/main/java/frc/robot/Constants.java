@@ -1,6 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -163,8 +162,8 @@ public class Constants {
     /*                              Controller Settings                           */
     /* -------------------------------------------------------------------------- */
     public static class Controller {
-        public static final int kDriver = 0;
-        public static final int kOperator = 1;
+        public static final int kManual = 0;
+        public static final int kAuto = 1;
         public static final int kTest = 2;
     }
 
