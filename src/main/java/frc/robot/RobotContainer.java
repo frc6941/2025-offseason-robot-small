@@ -185,6 +185,7 @@ public class RobotContainer {
         autoController.povRight().whileTrue(new AutoIntakeCommand(swerve, endEffectorSubsystem, elevatorSubsystem, indicatorSubsystem));
 
         autoController.y().onTrue(elevatorSubsystem.zeroElevator());
+        autoController.a().whileTrue(new ShootCommand(endEffectorSubsystem, indicatorSubsystem));
 
         autoController.leftTrigger().whileTrue(
                 Commands.sequence(
