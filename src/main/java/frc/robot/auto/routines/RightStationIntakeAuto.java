@@ -19,29 +19,15 @@ public class RightStationIntakeAuto extends AutoRoutine {
                 AutoActions.reverseEE(),
                 AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L4),
                 AutoActions.autoScore('F'),
-                Commands.parallel(
-                        AutoActions.toStation(false),
-                        AutoActions.intake()
-                ),
+                AutoActions.autoIntake(true),
                 AutoActions.autoScore('D'),
-                Commands.parallel(
-                        AutoActions.toStation(false),
-                        AutoActions.intake()
-                ),
+                AutoActions.autoIntake(true),
                 AutoActions.autoScore('C'),
-                Commands.parallel(
-                        AutoActions.toStation(false),
-                        AutoActions.intake()
-                ),
+                AutoActions.autoIntake(true),
                 AutoActions.autoScore('E'),
-                Commands.parallel(
-                        AutoActions.toStation(false),
-                        AutoActions.intake()
-                ), AutoActions.autoScore('B'),
-                Commands.parallel(
-                        AutoActions.toStation(false),
-                        AutoActions.intake()
-                )
+                AutoActions.autoIntake(true),
+                AutoActions.autoScore('B'),
+                AutoActions.autoIntake(true)
         );
     }
 }

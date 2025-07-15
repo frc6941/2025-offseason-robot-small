@@ -11,11 +11,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
+import frc.robot.ElevatorCommonNT;
 import frc.robot.RobotStateRecorder;
-import frc.robot.commands.IntakeCommand;
-import frc.robot.commands.NavToStationCommand;
-import frc.robot.commands.ReefAimCommand;
-import frc.robot.commands.ReverseEndeffectorCommand;
+import frc.robot.commands.*;
 import frc.robot.drivers.DestinationSupplier;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endeffector.EndEffectorSubsystem;
@@ -199,7 +197,13 @@ public class AutoActions {
     }
 
     public static Command autoScore(char goal) {
-        return new ReefAimCommand(swerve, indicator, goal);
+        return Commands.sequence(
+                Commands.parallel(
+                        new ReefAimCommand(swerve, indicator, goal),
+                        Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(DestinationSupplier.getInstance().getElevatorSetpoint(true)))
+                ),
+                new ShootCommand(endEffectorSubsystem, indicator),
+                Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(ElevatorCommonNT.INTAKE_EXTENSION_METERS.getValue())));
     }
 
     public static Command toStation(boolean isRight) {
@@ -208,6 +212,13 @@ public class AutoActions {
 
     public static Command intake() {
         return new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicator);
+    }
+
+    public static Command autoIntake(boolean isRight) {
+        return Commands.parallel(
+                new NavToStationCommand(swerve, indicator, isRight),
+                new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicator)
+        );
     }
 
     public static Command setLevel(DestinationSupplier.elevatorSetpoint setpoint) {
