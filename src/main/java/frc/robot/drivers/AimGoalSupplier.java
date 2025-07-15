@@ -6,21 +6,15 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.Reef;
-import frc.robot.ReefAimCommandParamsNT;
+import frc.robot.NavToStationCommandParamsNT;
+import frc.robot.RobotStateRecorder;
 import lib.ntext.NTParameter;
-import lombok.Getter;
-import lombok.Setter;
 import org.littletonrobotics.AllianceFlipUtil;
 import org.littletonrobotics.junction.Logger;
 
 import java.util.List;
 
-import static lib.ironpulse.math.MathTools.epsilonEquals;
-
 public class AimGoalSupplier {
-    @Getter
-    @Setter
-    private static ReefFace selectedTarget = ReefFace.NearFlat;
 
     /**
      * Calculates the optimal drive target position based on the robot's current position and goal position
@@ -46,7 +40,7 @@ public class AimGoalSupplier {
             shiftYT = 0.0;
         goal = goal.transformBy(
                 new Transform2d(
-                        shiftXT * AimParamsNT.MaxDistanceReefLineup.getValue(),
+                        Math.copySign(shiftXT * AimParamsNT.MaxDistanceReefLineup.getValue(), offset.getX()),
                         Math.copySign(shiftYT * AimParamsNT.MaxDistanceReefLineup.getValue() * 0.8, offset.getY()),
                         new Rotation2d()));
 
@@ -79,8 +73,8 @@ public class AimGoalSupplier {
     public static Pose2d getFinalAlgaeTarget(Pose2d goal) {
         goal = goal.transformBy(new Transform2d(
                 new Translation2d(
-                        ReefAimCommandParamsNT.ROBOT_TO_ALGAE_METERS.getValue(),
-                        ReefAimCommandParamsNT.ALGAE_TO_TAG_METERS.getValue()),
+                        NavToStationCommandParamsNT.ROBOT_TO_ALGAE_METERS.getValue(),
+                        NavToStationCommandParamsNT.ALGAE_TO_TAG_METERS.getValue()),
                 new Rotation2d()));
         return goal;
     }
@@ -92,11 +86,6 @@ public class AimGoalSupplier {
         ));
     }
 
-    public static boolean isNearNet(Pose2d robotPose) {
-        Pose2d target = getFinalNetTarget();
-        return epsilonEquals(target.getTranslation().getX(), robotPose.getX(), AimParamsNT.NetNearDistance.getValue());
-    }
-
     /**
      * Gets the nearest AprilTag pose to the robot's current position
      *
@@ -105,12 +94,6 @@ public class AimGoalSupplier {
      */
     public static Pose2d getNearestTag(Pose2d robotPose) {
         return FieldConstants.aprilTagType.getLayout().getTagPose(getNearestTagID(robotPose)).get().toPose2d();
-    }
-
-    public static Pose2d getSelectedTag() {
-        return FieldConstants.aprilTagType.getLayout().getTagPose(
-                AllianceFlipUtil.shouldFlip() ? selectedTarget.redId : selectedTarget.blueId
-        ).get().toPose2d();
     }
 
     /**
@@ -160,9 +143,9 @@ public class AimGoalSupplier {
     public static boolean isInHexagonalReefDangerZone(Pose2d robotPose) {
 
         double defaultDangerZoneRadius = Reef.faceLength
-                + ReefAimCommandParamsNT.HEXAGON_DANGER_ZONE_OFFSET.getValue()
-                + ReefAimCommandParamsNT.ROBOT_TO_ALGAE_METERS.getValue();
-        double defaultFacingTolerance = ReefAimCommandParamsNT.HEXAGON_DANGER_DEGREES.getValue(); // Default facing tolerance in degrees
+                + NavToStationCommandParamsNT.HEXAGON_DANGER_ZONE_OFFSET.getValue()
+                + NavToStationCommandParamsNT.ROBOT_TO_ALGAE_METERS.getValue();
+        double defaultFacingTolerance = NavToStationCommandParamsNT.HEXAGON_DANGER_DEGREES.getValue(); // Default facing tolerance in degrees
 
         return isInHexagonalReefDangerZone(robotPose, defaultDangerZoneRadius, defaultFacingTolerance);
     }
@@ -248,7 +231,7 @@ public class AimGoalSupplier {
                 minDistance = distance;
             }
         }
-        if ((secondMinDistance - minDistance) < ReefAimCommandParamsNT.Edge_Case_Max_Delta.getValue() && (Math.abs(ControllerX) >= 0.05 || Math.abs(ControllerY) >= 0.05)) {
+        if ((secondMinDistance - minDistance) < NavToStationCommandParamsNT.Edge_Case_Max_Delta.getValue() && (Math.abs(ControllerX) >= 0.05 || Math.abs(ControllerY) >= 0.05)) {
             minDistanceID = solveEdgeCase(ControllerX, ControllerY, minDistanceID, secondMinDistanceID);
         }
         return minDistanceID;
@@ -318,7 +301,7 @@ public class AimGoalSupplier {
         Logger.recordOutput("EdgeCase/DeltaDistance", secondMinDistance - minDistance);
         Logger.recordOutput("EdgeCase/ControllerX", ControllerX);
         Logger.recordOutput("EdgeCase/ControllerY", ControllerY);
-        if ((secondMinDistance - minDistance) < ReefAimCommandParamsNT.Edge_Case_Max_Delta.getValue()) {
+        if ((secondMinDistance - minDistance) < NavToStationCommandParamsNT.Edge_Case_Max_Delta.getValue()) {
             Logger.recordOutput("EdgeCase/IsEdgeCase", true);
             if (Math.abs(ControllerX) >= 0.05 || Math.abs(ControllerY) >= 0.05) {
                 minDistanceID = solveEdgeCase(ControllerX, ControllerY, minDistanceID, secondMinDistanceID);
@@ -329,29 +312,12 @@ public class AimGoalSupplier {
         Logger.recordOutput("EdgeCase/TargetChanged", minDistanceID == secondMinDistanceID);
     }
 
-    // note: all assume blue driver station, origin at right side
-    public enum ReefFace {
-        FarFlat(10, 21),
-        NearFlat(7, 18),
-        FarRightTilt(9, 22),
-        NearRightTilt(8, 17),
-        FarLeftTilt(11, 20),
-        NearLeftTilt(6, 19);
-
-        public int redId;
-        public int blueId;
-
-        ReefFace(int redId, int blueId) {
-            this.redId = redId;
-            this.blueId = blueId;
-        }
-    }
 
     @NTParameter(tableName = "Params/AimParams")
     private static class AimParams {
         static final double MaxDistanceReefLineup = 0.75;
         static final double RobotToPipeXMeters = 0.52;
-        static final double RobotToPipeYMeters = -0.03;
+        static final double RobotToPipeYMeters = 0.07;
 
         static final double RobotToAlgaeMeters = 0.4;
         static final double AlgaeToTagMeters = 0.2;
@@ -364,5 +330,23 @@ public class AimGoalSupplier {
     }
 
     private record TagCondition(int tagA, int tagB, char axis, int positiveResult, int negativeResult) {
+    }
+
+    public static Pose2d getStationTarget(boolean useRight) {
+        return AllianceFlipUtil.apply(useRight ? FieldConstants.CoralStation.rightCenterFace : FieldConstants.CoralStation.leftCenterFace);
+    }
+
+    public static boolean useRightStation() {
+        return RobotStateRecorder.getPoseWorldRobotCurrent().toPose2d().minus(AllianceFlipUtil.apply(FieldConstants.CoralStation.rightCenterFace)).getTranslation().getNorm()
+                < RobotStateRecorder.getPoseWorldRobotCurrent().toPose2d().minus(AllianceFlipUtil.apply(FieldConstants.CoralStation.leftCenterFace)).getTranslation().getNorm();
+    }
+
+    public static Pose2d getFinalStationTarget(Pose2d goal) {
+        return goal.transformBy(new Transform2d(
+                new Translation2d(
+                        NavToStationCommandParamsNT.ROBOT_TO_STATION_METERS.getValue(),
+                        0
+                ),
+                new Rotation2d()));
     }
 } 

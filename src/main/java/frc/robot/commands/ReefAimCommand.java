@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.FieldConstants;
 import frc.robot.ReefAimCommandParamsNT;
 import frc.robot.RobotStateRecorder;
 import frc.robot.drivers.AimGoalSupplier;
@@ -18,6 +19,7 @@ import lib.ironpulse.math.MathTools;
 import lib.ironpulse.swerve.Swerve;
 import lib.ironpulse.swerve.SwerveLimit;
 import lib.ironpulse.utils.Logging;
+import org.littletonrobotics.AllianceFlipUtil;
 import org.littletonrobotics.junction.Logger;
 
 import static edu.wpi.first.math.util.Units.degreesToRadians;
@@ -34,12 +36,25 @@ public class ReefAimCommand extends Command {
     private Pose2d poseWorldRobot, velocityRobot, tagPose, poseWorldTarget, finalDestinationPose;
     private PIDController translationController;
     private PIDController rotationController;
+    private static final int[] FLIP_TAG_NUMBERS = {7, 8, 9, 10, 11, 6};
+    private static final int[] NON_FLIP_TAG_NUMBERS = {18, 17, 22, 21, 20, 19};
+    private int tagNumber;
 
-    private final boolean useSelectedTarget;
+    private boolean useSelectedTarget = false;
 
-    public ReefAimCommand(Swerve swerve, IndicatorSubsystem indicatorSubsystem, boolean useSelectedTarget) {
+    public ReefAimCommand(Swerve swerve, IndicatorSubsystem indicatorSubsystem, char selectedTag) {
+        this(swerve, indicatorSubsystem);
+        this.useSelectedTarget = true;
+        rightReef = (selectedTag % 2) == 0;
+        tagNumber = AllianceFlipUtil.shouldFlip()
+                ? FLIP_TAG_NUMBERS[(selectedTag - 'A') / 2]
+                : NON_FLIP_TAG_NUMBERS[(selectedTag - 'A') / 2];
+    }
+
+    public ReefAimCommand(Swerve swerve, IndicatorSubsystem indicatorSubsystem) {
         this.indicatorSubsystem = indicatorSubsystem;
         this.swerve = swerve;
+        this.useSelectedTarget = false;
 
         translationController = new PIDController(
                 ReefAimCommandParamsNT.translationKp.getValue(),
@@ -52,12 +67,6 @@ public class ReefAimCommand extends Command {
                 ReefAimCommandParamsNT.rotationKd.getValue()
         );
         addRequirements(swerve);
-
-        this.useSelectedTarget = useSelectedTarget;
-    }
-
-    public ReefAimCommand(Swerve swerve, IndicatorSubsystem indicatorSubsystem) {
-        this(swerve, indicatorSubsystem, false);
     }
 
     private boolean useFast() {
@@ -94,10 +103,10 @@ public class ReefAimCommand extends Command {
         velocityRobot = RobotStateRecorder.getVelocityWorldRobotCurrent();
 
         // calculate destination
-        tagPose = useSelectedTarget ? AimGoalSupplier.getSelectedTag() : AimGoalSupplier.getNearestTag(poseWorldRobot);
+        tagPose = useSelectedTarget ? FieldConstants.officialAprilTagType.getLayout().getTagPose(tagNumber).get().toPose2d() : AimGoalSupplier.getNearestTag(poseWorldRobot);
 
 
-        rightReef = DestinationSupplier.getInstance().isCoralRight();
+        rightReef = useSelectedTarget ? rightReef : DestinationSupplier.getInstance().isCoralRight();
         finalDestinationPose = AimGoalSupplier.getFinalCoralTarget(tagPose, rightReef);
 
         // Now that finalDestinationPose is set, we can get the drive target
@@ -170,6 +179,7 @@ public class ReefAimCommand extends Command {
         Logger.recordOutput(kTag + "/tagPose", tagPose);
         Logger.recordOutput(kTag + "/destinationPose", poseWorldTarget);
         Logger.recordOutput(kTag + "/finalDestinationPose", finalDestinationPose);
+        Logger.recordOutput(kTag + "/currentDestinationPose", poseWorldTarget);
     }
 
     @Override
