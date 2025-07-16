@@ -92,11 +92,11 @@ public class SwerveSetpointGenerator {
             }
         }
 
-        if (allModulesShouldFlip
-                && !epsilonEquals(toTwist2d(prevSetpoint.chassisSpeeds()), new Twist2d(), 0.001)
-                && !epsilonEquals(toTwist2d(desiredChassisSpeed), new Twist2d(), 0.001))
-            // It will (likely) be faster to stop the robot, rotate the modules in place to the complement of desired, and accelerate again.
-            return generate(new ChassisSpeeds(), prevSetpoint, dt);
+//        if (allModulesShouldFlip
+//                && !epsilonEquals(toTwist2d(prevSetpoint.chassisSpeeds()), new Twist2d(), 0.01)
+//                && !epsilonEquals(toTwist2d(desiredChassisSpeed), new Twist2d(), 0.01))
+//            // It will (likely) be faster to stop the robot, rotate the modules in place to the complement of desired, and accelerate again.
+//            return generate(new ChassisSpeeds(), prevSetpoint, dt);
 
 
         // Compute the deltas between start and goal. We can then interpolate from the start state to the goal state; then find the
@@ -153,7 +153,6 @@ public class SwerveSetpointGenerator {
                     continue;
                 }
             }
-
             if (sMin == 0.0) {
                 // s can't get any lower. Save some CPU.
                 continue;

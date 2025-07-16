@@ -96,6 +96,9 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+    implementation group: 'gov.nist.math', name: 'jama', version: '1.0.3'
+    implementation 'org.jgrapht:jgrapht-core:1.5.1'
+    
     compileOnly 'org.projectlombok:lombok:1.18.32'
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
 

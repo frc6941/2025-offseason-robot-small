@@ -20,6 +20,7 @@ public interface SwerveModuleIO {
     default void setDriveVelocity(LinearVelocity des) {
     }
     default void setDriveVelocity(LinearVelocity des, Current ff) {
+        setDriveVelocity(des);
     }
     default void setSteerOpenLoop(Voltage des) {
     }
