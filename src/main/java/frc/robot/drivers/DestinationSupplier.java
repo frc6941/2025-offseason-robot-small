@@ -7,11 +7,8 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants;
-import frc.robot.ElevatorCommonNT;
-import frc.robot.FieldConstants;
+import frc.robot.*;
 import frc.robot.FieldConstants.Reef;
-import frc.robot.NavToStationCommandParamsNT;
 import lombok.Getter;
 import lombok.Setter;
 import org.littletonrobotics.AllianceFlipUtil;
@@ -286,5 +283,11 @@ public class DestinationSupplier {
 
     public enum elevatorSetpoint {
         L2, L3, L4, P1, P2, INTAKE
+    }
+
+    public static boolean isSafeToRaise(Pose2d robotPose, boolean rightReef) {
+        Pose2d tag = AimGoalSupplier.getNearestTag(robotPose);
+        Pose2d goal = AimGoalSupplier.getFinalCoralTarget(tag, rightReef);
+        return goal.getTranslation().getDistance(robotPose.getTranslation()) < ReefAimCommandParamsNT.RAISE_LIMIT_METERS.getValue();
     }
 }

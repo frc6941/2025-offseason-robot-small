@@ -162,12 +162,12 @@ public class RobotContainer {
                 .onFalse(new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem));
         manualController.y().onTrue(elevatorSubsystem.zeroElevator());//电梯归零
         manualController.povUp().whileTrue(Commands.sequence(
-                        Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.P2)),
-                        new PokeCommand(endEffectorSubsystem,elevatorSubsystem)
+                Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.P2)),
+                new PokeCommand(endEffectorSubsystem, elevatorSubsystem)
         ));
         manualController.povDown().whileTrue(Commands.sequence(
                 Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.P1)),
-                new PokeCommand(endEffectorSubsystem,elevatorSubsystem)
+                new PokeCommand(endEffectorSubsystem, elevatorSubsystem)
         ));
 
 
@@ -183,8 +183,8 @@ public class RobotContainer {
         autoController.rightBumper().whileTrue(new AutoIntakeCommand(swerve, endEffectorSubsystem, elevatorSubsystem, indicatorSubsystem));//手动intake
         autoController.rightTrigger().whileTrue(new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, () -> false));//强制放
 
-        autoController.leftStick().onTrue(Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(false)));
-        autoController.rightStick().onTrue(Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(true)));
+        autoController.leftStick().onTrue(Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(false)).ignoringDisable(true));
+        autoController.rightStick().onTrue(Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(true)).ignoringDisable(true));
 
         autoController.povLeft().whileTrue(new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem));
         autoController.povRight().whileTrue(new AutoIntakeCommand(swerve, endEffectorSubsystem, elevatorSubsystem, indicatorSubsystem));
@@ -212,11 +212,11 @@ public class RobotContainer {
         );
         autoController.povUp().whileTrue(Commands.sequence(
                 Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.P2)),
-                new PokeCommand(endEffectorSubsystem,elevatorSubsystem)
+                new PokeCommand(endEffectorSubsystem, elevatorSubsystem)
         ));
         autoController.povDown().whileTrue(Commands.sequence(
                 Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.P1)),
-                new PokeCommand(endEffectorSubsystem,elevatorSubsystem)
+                new PokeCommand(endEffectorSubsystem, elevatorSubsystem)
         ));
     }
 
