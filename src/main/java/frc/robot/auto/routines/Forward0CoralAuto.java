@@ -23,7 +23,6 @@ public class Forward0CoralAuto extends AutoRoutine {
     @Override
     public Command getAutoCommand() {
         return Commands.parallel(
-                AutoActions.reverseEE(),
                 AutoActions.followPath(testPath)
         );
     }

@@ -15,8 +15,8 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class EndEffectorSubsystem extends SubsystemBase {
-    public static final String NAME = "EndEffectorArm";
-    private final RollerIOInputsAutoLogged armRollerIOInputs = new RollerIOInputsAutoLogged();
+    public static final String NAME = "EndEffector";
+    private final RollerIOInputsAutoLogged rollerIOInputs = new RollerIOInputsAutoLogged();
 
     private final BeambreakIOInputsAutoLogged frontBeambreakInputs = new BeambreakIOInputsAutoLogged();
     private final BeambreakIOInputsAutoLogged endBeambreakInputs = new BeambreakIOInputsAutoLogged();
@@ -27,18 +27,18 @@ public class EndEffectorSubsystem extends SubsystemBase {
     private final BeambreakIO endBeamBreakIO;
 
     @Getter
-    @AutoLogOutput(key = "EndEffectorArm/setPoint")
+    @AutoLogOutput(key = "EndEffector/setPoint")
     private double wantedAngle = 0.0;
     @Getter
-    @AutoLogOutput(key = "EndEffectorArm/atGoal")
+    @AutoLogOutput(key = "EndEffector/atGoal")
     private boolean atGoal = false;
     @Getter
     @Setter
-    @AutoLogOutput(key = "EndEffectorArm/frontEE")
+    @AutoLogOutput(key = "EndEffector/frontEE")
     private boolean frontEE = false;
     @Getter
     @Setter
-    @AutoLogOutput(key = "EndEffectorArm/endEE")
+    @AutoLogOutput(key = "EndEffector/endEE")
     private boolean endEE = false;
 
 
@@ -63,7 +63,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
 
     public void periodic() {
         // Update inputs from hardware
-        rollerIO.updateInputs(armRollerIOInputs);
+        rollerIO.updateInputs(rollerIOInputs);
         frontBeamBreakIO.updateInputs(frontBeambreakInputs);
         endBeamBreakIO.updateInputs(endBeambreakInputs);
         if (RobotBase.isReal()) {
@@ -74,7 +74,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
         // Process and log inputs
         Logger.processInputs(NAME + "/Front Beambreak", frontBeambreakInputs);
         Logger.processInputs(NAME + "/End Beambreak", endBeambreakInputs);
-        Logger.processInputs(NAME + "/Roller", armRollerIOInputs);
+        Logger.processInputs(NAME + "/Roller", rollerIOInputs);
         Logger.recordOutput(NAME + "/intakeFinished", intakeFinished());
         Logger.recordOutput(NAME + "/hasCoral", hasCoral());
 
@@ -91,7 +91,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
                     EndEffectorParamsNT.ROLLER_KS.getValue()
             );
         }
-        LoggedTracer.record("EndEffectorArm");
+        LoggedTracer.record("EndEffector");
     }
 
     public void setRollerVoltage(double voltage) {

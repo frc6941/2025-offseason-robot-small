@@ -24,7 +24,7 @@ public class AimGoalSupplier {
      * @return A modified goal pose that accounts for optimal approach positioning
      */
     public static Pose2d getDriveTarget(Pose2d robot, Pose2d goal) {
-        Transform2d offset = new Transform2d(goal, new Pose2d(robot.getTranslation(), goal.getRotation()));
+        Transform2d offset = new Transform2d(goal, robot);
         double yDistance = Math.abs(offset.getY());
         double xDistance = Math.abs(offset.getX());
         double shiftXT =
@@ -317,7 +317,7 @@ public class AimGoalSupplier {
     private static class AimParams {
         static final double MaxDistanceReefLineup = 0.75;
         static final double RobotToPipeXMeters = 0.48;
-        static final double RobotToPipeYMeters = 0.03;
+        static final double RobotToPipeYMeters = 0.00;
 
         static final double RobotToAlgaeMeters = 0.4;
         static final double AlgaeToTagMeters = 0.2;

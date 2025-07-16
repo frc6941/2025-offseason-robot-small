@@ -16,16 +16,19 @@ public class LeftStationIntakeAuto extends AutoRoutine {
     @Override
     public Command getAutoCommand() {
         return Commands.sequence(
-                AutoActions.reverseEE(),
                 AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L4),
                 AutoActions.autoScore('I'),
                 AutoActions.autoIntake(false),
+                AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L4),
                 AutoActions.autoScore('K'),
                 AutoActions.autoIntake(false),
+                AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L4),
                 AutoActions.autoScore('L'),
                 AutoActions.autoIntake(false),
+                AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L4),
                 AutoActions.autoScore('J'),
                 AutoActions.autoIntake(false),
+                AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L4),
                 AutoActions.autoScore('A'),
                 AutoActions.autoIntake(false)
         );

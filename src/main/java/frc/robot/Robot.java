@@ -7,7 +7,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Threads;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.auto.AutoSelector;
 import lib.ironpulse.utils.LoggedTracer;
 import lib.ironpulse.utils.PhoenixUtils;
 import lib.ntext.NTParameterRegistry;
@@ -23,6 +25,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  */
 public class Robot extends LoggedRobot {
     RobotContainer container;
+    private Command autonomousCommand;
 
     public Robot() {
         super(Constants.kDtS); // accelerate loop time
@@ -57,10 +60,26 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void autonomousInit() {
+        try {
+            autonomousCommand = AutoSelector.getInstance().getAutoCommand();
+        } catch (Exception e) {
+            System.out.println("Autonomous command failed: " + e);
+            e.printStackTrace();
+            autonomousCommand = null;
+        }
+
+        if (autonomousCommand != null) autonomousCommand.schedule();
     }
 
     @Override
     public void autonomousPeriodic() {
+    }
+
+    @Override
+    public void autonomousExit() {
+        if (autonomousCommand != null) {
+            autonomousCommand.cancel();
+        }
     }
 
     @Override

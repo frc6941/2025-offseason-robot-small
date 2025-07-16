@@ -49,7 +49,7 @@ public class AutoShootCommand extends SequentialCommandGroup {
             char goal
     ) {
         addCommands(
-                Commands.sequence(
+                Commands.parallel(
                         new ReefAimCommand(swerve, indicatorSubsystem, goal),
                         Commands.sequence(
                                 Commands.waitUntil(
@@ -57,8 +57,7 @@ public class AutoShootCommand extends SequentialCommandGroup {
                                                 RobotStateRecorder.getPoseWorldRobotCurrent().toPose2d(),
                                                 DestinationSupplier.getInstance().isCoralRight())).onlyIf(
                                         () -> DestinationSupplier.getInstance().getCurrentElevSetpointCoral() == DestinationSupplier.elevatorSetpoint.L4),
-                                Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(DestinationSupplier.getInstance().getElevatorSetpoint(true)))
-                        )
+                                Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(DestinationSupplier.getInstance().getElevatorSetpoint(true))))
                 ),
                 new ShootCommand(endEffectorSubsystem, indicatorSubsystem).
                         finallyDo(() -> elevatorSubsystem.setElevatorPosition(ElevatorCommonNT.INTAKE_EXTENSION_METERS.getValue()))

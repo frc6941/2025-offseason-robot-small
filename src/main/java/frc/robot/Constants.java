@@ -175,8 +175,8 @@ public class Constants {
     /*                              Controller Settings                           */
     /* -------------------------------------------------------------------------- */
     public static class Controller {
-        public static final int kManual = 0;
-        public static final int kAuto = 1;
+        public static final int kTest = 1;
+        public static final int kDriver = 0;
     }
 
     /* -------------------------------------------------------------------------- */
@@ -256,8 +256,7 @@ public class Constants {
             public static final double CORAL_HOLD_VOLTAGE = 0.5;
             public static final double CORAL_SHOOT_VOLTAGE = 12.0;
             public static final double CORAL_SHOOT_DELAY_TIME = 0.2;
-            public static final double REVERSE_POKE_VOLTAGE = -3.0;
-            public static final double ALGAE_POKE_VOLTAGE = 3.0;
+            public static final double ALGAE_POKE_VOLTAGE = 12.0;
         }
 
     }
@@ -273,7 +272,7 @@ public class Constants {
         public static final int SNAPSHOT_PERIOD = 5; //seconds
         public static Transform3d[] CAMERA_RELATIVE_TO_ROBOT = new Transform3d[]{
                 new Transform3d(0.19933, 0.30879, 0.3156, new Rotation3d(Math.toRadians(0), Math.toRadians(0), Math.toRadians(-20))),
-                new Transform3d(0.29051, -0.29248, 0.19732, new Rotation3d(Math.toRadians(0), Math.toRadians(-10), Math.toRadians(17.9)))
+                new Transform3d(0.19933, -0.30879, 0.3156, new Rotation3d(Math.toRadians(0), Math.toRadians(0), Math.toRadians(20)))
         };
 //        public static final String kPhotonVisionTag = "PhotonVision";
 //        @NTParameter(tableName = "Params" + "/" + kPhotonVisionTag)

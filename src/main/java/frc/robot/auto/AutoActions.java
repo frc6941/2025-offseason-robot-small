@@ -15,7 +15,6 @@ import frc.robot.RobotStateRecorder;
 import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.NavToStationCommand;
-import frc.robot.commands.ReverseEndeffectorCommand;
 import frc.robot.drivers.DestinationSupplier;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endeffector.EndEffectorSubsystem;
@@ -171,10 +170,6 @@ public class AutoActions {
         }).finallyDo(
                 () -> swerve.setSwerveLimitDefault()
         );
-    }
-
-    public static Command reverseEE() {
-        return new ReverseEndeffectorCommand(endEffectorSubsystem);
     }
 
     public static Command followPath(PathPlannerPath path) {

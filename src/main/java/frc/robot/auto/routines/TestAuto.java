@@ -6,8 +6,8 @@ import frc.robot.auto.AutoActions;
 import frc.robot.auto.AutoRoutine;
 import frc.robot.drivers.DestinationSupplier;
 
-public class Middle1CoralAuto extends AutoRoutine {
-    public Middle1CoralAuto() {
+public class TestAuto extends AutoRoutine {
+    public TestAuto() {
         super("Middle1CoralAuto");
     }
 
@@ -15,6 +15,6 @@ public class Middle1CoralAuto extends AutoRoutine {
     public Command getAutoCommand() {
         return Commands.sequence(
                 AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L4),
-                AutoActions.autoScore('H'));
+                AutoActions.autoScore('C'));
     }
 }
