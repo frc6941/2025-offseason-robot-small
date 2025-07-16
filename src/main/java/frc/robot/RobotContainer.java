@@ -13,10 +13,7 @@ import frc.robot.auto.AutoActions;
 import frc.robot.auto.AutoSelector;
 import frc.robot.auto.routines.Forward0CoralAuto;
 import frc.robot.auto.routines.LeftStationIntakeAuto;
-import frc.robot.commands.AutoIntakeCommand;
-import frc.robot.commands.AutoShootCommand;
-import frc.robot.commands.IntakeCommand;
-import frc.robot.commands.ShootCommand;
+import frc.robot.commands.*;
 import frc.robot.drivers.DestinationSupplier;
 import frc.robot.subsystems.beambreak.BeambreakIOReal;
 import frc.robot.subsystems.beambreak.BeambreakIOSim;
@@ -148,7 +145,6 @@ public class RobotContainer {
                                             TransformRecorder.kFrameRobot);
                                     indicatorSubsystem.setPattern(IndicatorIO.Patterns.RESET_ODOM);
                                 })));
-        manualController.povDown().onTrue(elevatorSubsystem.zeroElevator());
         manualController.rightBumper().onTrue(new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem));//手动intake
         manualController.rightTrigger().whileTrue(new ShootCommand(endEffectorSubsystem, indicatorSubsystem));//强制放
         manualController.povLeft().whileTrue(Commands.sequence(
@@ -165,6 +161,15 @@ public class RobotContainer {
                         Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true)))))
                 .onFalse(new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem));
         manualController.y().onTrue(elevatorSubsystem.zeroElevator());//电梯归零
+        manualController.povUp().whileTrue(Commands.sequence(
+                        Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.P2)),
+                        new PokeCommand(endEffectorSubsystem,elevatorSubsystem)
+        ));
+        manualController.povDown().whileTrue(Commands.sequence(
+                Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.P1)),
+                new PokeCommand(endEffectorSubsystem,elevatorSubsystem)
+        ));
+
 
         autoController.start().onTrue(
                 SwerveCommands.resetAngle(swerve, new Rotation2d())
@@ -205,6 +210,14 @@ public class RobotContainer {
                         new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, autoController.rightTrigger())
                 )
         );
+        autoController.povUp().whileTrue(Commands.sequence(
+                Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.P2)),
+                new PokeCommand(endEffectorSubsystem,elevatorSubsystem)
+        ));
+        autoController.povDown().whileTrue(Commands.sequence(
+                Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.P1)),
+                new PokeCommand(endEffectorSubsystem,elevatorSubsystem)
+        ));
     }
 
     public void robotPeriodic() {
