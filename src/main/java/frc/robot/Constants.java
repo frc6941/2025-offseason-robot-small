@@ -253,11 +253,10 @@ public class Constants {
             public static final double CORAL_INTAKE_VOLTAGE = 12.0;
             public static final double CORAL_INDEX_VOLTAGE = 4.0;
             public static final double CORAL_OUTTAKE_VOLTAGE = -6.0;
-            public static final double CORAL_PRESHOOT_VOLTAGE = -10.0;
             public static final double CORAL_HOLD_VOLTAGE = 0.5;
             public static final double CORAL_SHOOT_VOLTAGE = 12.0;
             public static final double CORAL_SHOOT_DELAY_TIME = 0.2;
-            public static final double REVERSE_POKE_VOLTAGE = 3.0;
+            public static final double REVERSE_POKE_VOLTAGE = -3.0;
             public static final double ALGAE_POKE_VOLTAGE = 3.0;
         }
 
@@ -294,10 +293,10 @@ public class Constants {
             static final double translationKi = 0.0;
             static final double translationKiZone = 0.00;
             static final double translationKd = 0.10;
-            static final double translationVelocityMaxFar = 4.6;
+            static final double translationVelocityMaxFar = 4.0;
             static final double translationVelocityMaxNear = 3.5;
             static final double translationParamsChangeDistance = 1.5;
-            static final double translationAccelerationMax = 13.0;
+            static final double translationAccelerationMax = 11.0;
 
             static final double translationFastKp = 5.5;
             static final double translationFastKi = 0.0;
@@ -362,7 +361,7 @@ public class Constants {
             static final double translationVelocityMaxFar = 4.6;
             static final double translationVelocityMaxNear = 3.5;
             static final double translationParamsChangeDistance = 1.5;
-            static final double translationAccelerationMax = 13.0;
+            static final double translationAccelerationMax = 12.0;
 
             static final double rotationKp = 4.5;
             static final double rotationKi = 0.0;
