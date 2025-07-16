@@ -1,0 +1,49 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "P4-1C"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "P4-1S"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "P4-2C"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "P4-2S"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "P4-3C"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "P4-3S"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
