@@ -6,31 +6,33 @@ import frc.robot.auto.AutoActions;
 import frc.robot.auto.AutoRoutine;
 import frc.robot.drivers.DestinationSupplier;
 
-public class LeftStationIntakeAuto extends AutoRoutine {
+public class Right5L4Auto extends AutoRoutine {
 
 
-    public LeftStationIntakeAuto() {
-        super("LeftStationIntakeAuto");
+    public Right5L4Auto() {
+        super("RightStationIntakeAuto");
     }
 
     @Override
     public Command getAutoCommand() {
         return Commands.sequence(
                 AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L4),
-                AutoActions.autoScore('I'),
-                AutoActions.autoIntake(false),
+                AutoActions.autoScore('F'),
+                AutoActions.autoIntake(true),
                 AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L4),
-                AutoActions.autoScore('K'),
-                AutoActions.autoIntake(false),
+                AutoActions.autoScore('D'),
+                AutoActions.autoIntake(true),
                 AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L4),
-                AutoActions.autoScore('L'),
-                AutoActions.autoIntake(false),
+                AutoActions.autoScore('C'),
+                AutoActions.autoIntake(true),
                 AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L4),
-                AutoActions.autoScore('J'),
-                AutoActions.autoIntake(false),
+                // DO NOT GO TO E SIDE
+                AutoActions.autoScore('B'),
+                AutoActions.autoIntake(true),
                 AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L4),
                 AutoActions.autoScore('A'),
-                AutoActions.autoIntake(false)
+                AutoActions.autoIntake(true),
+                AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L4)
         );
     }
 }

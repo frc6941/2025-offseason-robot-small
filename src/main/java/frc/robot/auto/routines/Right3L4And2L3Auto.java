@@ -6,10 +6,10 @@ import frc.robot.auto.AutoActions;
 import frc.robot.auto.AutoRoutine;
 import frc.robot.drivers.DestinationSupplier;
 
-public class RightStationIntakeAuto extends AutoRoutine {
+public class Right3L4And2L3Auto extends AutoRoutine {
 
 
-    public RightStationIntakeAuto() {
+    public Right3L4And2L3Auto() {
         super("RightStationIntakeAuto");
     }
 
@@ -25,13 +25,12 @@ public class RightStationIntakeAuto extends AutoRoutine {
                 AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L4),
                 AutoActions.autoScore('C'),
                 AutoActions.autoIntake(true),
-                AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L4),
-                AutoActions.autoScore('E'),
+                AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L3),
+                AutoActions.autoScore('D'),
                 AutoActions.autoIntake(true),
-                AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L4),
-                AutoActions.autoScore('B'),
-                AutoActions.autoIntake(true),
-                AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L4)
+                AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L3),
+                AutoActions.autoScore('C'),
+                AutoActions.autoIntake(true)
         );
     }
 }
