@@ -202,14 +202,14 @@ public class RobotContainer {
                 Commands.sequence(
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(true)),
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)),
-                        new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.rightTrigger())
+                        new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.povUp())
                 )
         );//背键-右侧靠内
         driverController.povLeft().whileTrue(
                 Commands.sequence(
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(false)),
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)),
-                        new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.rightTrigger())
+                        new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.povUp())
                 )
         );//背键-左侧靠内
 
@@ -217,14 +217,14 @@ public class RobotContainer {
                 Commands.sequence(
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(true)),
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)),
-                        new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.rightTrigger())
+                        new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.povUp())
                 )
         );
         driverController.leftTrigger().whileTrue(
                 Commands.sequence(
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(false)),
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)),
-                        new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.rightTrigger())
+                        new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.povUp())
                 )
         );
 
@@ -232,14 +232,14 @@ public class RobotContainer {
                 Commands.sequence(
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(true)),
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
-                        new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.rightTrigger())
+                        new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.povUp())
                 )
         );
         driverController.leftBumper().whileTrue(
                 Commands.sequence(
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(false)),
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
-                        new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.rightTrigger())
+                        new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.povUp())
                 )
         );
 
