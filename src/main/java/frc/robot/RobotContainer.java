@@ -33,7 +33,7 @@ import lib.ironpulse.rbd.TransformRecorder;
 import lib.ironpulse.swerve.Swerve;
 import lib.ironpulse.swerve.SwerveCommands;
 import lib.ironpulse.swerve.sim.ImuIOSim;
-import lib.ironpulse.swerve.sim.SwerveModuleIOSim;
+import lib.ironpulse.swerve.sim.SwerveModuleIOSimpleSim;
 import lib.ironpulse.swerve.sjtu6.ImuIOPigeon;
 import lib.ironpulse.swerve.sjtu6.SwerveModuleIOSJTU6;
 
@@ -109,10 +109,10 @@ public class RobotContainer {
             swerve = new Swerve(
                     Constants.Swerve.kSimConfig,
                     new ImuIOSim(),
-                    new SwerveModuleIOSim(Constants.Swerve.kSimConfig, 0),
-                    new SwerveModuleIOSim(Constants.Swerve.kSimConfig, 1),
-                    new SwerveModuleIOSim(Constants.Swerve.kSimConfig, 2),
-                    new SwerveModuleIOSim(Constants.Swerve.kSimConfig, 3));
+                    new SwerveModuleIOSimpleSim(Constants.Swerve.kSimConfig, 0),
+                    new SwerveModuleIOSimpleSim(Constants.Swerve.kSimConfig, 1),
+                    new SwerveModuleIOSimpleSim(Constants.Swerve.kSimConfig, 2),
+                    new SwerveModuleIOSimpleSim(Constants.Swerve.kSimConfig, 3));
             indicatorSubsystem = new IndicatorSubsystem(new IndicatorIOSim());
             elevatorSubsystem = new ElevatorSubsystem(new ElevatorIOSim());
             photonVisionSubsystem = new PhotonVisionSubsystem(
