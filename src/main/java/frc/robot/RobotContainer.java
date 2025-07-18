@@ -243,6 +243,51 @@ public class RobotContainer {
                 )
         );
 
+        driverController.povRight().toggleOnTrue(
+                Commands.sequence(
+                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(true)),
+                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)),
+                        new SemiAutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem)
+                )
+        );//背键-右侧靠内
+        driverController.povLeft().toggleOnTrue(
+                Commands.sequence(
+                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(false)),
+                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)),
+                        new SemiAutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem)
+                )
+        );//背键-左侧靠内
+
+        driverController.rightTrigger().toggleOnTrue(
+                Commands.sequence(
+                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(true)),
+                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)),
+                        new SemiAutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem)
+                )
+        );
+        driverController.leftTrigger().toggleOnTrue(
+                Commands.sequence(
+                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(false)),
+                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)),
+                        new SemiAutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem)
+                )
+        );
+
+        driverController.rightBumper().toggleOnTrue(
+                Commands.sequence(
+                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(true)),
+                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
+                        new SemiAutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem)
+                )
+        );
+        driverController.leftBumper().toggleOnTrue(
+                Commands.sequence(
+                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(false)),
+                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
+                        new SemiAutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem)
+                )
+        );
+
         driverController.y().whileTrue(Commands.sequence(
                 Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.P2)),
                 new PokeCommand(endEffectorSubsystem, elevatorSubsystem)
