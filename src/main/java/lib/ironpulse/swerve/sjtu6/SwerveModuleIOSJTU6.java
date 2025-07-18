@@ -355,8 +355,6 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
 
         // Apply single combined configuration
         driveMotor.getConfigurator().apply(driveControlConfig);
-        System.out.println(
-                "Drive motor " + moduleID + " controller configured: kP=" + kp + ", kI=" + ki + ", kD=" + kd + ", kS=" + ks + ", kV=" + kv + ", kA=" + ka);
     }
 
 
@@ -375,8 +373,6 @@ public class SwerveModuleIOSJTU6 implements SwerveModuleIO {
         steerControlConfig.Slot0.kD = kd;
         steerControlConfig.Slot0.kS = ks;
         steerMotor.getConfigurator().apply(steerControlConfig);
-        System.out.println(
-                "Steer motor " + moduleID + " controller configured: kP=" + kp + ", kI=" + ki + ", kD=" + kd + ", kS=" + ks);
     }
 
     @Override
