@@ -38,6 +38,7 @@ public class Robot extends LoggedRobot {
         // logger initialization
         Logger.addDataReceiver(new NT4Publisher());
         Logger.addDataReceiver(new WPILOGWriter());
+        Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
         Logger.start();
 
         // early-stage initialization
