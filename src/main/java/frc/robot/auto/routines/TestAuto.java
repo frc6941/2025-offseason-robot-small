@@ -8,7 +8,7 @@ import frc.robot.drivers.DestinationSupplier;
 
 public class TestAuto extends AutoRoutine {
     public TestAuto() {
-        super("Middle1CoralAuto");
+        super("TestAuto");
     }
 
     @Override

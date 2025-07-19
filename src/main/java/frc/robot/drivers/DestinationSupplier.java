@@ -47,23 +47,6 @@ public class DestinationSupplier {
      * @return A modified goal pose that accounts for optimal approach positioning
      */
     public static Pose2d getDriveTarget(Pose2d robot, Pose2d goal) {
-//        Transform2d offset = new Transform2d(goal, new Pose2d(robot.getTranslation(), goal.getRotation()));
-//        double yDistance = Math.abs(offset.getY());
-//        double xDistance = Math.abs(offset.getX());
-//        double shiftXT =
-//                MathUtil.clamp(
-//                        (yDistance / (Reef.faceLength * 2)) + ((xDistance - 0.3) / (Reef.faceLength * 3)),
-//                        0.0,
-//                        1.0);
-//        double shiftYT = MathUtil.clamp(yDistance <= 0.2 ? 0.0 : -offset.getX() / Reef.faceLength, 0.0, 1.0);
-//        goal = goal.transformBy(
-//                new Transform2d(
-//                        shiftXT * NavToStationCommandParamsNT.MAX_DISTANCE_REEF_LINEUP.getValue(),
-//                        Math.copySign(shiftYT * NavToStationCommandParamsNT.MAX_DISTANCE_REEF_LINEUP.getValue() * 0.8, offset.getY()),
-//                        new Rotation2d()));
-//
-//        return goal;
-
         Transform2d offset = new Transform2d(goal, new Pose2d(robot.getTranslation(), goal.getRotation()));
         double yDistance = Math.abs(offset.getY());
         double xDistance = Math.abs(offset.getX());

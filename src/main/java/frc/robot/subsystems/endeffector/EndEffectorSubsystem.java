@@ -27,12 +27,6 @@ public class EndEffectorSubsystem extends SubsystemBase {
     private final BeambreakIO endBeamBreakIO;
 
     @Getter
-    @AutoLogOutput(key = "EndEffector/setPoint")
-    private double wantedAngle = 0.0;
-    @Getter
-    @AutoLogOutput(key = "EndEffector/atGoal")
-    private boolean atGoal = false;
-    @Getter
     @Setter
     @AutoLogOutput(key = "EndEffector/frontEE")
     private boolean frontEE = false;
