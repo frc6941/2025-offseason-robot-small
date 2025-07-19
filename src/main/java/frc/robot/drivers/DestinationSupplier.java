@@ -31,6 +31,8 @@ public class DestinationSupplier {
     private boolean useCoral = true;
     @Getter
     private elevatorSetpoint currentElevSetpointAlgae = elevatorSetpoint.P1;
+    @Getter
+    private boolean isAuto = true;
 
     public static DestinationSupplier getInstance() {
         if (instance == null) {
@@ -272,5 +274,11 @@ public class DestinationSupplier {
         Pose2d tag = AimGoalSupplier.getNearestTag(robotPose);
         Pose2d goal = AimGoalSupplier.getFinalCoralTarget(tag, rightReef);
         return goal.getTranslation().getDistance(robotPose.getTranslation()) < ReefAimCommandParamsNT.RAISE_LIMIT_METERS.getValue();
+    }
+
+    public void setIsAuto(boolean isAuto) {
+        this.isAuto = isAuto;
+        Logger.recordOutput("DestinationSupplier/Auto", isAuto);
+        SmartDashboard.putString("DestinationSupplier/Auto", isAuto ? "Auto" : "Manual");
     }
 }

@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.display.SuperstructureVisualizer;
 import lib.ironpulse.utils.LoggedTracer;
 import lombok.Getter;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -144,6 +145,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         }
 
         LoggedTracer.record("Elevator");
+
+        SuperstructureVisualizer.getInstance().updateElevator(io.getElevatorHeight());
     }
 
     public double getElevatorPosition() {

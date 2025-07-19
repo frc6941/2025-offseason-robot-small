@@ -14,6 +14,7 @@ import frc.robot.auto.AutoActions;
 import frc.robot.auto.AutoSelector;
 import frc.robot.auto.routines.*;
 import frc.robot.commands.*;
+import frc.robot.display.Display;
 import frc.robot.drivers.DestinationSupplier;
 import frc.robot.subsystems.beambreak.BeambreakIOReal;
 import frc.robot.subsystems.beambreak.BeambreakIOSim;
@@ -49,6 +50,7 @@ public class RobotContainer {
     IndicatorSubsystem indicatorSubsystem;
     DestinationSupplier destinationSupplier = DestinationSupplier.getInstance();
     PhotonVisionSubsystem photonVisionSubsystem;
+    Display display = Display.getInstance();
 
     // controllers
     CommandXboxController driverController = new CommandXboxController(Constants.Controller.kDriver);
@@ -152,49 +154,69 @@ public class RobotContainer {
                                     indicatorSubsystem.setPattern(IndicatorIO.Patterns.RESET_ODOM);
                                 })));
         driverController.povRight().whileTrue(
-                Commands.sequence(
-                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(true)),
+                new ConditionalCommand(
+                        Commands.sequence(
+                                Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(true)),
+                                Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)),
+                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.b())),
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)),
-                        new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.povUp()))
+                        DestinationSupplier.getInstance()::isAuto
+                )
         );//背键-右侧靠内
         driverController.povLeft().whileTrue(
-                Commands.sequence(
-                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(false)),
+                new ConditionalCommand(
+                        Commands.sequence(
+                                Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(false)),
+                                Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)),
+                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.b())),
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)),
-                        new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.povUp())
+                        DestinationSupplier.getInstance()::isAuto
                 )
         );//背键-左侧靠内
 
         driverController.rightTrigger().whileTrue(
-                Commands.sequence(
-                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(true)),
+                new ConditionalCommand(
+                        Commands.sequence(
+                                Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(true)),
+                                Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)),
+                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.b())),
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)),
-                        new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.povUp())
+                        DestinationSupplier.getInstance()::isAuto
                 )
         );
         driverController.leftTrigger().whileTrue(
-                Commands.sequence(
-                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(false)),
+                new ConditionalCommand(
+                        Commands.sequence(
+                                Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(false)),
+                                Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)),
+                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.b())),
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)),
-                        new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.povUp())
+                        DestinationSupplier.getInstance()::isAuto
                 )
         );
 
         driverController.rightBumper().whileTrue(
-                Commands.sequence(
-                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(true)),
+                new ConditionalCommand(
+                        Commands.sequence(
+                                Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(true)),
+                                Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
+                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.b())),
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
-                        new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.povUp())
+                        DestinationSupplier.getInstance()::isAuto
                 )
         );
         driverController.leftBumper().whileTrue(
-                Commands.sequence(
-                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(false)),
+                new ConditionalCommand(
+                        Commands.sequence(
+                                Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(false)),
+                                Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
+                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.b())),
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
-                        new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.povUp())
+                        DestinationSupplier.getInstance()::isAuto
                 )
         );
 
+        driverController.povUp().onTrue(Commands.runOnce(() -> DestinationSupplier.getInstance().setIsAuto(!DestinationSupplier.getInstance().isAuto())).ignoringDisable(true));
         driverController.povRight().onTrue(Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)));//背键-右侧靠内
         driverController.povLeft().onTrue(Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)));//背键-左侧靠内
         driverController.rightTrigger().onTrue(Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)));
@@ -203,32 +225,32 @@ public class RobotContainer {
         driverController.leftBumper().onTrue(Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)));
 
 
-        driverController.y().whileTrue(Commands.sequence(
+        driverController.y().onTrue(Commands.sequence(
                 Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.P2)),
                 new PokeCommand(endEffectorSubsystem, elevatorSubsystem)
         ));
-        driverController.a().whileTrue(Commands.sequence(
+        driverController.a().onTrue(Commands.sequence(
                 Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.P1)),
                 new PokeCommand(endEffectorSubsystem, elevatorSubsystem)
         ));
 
         driverController.b().whileTrue(new ShootCommand(endEffectorSubsystem, indicatorSubsystem));
-        driverController.x().whileTrue(new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem));
+        driverController.x().toggleOnTrue(new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem));
 
         driverController.povDown().onTrue(elevatorSubsystem.zeroElevator());
 
         driverController.leftStick().whileTrue(
                 new ConditionalCommand(
-                        new ShootCommand(endEffectorSubsystem, indicatorSubsystem),
                         new AutoIntakeCommand(swerve, endEffectorSubsystem, elevatorSubsystem, indicatorSubsystem),
-                        endEffectorSubsystem::hasCoral
+                        Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(DestinationSupplier.getInstance().getElevatorSetpoint(true))),
+                        DestinationSupplier.getInstance()::isAuto
                 )
         );//背键-左侧靠外
         driverController.rightStick().whileTrue(
                 new ConditionalCommand(
-                        Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(DestinationSupplier.getInstance().getElevatorSetpoint(true))),
                         new AutoIntakeCommand(swerve, endEffectorSubsystem, elevatorSubsystem, indicatorSubsystem),
-                        endEffectorSubsystem::hasCoral
+                        Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(DestinationSupplier.getInstance().getElevatorSetpoint(true))),
+                        DestinationSupplier.getInstance()::isAuto
                 )
         );//背键-右侧靠外
 
@@ -243,6 +265,7 @@ public class RobotContainer {
                     photonVisionSubsystem.timestampSeconds,
                     VecBuilder.fill(0.1, 0.1, 0.3, Double.MAX_VALUE));
         }
+        display.update();
         var now = Seconds.of(Timer.getTimestamp());
         RobotStateRecorder.getInstance().putTransform(
                 swerve.getEstimatedPose(), now,
