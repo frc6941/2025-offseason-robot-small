@@ -167,9 +167,9 @@ public class DestinationSupplier {
                 minDistance = distance;
             }
         }
-        if ((secondMinDistance - minDistance) < NavToStationCommandParamsNT.Edge_Case_Max_Delta.getValue() && (Math.abs(ControllerX) >= 0.05 || Math.abs(ControllerY) >= 0.05)) {
-            minDistanceID = solveEdgeCase(ControllerX, ControllerY, minDistanceID, secondMinDistanceID);
-        }
+//        if ((secondMinDistance - minDistance) < NavToStationCommandParamsNT.Edge_Case_Max_Delta.getValue() && (Math.abs(ControllerX) >= 0.05 || Math.abs(ControllerY) >= 0.05)) {
+//            minDistanceID = solveEdgeCase(ControllerX, ControllerY, minDistanceID, secondMinDistanceID);
+//        }
         return minDistanceID;
     }
 
