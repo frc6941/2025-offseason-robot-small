@@ -17,4 +17,16 @@ public class AutoIntakeCommand extends ParallelCommandGroup {
                 new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem)
         );
     }
+
+    public AutoIntakeCommand(
+            Swerve swerve,
+            EndEffectorSubsystem endEffectorSubsystem,
+            ElevatorSubsystem elevatorSubsystem,
+            IndicatorSubsystem indicatorSubsystem,
+            boolean enableRumble) {
+        addCommands(
+                new NavToStationCommand(swerve, indicatorSubsystem),
+                new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem, enableRumble)
+        );
+    }
 }

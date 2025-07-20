@@ -200,7 +200,7 @@ public class NavToStationCommand extends Command {
         swerve.setSwerveLimitDefault();
         swerve.runStop();
         if (!interrupted) indicatorSubsystem.setPattern(IndicatorIO.Patterns.AIMED);
-        else indicatorSubsystem.setPattern(IndicatorIO.Patterns.NORMAL);
+        else indicatorSubsystem.setNormal();
     }
 
     @Override
