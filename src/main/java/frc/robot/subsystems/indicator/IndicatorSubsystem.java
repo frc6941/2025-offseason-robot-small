@@ -37,6 +37,7 @@ public class IndicatorSubsystem extends SubsystemBase {
     public void periodic() {
         switch (currentPattern) {
             case AFTER_INTAKE, RESET_ODOM, AIMED, SHOOT -> resetLed();
+            case AUTO, MANUAL -> setNormal();
             default -> {
             }
         }
