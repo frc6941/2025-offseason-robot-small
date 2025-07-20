@@ -242,7 +242,7 @@ public class RobotContainer {
         driverController.leftStick().whileTrue(
                 new ConditionalCommand(
                         new AutoIntakeCommand(swerve, endEffectorSubsystem, elevatorSubsystem, indicatorSubsystem, true),
-                        Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(DestinationSupplier.getInstance().getElevatorSetpoint(true)))
+                        Commands.run(() -> elevatorSubsystem.setElevatorPosition(DestinationSupplier.getInstance().getElevatorSetpoint(true)))
                                 .finallyDo(() -> elevatorSubsystem.setElevatorPosition(0)),
                         DestinationSupplier.getInstance()::isAuto
                 )
