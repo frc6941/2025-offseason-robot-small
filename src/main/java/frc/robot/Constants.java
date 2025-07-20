@@ -291,7 +291,7 @@ public class Constants {
             static final double translationKp = 2.5;
             static final double translationKi = 0.0;
             static final double translationKiZone = 0.00;
-            static final double translationKd = 0.8;
+            static final double translationKd = 0.10;
             static final double translationVelocityMaxFar = 4.0;
             static final double translationVelocityMaxNear = 3.5;
             static final double translationParamsChangeDistance = 1.5;

@@ -24,7 +24,7 @@ public class AimGoalSupplier {
      * @return A modified goal pose that accounts for optimal approach positioning
      */
     public static Pose2d getDriveTarget(Pose2d robot, Pose2d goal) {
-        Transform2d offset = new Transform2d(goal, robot);
+        Transform2d offset = new Transform2d(goal, new Pose2d(robot.getTranslation(), goal.getRotation()));
         double yDistance = Math.abs(offset.getY());
         double xDistance = Math.abs(offset.getX());
         double shiftXT =
@@ -40,7 +40,8 @@ public class AimGoalSupplier {
             shiftYT = 0.0;
         goal = goal.transformBy(
                 new Transform2d(
-                        Math.copySign(shiftXT * AimParamsNT.MaxDistanceReefLineup.getValue(), offset.getX()),
+//                        Math.copySign(shiftXT * AimParamsNT.MaxDistanceReefLineup.getValue(), offset.getX()),
+                        shiftXT * AimParamsNT.MaxDistanceReefLineup.getValue(),
                         Math.copySign(shiftYT * AimParamsNT.MaxDistanceReefLineup.getValue() * 0.8, offset.getY()),
                         new Rotation2d()));
 
