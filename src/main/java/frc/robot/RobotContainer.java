@@ -38,6 +38,7 @@ import lib.ironpulse.swerve.sim.ImuIOSim;
 import lib.ironpulse.swerve.sim.SwerveModuleIOSimpleSim;
 import lib.ironpulse.swerve.sjtu6.ImuIOPigeon;
 import lib.ironpulse.swerve.sjtu6.SwerveModuleIOSJTU6;
+import org.frcteam6941.command.DriverConditionalCommand;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -225,11 +226,11 @@ public class RobotContainer {
         driverController.leftBumper().onTrue(Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)));
 
 
-        driverController.y().onTrue(Commands.sequence(
+        driverController.y().toggleOnTrue(Commands.sequence(
                 Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.P2)),
                 new PokeCommand(endEffectorSubsystem, elevatorSubsystem)
         ));
-        driverController.a().onTrue(Commands.sequence(
+        driverController.a().toggleOnTrue(Commands.sequence(
                 Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.P1)),
                 new PokeCommand(endEffectorSubsystem, elevatorSubsystem)
         ));
@@ -240,7 +241,7 @@ public class RobotContainer {
         driverController.povDown().onTrue(elevatorSubsystem.zeroElevator());
 
         driverController.leftStick().whileTrue(
-                new ConditionalCommand(
+                new DriverConditionalCommand(
                         new AutoIntakeCommand(swerve, endEffectorSubsystem, elevatorSubsystem, indicatorSubsystem, true),
                         Commands.run(() -> elevatorSubsystem.setElevatorPosition(DestinationSupplier.getInstance().getElevatorSetpoint(true)))
                                 .finallyDo(() -> elevatorSubsystem.setElevatorPosition(0)),
@@ -248,7 +249,7 @@ public class RobotContainer {
                 )
         );//背键-左侧靠外
         driverController.rightStick().whileTrue(
-                new ConditionalCommand(
+                new DriverConditionalCommand(
                         new AutoIntakeCommand(swerve, endEffectorSubsystem, elevatorSubsystem, indicatorSubsystem, true),
                         Commands.run(() -> elevatorSubsystem.setElevatorPosition(DestinationSupplier.getInstance().getElevatorSetpoint(true)))
                                 .finallyDo(() -> elevatorSubsystem.setElevatorPosition(0)),
