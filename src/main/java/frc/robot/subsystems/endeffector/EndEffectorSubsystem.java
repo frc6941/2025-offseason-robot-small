@@ -1,6 +1,7 @@
 package frc.robot.subsystems.endeffector;
 
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.EndEffectorParamsNT;
@@ -71,6 +72,9 @@ public class EndEffectorSubsystem extends SubsystemBase {
         Logger.processInputs(NAME + "/Roller", rollerIOInputs);
         Logger.recordOutput(NAME + "/intakeFinished", intakeFinished());
         Logger.recordOutput(NAME + "/hasCoral", hasCoral());
+        SmartDashboard.putBoolean("EndEffector/hasCoral", hasCoral());
+        SmartDashboard.putBoolean("EndEffector/endEE", endEE);
+        SmartDashboard.putBoolean("EndEffector/frontEE", frontEE);
 
 
         // Update tunable numbers if tuning is enabled
