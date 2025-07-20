@@ -271,8 +271,8 @@ public class Constants {
         public static final boolean[] SNAPSHOT_ENABLED = {false, false};
         public static final int SNAPSHOT_PERIOD = 5; //seconds
         public static Transform3d[] CAMERA_RELATIVE_TO_ROBOT = new Transform3d[]{
-                new Transform3d(0.19933, 0.30879, 0.3156, new Rotation3d(Math.toRadians(0), Math.toRadians(0), Math.toRadians(-20))),
-                new Transform3d(0.19933, -0.30879, 0.3156, new Rotation3d(Math.toRadians(0), Math.toRadians(0), Math.toRadians(20)))
+                new Transform3d(0.19651247, 0.30981213, 0.3156, new Rotation3d(Math.toRadians(0), Math.toRadians(0), Math.toRadians(-20))),
+                new Transform3d(0.19651247, -0.30981213, 0.3156, new Rotation3d(Math.toRadians(0), Math.toRadians(0), Math.toRadians(20)))
         };
 //        public static final String kPhotonVisionTag = "PhotonVision";
 //        @NTParameter(tableName = "Params" + "/" + kPhotonVisionTag)
@@ -288,19 +288,19 @@ public class Constants {
 
         @NTParameter(tableName = "Params/" + kTag)
         public static class ReefAimCommandParams {
-            static final double translationKp = 2.8;
+            static final double translationKp = 2.5;
             static final double translationKi = 0.0;
             static final double translationKiZone = 0.00;
-            static final double translationKd = 0.10;
+            static final double translationKd = 0.8;
             static final double translationVelocityMaxFar = 4.0;
             static final double translationVelocityMaxNear = 3.5;
             static final double translationParamsChangeDistance = 1.5;
             static final double translationAccelerationMax = 9.0;
 
-            static final double translationFastKp = 4.0;
+            static final double translationFastKp = 3.0;
             static final double translationFastKi = 0.0;
             static final double translationFastKiZone = 0.00;
-            static final double translationFastKd = 0.15;
+            static final double translationFastKd = 0.10;
             static final double translationFastVelocityMaxFar = 4.6;
             static final double translationFastVelocityMaxNear = 3.6;
             static final double translationFastParamsChangeDistance = 1.8;

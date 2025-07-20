@@ -244,7 +244,7 @@ public class RobotContainer {
 
         driverController.leftStick().whileTrue(
                 new DriverConditionalCommand(
-                        new AutoIntakeCommand(swerve, endEffectorSubsystem, elevatorSubsystem, indicatorSubsystem, true),
+                        new NavToStationCommand(swerve, indicatorSubsystem),
                         Commands.run(() -> elevatorSubsystem.setElevatorPosition(DestinationSupplier.getInstance().getElevatorSetpoint(true)))
                                 .finallyDo(() -> elevatorSubsystem.setElevatorPosition(0)),
                         DestinationSupplier.getInstance()::isAuto
@@ -252,7 +252,7 @@ public class RobotContainer {
         );//背键-左侧靠外
         driverController.rightStick().whileTrue(
                 new DriverConditionalCommand(
-                        new AutoIntakeCommand(swerve, endEffectorSubsystem, elevatorSubsystem, indicatorSubsystem, true),
+                        new NavToStationCommand(swerve, indicatorSubsystem),
                         Commands.run(() -> elevatorSubsystem.setElevatorPosition(DestinationSupplier.getInstance().getElevatorSetpoint(true)))
                                 .finallyDo(() -> elevatorSubsystem.setElevatorPosition(0)),
                         DestinationSupplier.getInstance()::isAuto
