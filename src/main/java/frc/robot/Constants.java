@@ -205,8 +205,8 @@ public class Constants {
             public static final double L2_EXTENSION_METERS = 0.494;
             public static final double L3_EXTENSION_METERS = 0.893;
             public static final double L4_EXTENSION_METERS = 1.53;
-            public static final double P1_EXTENSION_METERS = 0.55;
-            public static final double P2_EXTENSION_METERS = 0.88;
+            public static final double P1_EXTENSION_METERS = 0.35;
+            public static final double P2_EXTENSION_METERS = 0.75;
             public static final double INTAKE_EXTENSION_METERS = 0.0;
 
             public static final double motionAccelerationUp = 1000;
@@ -379,7 +379,7 @@ public class Constants {
             static final double rotationOnTargetVelocityToleranceDegreesPerSecond = 15.0;
             static final double rotationAdjustmentMaxDegree = 0.0;
 
-            static final double ROBOT_TO_STATION_METERS = 0.50;
+            static final double ROBOT_TO_STATION_METERS = 0.47;
             // old stuff
             public static final double HEXAGON_DANGER_ZONE_OFFSET = 0.24;
             public static final double MAX_DISTANCE_REEF_LINEUP = 0.75;
