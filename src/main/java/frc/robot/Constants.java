@@ -53,7 +53,7 @@ public class Constants {
         public static final String kSwerveModuleTag = "Swerve/SwerveModule";
         public static SwerveLimit kDefaultSwerveLimit = SwerveLimit.builder()
                 .maxLinearVelocity(MetersPerSecond.of(4.5))
-                .maxSkidAcceleration(MetersPerSecondPerSecond.of(12.0))
+                .maxSkidAcceleration(MetersPerSecondPerSecond.of(10.0))
                 .maxAngularVelocity(RadiansPerSecond.of(10.0))
                 .maxAngularAcceleration(RadiansPerSecondPerSecond.of(15.0))
                 .build();
