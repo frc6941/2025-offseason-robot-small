@@ -77,6 +77,8 @@ public class RobotContainer {
         AutoSelector.getInstance().registerAuto("Forward0CoralAuto", new Forward0CoralAuto());
         AutoSelector.getInstance().registerAuto("Left5L4Auto", new Left5L4Auto());
         AutoSelector.getInstance().registerAuto("Right5L4Auto", new Right5L4Auto());
+        AutoSelector.getInstance().registerAuto("Left5L3Auto", new Left5L3Auto());
+        AutoSelector.getInstance().registerAuto("Right5L3Auto", new Right5L3Auto());
         AutoSelector.getInstance().registerAuto("Middle1CoralAuto", new Middle1CoralAuto());
         AutoSelector.getInstance().registerAuto("TestAuto", new TestAuto());
         AutoSelector.getInstance().registerAuto("Left3L4And2L3Auto", new Left3L4And2L3Auto());
