@@ -155,7 +155,7 @@ public class RobotContainer {
                                             TransformRecorder.kFrameWorld,
                                             TransformRecorder.kFrameRobot);
                                     indicatorSubsystem.setPattern(IndicatorIO.Patterns.RESET_ODOM);
-                                })));
+                                })).ignoringDisable(true));
         driverController.povRight().whileTrue(
                 new ConditionalCommand(
                         Commands.sequence(
