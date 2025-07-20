@@ -331,7 +331,7 @@ public class Constants {
 
             public static final double HEXAGON_DANGER_ZONE_OFFSET = 0.24;
             public static final double MAX_DISTANCE_REEF_LINEUP = 0.75;
-            public static final double ROBOT_TO_PIPE_METERS = 0.59;
+            public static final double ROBOT_TO_PIPE_METERS = 0.61;
             public static final double X_TOLERANCE_METERS = 0.01;
             public static final double Y_TOLERANCE_METERS = 0.01;
             public static final double RAISE_LIMIT_METERS = 1.0;
@@ -379,7 +379,7 @@ public class Constants {
             static final double rotationOnTargetVelocityToleranceDegreesPerSecond = 15.0;
             static final double rotationAdjustmentMaxDegree = 0.0;
 
-            static final double ROBOT_TO_STATION_METERS = 0.47;
+            static final double ROBOT_TO_STATION_METERS = 0.50;
             // old stuff
             public static final double HEXAGON_DANGER_ZONE_OFFSET = 0.24;
             public static final double MAX_DISTANCE_REEF_LINEUP = 0.75;

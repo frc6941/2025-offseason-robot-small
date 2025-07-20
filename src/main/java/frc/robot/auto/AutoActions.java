@@ -206,9 +206,9 @@ public class AutoActions {
     }
 
     public static Command autoIntake(boolean isRight) {
-        return Commands.parallel(
-                new NavToStationCommand(swerve, indicator, isRight),
-                new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicator)
+        return Commands.deadline(
+                new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicator),
+                new NavToStationCommand(swerve, indicator, isRight)
         );
     }
 
