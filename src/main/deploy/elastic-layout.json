@@ -1,6 +1,6 @@
 {
   "version": 1.0,
-  "grid_size": 128,
+  "grid_size": 64,
   "tabs": [
     {
       "name": "Teleop",
@@ -9,10 +9,10 @@
         "containers": [
           {
             "title": "Field",
-            "x": 576.0,
+            "x": 1024.0,
             "y": 0.0,
-            "width": 192.0,
-            "height": 448.0,
+            "width": 256.0,
+            "height": 576.0,
             "type": "Field",
             "properties": {
               "topic": "/SmartDashboard/Field",
@@ -31,8 +31,8 @@
             "title": "Auto Selector",
             "x": 0.0,
             "y": 0.0,
-            "width": 128.0,
-            "height": 64.0,
+            "width": 256.0,
+            "height": 128.0,
             "type": "ComboBox Chooser",
             "properties": {
               "topic": "/SmartDashboard/Auto Selector",
@@ -41,38 +41,11 @@
             }
           },
           {
-            "title": "Console",
-            "x": 0.0,
-            "y": 320.0,
-            "width": 576.0,
-            "height": 64.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Console",
-              "period": 0.06,
-              "data_type": "string",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "FullCycleMS",
-            "x": 0.0,
-            "y": 384.0,
-            "width": 64.0,
-            "height": 64.0,
-            "type": "Large Text Display",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/LoggedRobot/FullCycleMS",
-              "period": 0.5,
-              "data_type": "double"
-            }
-          },
-          {
             "title": "Pipe",
             "x": 0.0,
-            "y": 64.0,
-            "width": 64.0,
-            "height": 64.0,
+            "y": 192.0,
+            "width": 128.0,
+            "height": 128.0,
             "type": "Large Text Display",
             "properties": {
               "topic": "/SmartDashboard/DestinationSupplier/Pipe",
@@ -82,10 +55,10 @@
           },
           {
             "title": "currentElevSetpointCoral",
-            "x": 64.0,
-            "y": 64.0,
-            "width": 64.0,
-            "height": 64.0,
+            "x": 128.0,
+            "y": 192.0,
+            "width": 128.0,
+            "height": 128.0,
             "type": "Large Text Display",
             "properties": {
               "topic": "/SmartDashboard/DestinationSupplier/currentElevSetpointCoral",
@@ -96,9 +69,9 @@
           {
             "title": "Auto",
             "x": 0.0,
-            "y": 128.0,
-            "width": 128.0,
-            "height": 64.0,
+            "y": 320.0,
+            "width": 256.0,
+            "height": 128.0,
             "type": "Large Text Display",
             "properties": {
               "topic": "/SmartDashboard/DestinationSupplier/Auto",
@@ -108,10 +81,10 @@
           },
           {
             "title": "PositionMeters",
-            "x": 192.0,
-            "y": 64.0,
-            "width": 64.0,
-            "height": 64.0,
+            "x": 256.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/Elevator/PositionMeters",
@@ -122,10 +95,10 @@
           },
           {
             "title": "setPoint",
-            "x": 256.0,
-            "y": 64.0,
-            "width": 64.0,
-            "height": 64.0,
+            "x": 384.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/Elevator/setPoint",
@@ -136,10 +109,10 @@
           },
           {
             "title": "zeroing",
-            "x": 192.0,
+            "x": 256.0,
             "y": 0.0,
-            "width": 128.0,
-            "height": 64.0,
+            "width": 256.0,
+            "height": 128.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/SmartDashboard/Elevator/zeroing",
@@ -153,10 +126,10 @@
           },
           {
             "title": "endEE",
-            "x": 384.0,
+            "x": 576.0,
             "y": 0.0,
-            "width": 64.0,
-            "height": 64.0,
+            "width": 128.0,
+            "height": 128.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/SmartDashboard/EndEffector/endEE",
@@ -170,10 +143,10 @@
           },
           {
             "title": "frontEE",
-            "x": 448.0,
+            "x": 704.0,
             "y": 0.0,
-            "width": 64.0,
-            "height": 64.0,
+            "width": 128.0,
+            "height": 128.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/SmartDashboard/EndEffector/frontEE",
@@ -187,10 +160,10 @@
           },
           {
             "title": "hasCoral",
-            "x": 384.0,
-            "y": 64.0,
-            "width": 128.0,
-            "height": 64.0,
+            "x": 576.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/SmartDashboard/EndEffector/hasCoral",
@@ -204,10 +177,10 @@
           },
           {
             "title": "Name",
-            "x": 256.0,
-            "y": 192.0,
-            "width": 64.0,
-            "height": 64.0,
+            "x": 384.0,
+            "y": 320.0,
+            "width": 128.0,
+            "height": 128.0,
             "type": "Large Text Display",
             "properties": {
               "topic": "/SmartDashboard/PhotonVision/Inst0/Name",
@@ -217,10 +190,10 @@
           },
           {
             "title": "Connected",
-            "x": 320.0,
-            "y": 192.0,
-            "width": 64.0,
-            "height": 64.0,
+            "x": 512.0,
+            "y": 320.0,
+            "width": 128.0,
+            "height": 128.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/SmartDashboard/PhotonVision/Inst0/Connected",
@@ -234,10 +207,10 @@
           },
           {
             "title": "hasFreshData",
-            "x": 384.0,
-            "y": 192.0,
-            "width": 64.0,
-            "height": 64.0,
+            "x": 640.0,
+            "y": 320.0,
+            "width": 128.0,
+            "height": 128.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/SmartDashboard/PhotonVision/Inst0/hasFreshData",
@@ -251,10 +224,10 @@
           },
           {
             "title": "hasTargets",
-            "x": 448.0,
-            "y": 192.0,
-            "width": 64.0,
-            "height": 64.0,
+            "x": 768.0,
+            "y": 320.0,
+            "width": 128.0,
+            "height": 128.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/SmartDashboard/PhotonVision/Inst0/hasTargets",
@@ -268,10 +241,10 @@
           },
           {
             "title": "StrategyUsed",
-            "x": 512.0,
-            "y": 192.0,
-            "width": 64.0,
-            "height": 64.0,
+            "x": 896.0,
+            "y": 320.0,
+            "width": 128.0,
+            "height": 128.0,
             "type": "Large Text Display",
             "properties": {
               "topic": "/SmartDashboard/PhotonVision/Inst0/StrategyUsed",
@@ -281,10 +254,10 @@
           },
           {
             "title": "Connected",
-            "x": 320.0,
-            "y": 256.0,
-            "width": 64.0,
-            "height": 64.0,
+            "x": 512.0,
+            "y": 448.0,
+            "width": 128.0,
+            "height": 128.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/SmartDashboard/PhotonVision/Inst1/Connected",
@@ -298,10 +271,10 @@
           },
           {
             "title": "hasFreshData",
-            "x": 384.0,
-            "y": 256.0,
-            "width": 64.0,
-            "height": 64.0,
+            "x": 640.0,
+            "y": 448.0,
+            "width": 128.0,
+            "height": 128.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/SmartDashboard/PhotonVision/Inst1/hasFreshData",
@@ -315,10 +288,10 @@
           },
           {
             "title": "hasTargets",
-            "x": 448.0,
-            "y": 256.0,
-            "width": 64.0,
-            "height": 64.0,
+            "x": 768.0,
+            "y": 448.0,
+            "width": 128.0,
+            "height": 128.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/SmartDashboard/PhotonVision/Inst1/hasTargets",
@@ -332,10 +305,10 @@
           },
           {
             "title": "StrategyUsed",
-            "x": 512.0,
-            "y": 256.0,
-            "width": 64.0,
-            "height": 64.0,
+            "x": 896.0,
+            "y": 448.0,
+            "width": 128.0,
+            "height": 128.0,
             "type": "Large Text Display",
             "properties": {
               "topic": "/SmartDashboard/PhotonVision/Inst1/StrategyUsed",
@@ -345,10 +318,10 @@
           },
           {
             "title": "Name",
-            "x": 256.0,
-            "y": 256.0,
-            "width": 64.0,
-            "height": 64.0,
+            "x": 384.0,
+            "y": 448.0,
+            "width": 128.0,
+            "height": 128.0,
             "type": "Large Text Display",
             "properties": {
               "topic": "/SmartDashboard/PhotonVision/Inst1/Name",
