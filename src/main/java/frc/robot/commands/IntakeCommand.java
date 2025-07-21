@@ -38,8 +38,7 @@ public class IntakeCommand extends Command {
     public void initialize() {
         indicatorSubsystem.setPattern(Patterns.INTAKE);
         endEffectorSubsystem.setRollerVoltage(EndEffectorParamsNT.CORAL_INTAKE_VOLTAGE.getValue());
-        destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.INTAKE);
-        elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true));
+        elevatorSubsystem.setElevatorPosition(ElevatorCommonNT.INTAKE_EXTENSION_METERS.getValue());
     }
 
     @Override
@@ -63,6 +62,5 @@ public class IntakeCommand extends Command {
                 CommandScheduler.getInstance().schedule(new RumbleCommand(Seconds.of(1), controller.getHID()));
         } else indicatorSubsystem.setNormal();
         elevatorSubsystem.setElevatorPosition(ElevatorCommonNT.INTAKE_EXTENSION_METERS.getValue());
-
     }
 }
