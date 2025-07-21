@@ -152,8 +152,8 @@ public class Constants {
         @NTParameter(tableName = kParameterTag + "/" + kSwerveModuleTag)
         private final static class SwerveModuleParams {
             private final static class Drive {
-                static final double kP = 8;
-                static final double kI = 0.12;
+                static final double kP = 10;
+                static final double kI = 0.16;
                 static final double kD = 0.0;
                 static final double kS = 0.0;
                 static final double kV = 0.1247;
