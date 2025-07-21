@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.ElevatorCommonNT;
 import frc.robot.EndEffectorParamsNT;
 import frc.robot.drivers.DestinationSupplier;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
@@ -61,8 +62,7 @@ public class IntakeCommand extends Command {
             if (enableRumble)
                 CommandScheduler.getInstance().schedule(new RumbleCommand(Seconds.of(1), controller.getHID()));
         } else indicatorSubsystem.setNormal();
-        destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2);
-        elevatorSubsystem.setElevatorPosition(destinationSupplier.getElevatorSetpoint(true));
+        elevatorSubsystem.setElevatorPosition(ElevatorCommonNT.INTAKE_EXTENSION_METERS.getValue());
 
     }
 }
