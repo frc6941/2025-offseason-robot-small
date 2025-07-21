@@ -17,7 +17,7 @@ public class Right5L4Auto extends AutoRoutine {
     public Command getAutoCommand() {
         return Commands.sequence(
                 AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L4),
-                AutoActions.autoScore('F'),
+                AutoActions.autoScore('E'),
                 AutoActions.autoIntake(true),
                 AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L4),
                 AutoActions.autoScore('D'),
