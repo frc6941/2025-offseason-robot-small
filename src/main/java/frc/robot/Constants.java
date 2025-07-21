@@ -268,7 +268,7 @@ public class Constants {
 
     public static class Photonvision {
         public static final String[] PV_CAMERA_NAMES = {"LeftCamera", "RightCamera"};
-        public static final boolean[] SNAPSHOT_ENABLED = {false, false};
+        public static final boolean[] SNAPSHOT_ENABLED = {true, true};
         public static final int SNAPSHOT_PERIOD = 5; //seconds
         public static Transform3d[] CAMERA_RELATIVE_TO_ROBOT = new Transform3d[]{
                 new Transform3d(0.19651247, 0.30981213, 0.3156, new Rotation3d(Math.toRadians(0), Math.toRadians(0), Math.toRadians(-20))),
