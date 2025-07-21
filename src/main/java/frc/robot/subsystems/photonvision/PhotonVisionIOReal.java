@@ -31,9 +31,7 @@ public class PhotonVisionIOReal implements PhotonVisionIO {
                 PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
                 CAMERA_RELATIVE_TO_ROBOT[id]);
         poseEstimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.CLOSEST_TO_REFERENCE_POSE);
-        poseEstimator.setFieldTags(AllianceFlipUtil.shouldFlip() ?
-                FieldConstants.weldedRedAprilTagType.getLayout() :
-                FieldConstants.weldedBlueAprilTagType.getLayout());
+        poseEstimator.setFieldTags(FieldConstants.weldedReefAprilTagType.getLayout());
     }
 
     @Override
@@ -80,4 +78,12 @@ public class PhotonVisionIOReal implements PhotonVisionIO {
     public void setRefPose(Pose3d refPose) {
         poseEstimator.setReferencePose(refPose);
     }
+
+    @Override
+    public void updateLayout() {
+        poseEstimator.setFieldTags(AllianceFlipUtil.shouldFlip() ?
+                FieldConstants.weldedRedAprilTagType.getLayout() :
+                FieldConstants.weldedBlueAprilTagType.getLayout());
+    }
+
 }

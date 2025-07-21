@@ -36,4 +36,9 @@ public class PhotonVisionIOSim implements PhotonVisionIO {
     @Override
     public void setRefPose(Pose3d refPose) {
     }
+
+    @Override
+    public void updateLayout() {
+
+    }
 }

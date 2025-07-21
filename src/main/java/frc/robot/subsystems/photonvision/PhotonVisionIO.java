@@ -16,6 +16,8 @@ public interface PhotonVisionIO {
 
     void setRefPose(Pose3d refPose);
 
+    void updateLayout();
+
     @AutoLog
     class PhotonVisionIOInputs {
         public String name;
@@ -32,5 +34,4 @@ public interface PhotonVisionIO {
     public enum estimateStrategy {
         None, MULTI_TAG, SINGLE_TAG,
     }
-
 }
