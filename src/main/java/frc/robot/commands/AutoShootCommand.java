@@ -28,6 +28,7 @@ public class AutoShootCommand extends SequentialCommandGroup {
                         ),
                         Commands.waitUntil(shoot)
                 ),
+                Commands.waitUntil(elevatorSubsystem::isAtGoal),
                 new ShootCommand(endEffectorSubsystem, indicatorSubsystem).
                         finallyDo(() -> elevatorSubsystem.setElevatorPosition(ElevatorCommonNT.INTAKE_EXTENSION_METERS.getValue()))
         );
