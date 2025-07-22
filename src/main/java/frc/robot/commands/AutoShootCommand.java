@@ -46,6 +46,7 @@ public class AutoShootCommand extends SequentialCommandGroup {
                         new ReefAimCommand(swerve, indicatorSubsystem, goal),
                         Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(DestinationSupplier.getInstance().getElevatorSetpoint(true)))
                 ),
+                Commands.waitUntil(elevatorSubsystem::isAtGoal),
                 new ShootCommand(endEffectorSubsystem, indicatorSubsystem).
                         finallyDo(() -> elevatorSubsystem.setElevatorPosition(ElevatorCommonNT.INTAKE_EXTENSION_METERS.getValue()))
         );
