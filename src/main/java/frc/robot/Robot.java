@@ -17,6 +17,7 @@ import lib.ironpulse.utils.PhoenixUtils;
 import lib.ntext.NTParameterRegistry;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.inputs.LoggedPowerDistribution;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
@@ -40,7 +41,7 @@ public class Robot extends LoggedRobot {
         Logger.addDataReceiver(new NT4Publisher());
         Logger.addDataReceiver(new WPILOGWriter());
         Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
-        // LoggedPowerDistribution.getInstance(, PowerDistribution.ModuleType.kRev);
+        LoggedPowerDistribution.getInstance(20, PowerDistribution.ModuleType.kRev);
         Logger.start();
 
         // early-stage initialization

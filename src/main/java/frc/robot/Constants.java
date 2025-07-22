@@ -312,11 +312,6 @@ public class Constants {
             static final double rotationVelocityMax = 500.0;
             static final double rotationAccelerationMax = 2000.0;
 
-            static final double xOnTargetMeter = 0.04;
-            static final double yOnTargetMeter = 0.02;
-            static final double xStationaryMetersPerSecond = 0.35;
-            static final double yStationaryMetersPerSecond = 0.25;
-
             static final double xOnTargetFastMeter = 0.04;
             static final double yOnTargetFastMeter = 0.035;
             static final double xStationaryFastMetersPerSecond = 0.40;
