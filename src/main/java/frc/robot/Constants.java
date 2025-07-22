@@ -195,7 +195,7 @@ public class Constants {
         private static final class ElevatorCommon {
             private static final double ELEVATOR_GOAL_TOLERANCE = 0.02;
 
-            private static final double MAX_EXTENSION_METERS = 1.56;
+            private static final double MAX_EXTENSION_METERS = 1.54;
             private static final double ELEVATOR_ZEROING_CURRENT = 50.0;
             private static final double SAFE_HEIGHT_FLIP = 0.54;
 
@@ -204,7 +204,7 @@ public class Constants {
 
             public static final double L2_EXTENSION_METERS = 0.494;
             public static final double L3_EXTENSION_METERS = 0.893;
-            public static final double L4_EXTENSION_METERS = 1.55;
+            public static final double L4_EXTENSION_METERS = 1.535;
             public static final double P1_EXTENSION_METERS = 0.35;
             public static final double P2_EXTENSION_METERS = 0.75;
             public static final double INTAKE_EXTENSION_METERS = 0.0;
