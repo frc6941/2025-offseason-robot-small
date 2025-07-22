@@ -38,7 +38,8 @@ public class Robot extends LoggedRobot {
     public void robotInit() {
         // logger initialization
         // if (Robot.isSimulation())
-        Logger.addDataReceiver(new NT4Publisher());
+        if (DriverStation.getMatchType() == DriverStation.MatchType.None)
+            Logger.addDataReceiver(new NT4Publisher());
         Logger.addDataReceiver(new WPILOGWriter());
         Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
         LoggedPowerDistribution.getInstance(20, PowerDistribution.ModuleType.kRev);
