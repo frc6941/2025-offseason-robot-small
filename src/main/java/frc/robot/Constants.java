@@ -204,7 +204,7 @@ public class Constants {
 
             public static final double L2_EXTENSION_METERS = 0.494;
             public static final double L3_EXTENSION_METERS = 0.893;
-            public static final double L4_EXTENSION_METERS = 1.53;
+            public static final double L4_EXTENSION_METERS = 1.55;
             public static final double P1_EXTENSION_METERS = 0.35;
             public static final double P2_EXTENSION_METERS = 0.75;
             public static final double INTAKE_EXTENSION_METERS = 0.0;
@@ -312,8 +312,8 @@ public class Constants {
             static final double rotationVelocityMax = 500.0;
             static final double rotationAccelerationMax = 2000.0;
 
-            static final double xOnTargetFastMeter = 0.04;
-            static final double yOnTargetFastMeter = 0.035;
+            static final double xOnTargetFastMeter = 0.03;
+            static final double yOnTargetFastMeter = 0.03;
             static final double xStationaryFastMetersPerSecond = 0.40;
             static final double yStationaryFastMetersPerSecond = 0.30;
 
