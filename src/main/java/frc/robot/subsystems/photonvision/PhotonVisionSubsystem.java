@@ -2,12 +2,11 @@ package frc.robot.subsystems.photonvision;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotStateRecorder;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
-
-import java.util.Optional;
 
 import static frc.robot.Constants.Photonvision.SNAPSHOT_ENABLED;
 import static frc.robot.Constants.Photonvision.SNAPSHOT_PERIOD;
@@ -36,6 +35,11 @@ public class PhotonVisionSubsystem extends SubsystemBase {
             ios[i].setRefPose(RobotStateRecorder.getPoseWorldRobotCurrent());
             ios[i].updateInputs(inputs[i]);
             Logger.processInputs("PhotonVision/Inst" + i, inputs[i]);
+            SmartDashboard.putString("PhotonVision/Inst" + i + "/Name", inputs[i].name);
+            SmartDashboard.putString("PhotonVision/Inst" + i + "/StrategyUsed", inputs[i].strategyUsed.toString());
+            SmartDashboard.putBoolean("PhotonVision/Inst" + i + "/Connected", inputs[i].connected);
+            SmartDashboard.putBoolean("PhotonVision/Inst" + i + "/hasFreshData", inputs[i].hasFreshData);
+            SmartDashboard.putBoolean("PhotonVision/Inst" + i + "/hasTargets", inputs[i].hasTargets);
         }
         if (snapshotTimer.hasElapsed(SNAPSHOT_PERIOD)) {
             for (int i = 0; i < ios.length; i++) {

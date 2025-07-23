@@ -1,7 +1,7 @@
 package frc.robot.subsystems.indicator;
 
 public class IndicatorIOSim implements IndicatorIO {
-    private Patterns currentPattern = Patterns.NORMAL;
+    private Patterns currentPattern = Patterns.AUTO;
 
     @Override
     public void updateInputs(IndicatorIOInputs inputs) {

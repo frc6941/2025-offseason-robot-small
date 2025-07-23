@@ -53,7 +53,7 @@ public class Constants {
         public static final String kSwerveModuleTag = "Swerve/SwerveModule";
         public static SwerveLimit kDefaultSwerveLimit = SwerveLimit.builder()
                 .maxLinearVelocity(MetersPerSecond.of(4.5))
-                .maxSkidAcceleration(MetersPerSecondPerSecond.of(12.0))
+                .maxSkidAcceleration(MetersPerSecondPerSecond.of(10.0))
                 .maxAngularVelocity(RadiansPerSecond.of(10.0))
                 .maxAngularAcceleration(RadiansPerSecondPerSecond.of(15.0))
                 .build();
@@ -152,8 +152,8 @@ public class Constants {
         @NTParameter(tableName = kParameterTag + "/" + kSwerveModuleTag)
         private final static class SwerveModuleParams {
             private final static class Drive {
-                static final double kP = 8;
-                static final double kI = 0.12;
+                static final double kP = 10;
+                static final double kI = 0.16;
                 static final double kD = 0.0;
                 static final double kS = 0.0;
                 static final double kV = 0.1247;
@@ -202,11 +202,11 @@ public class Constants {
             private static final double SYSID_RAMP_RATE_VOLTS_PER_SEC = 1;
             private static final double SYSID_DYNAMIC_VOLTAGE = 7;
 
-            public static final double L2_EXTENSION_METERS = 0.485;
-            public static final double L3_EXTENSION_METERS = 0.93;
-            public static final double L4_EXTENSION_METERS = 1.525;
-            public static final double P1_EXTENSION_METERS = 0.55;
-            public static final double P2_EXTENSION_METERS = 0.88;
+            public static final double L2_EXTENSION_METERS = 0.494;
+            public static final double L3_EXTENSION_METERS = 0.893;
+            public static final double L4_EXTENSION_METERS = 1.535;
+            public static final double P1_EXTENSION_METERS = 0.35;
+            public static final double P2_EXTENSION_METERS = 0.75;
             public static final double INTAKE_EXTENSION_METERS = 0.0;
 
             public static final double motionAccelerationUp = 1000;
@@ -254,7 +254,7 @@ public class Constants {
             public static final double CORAL_INDEX_VOLTAGE = 4.0;
             public static final double CORAL_OUTTAKE_VOLTAGE = -6.0;
             public static final double CORAL_HOLD_VOLTAGE = 0.5;
-            public static final double CORAL_SHOOT_VOLTAGE = 12.0;
+            public static final double CORAL_SHOOT_VOLTAGE = 9.0;
             public static final double CORAL_SHOOT_DELAY_TIME = 0.2;
             public static final double ALGAE_POKE_VOLTAGE = 12.0;
         }
@@ -268,11 +268,11 @@ public class Constants {
 
     public static class Photonvision {
         public static final String[] PV_CAMERA_NAMES = {"LeftCamera", "RightCamera"};
-        public static final boolean[] SNAPSHOT_ENABLED = {false, false};
+        public static final boolean[] SNAPSHOT_ENABLED = {true, true};
         public static final int SNAPSHOT_PERIOD = 5; //seconds
         public static Transform3d[] CAMERA_RELATIVE_TO_ROBOT = new Transform3d[]{
-                new Transform3d(0.19933, 0.30879, 0.3156, new Rotation3d(Math.toRadians(0), Math.toRadians(0), Math.toRadians(-20))),
-                new Transform3d(0.19933, -0.30879, 0.3156, new Rotation3d(Math.toRadians(0), Math.toRadians(0), Math.toRadians(20)))
+                new Transform3d(0.19651247, 0.30981213, 0.3156, new Rotation3d(Math.toRadians(0), Math.toRadians(0), Math.toRadians(-20))),
+                new Transform3d(0.19651247, -0.30981213, 0.3156, new Rotation3d(Math.toRadians(0), Math.toRadians(0), Math.toRadians(20)))
         };
 //        public static final String kPhotonVisionTag = "PhotonVision";
 //        @NTParameter(tableName = "Params" + "/" + kPhotonVisionTag)
@@ -288,19 +288,19 @@ public class Constants {
 
         @NTParameter(tableName = "Params/" + kTag)
         public static class ReefAimCommandParams {
-            static final double translationKp = 2.8;
+            static final double translationKp = 2.5;
             static final double translationKi = 0.0;
             static final double translationKiZone = 0.00;
             static final double translationKd = 0.10;
             static final double translationVelocityMaxFar = 4.0;
             static final double translationVelocityMaxNear = 3.5;
             static final double translationParamsChangeDistance = 1.5;
-            static final double translationAccelerationMax = 11.0;
+            static final double translationAccelerationMax = 9.0;
 
-            static final double translationFastKp = 4.5;
+            static final double translationFastKp = 3.0;
             static final double translationFastKi = 0.0;
             static final double translationFastKiZone = 0.00;
-            static final double translationFastKd = 0.15;
+            static final double translationFastKd = 0.10;
             static final double translationFastVelocityMaxFar = 4.6;
             static final double translationFastVelocityMaxNear = 3.6;
             static final double translationFastParamsChangeDistance = 1.8;
@@ -312,13 +312,8 @@ public class Constants {
             static final double rotationVelocityMax = 500.0;
             static final double rotationAccelerationMax = 2000.0;
 
-            static final double xOnTargetMeter = 0.04;
-            static final double yOnTargetMeter = 0.02;
-            static final double xStationaryMetersPerSecond = 0.35;
-            static final double yStationaryMetersPerSecond = 0.25;
-
-            static final double xOnTargetFastMeter = 0.04;
-            static final double yOnTargetFastMeter = 0.035;
+            static final double xOnTargetFastMeter = 0.03;
+            static final double yOnTargetFastMeter = 0.03;
             static final double xStationaryFastMetersPerSecond = 0.40;
             static final double yStationaryFastMetersPerSecond = 0.30;
 
@@ -331,7 +326,7 @@ public class Constants {
 
             public static final double HEXAGON_DANGER_ZONE_OFFSET = 0.24;
             public static final double MAX_DISTANCE_REEF_LINEUP = 0.75;
-            public static final double ROBOT_TO_PIPE_METERS = 0.59;
+            public static final double ROBOT_TO_PIPE_METERS = 0.61;
             public static final double X_TOLERANCE_METERS = 0.01;
             public static final double Y_TOLERANCE_METERS = 0.01;
             public static final double RAISE_LIMIT_METERS = 1.0;
@@ -379,7 +374,7 @@ public class Constants {
             static final double rotationOnTargetVelocityToleranceDegreesPerSecond = 15.0;
             static final double rotationAdjustmentMaxDegree = 0.0;
 
-            static final double ROBOT_TO_STATION_METERS = 0.45;
+            static final double ROBOT_TO_STATION_METERS = 0.47;
             // old stuff
             public static final double HEXAGON_DANGER_ZONE_OFFSET = 0.24;
             public static final double MAX_DISTANCE_REEF_LINEUP = 0.75;

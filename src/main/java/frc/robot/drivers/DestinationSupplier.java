@@ -167,9 +167,9 @@ public class DestinationSupplier {
                 minDistance = distance;
             }
         }
-        if ((secondMinDistance - minDistance) < NavToStationCommandParamsNT.Edge_Case_Max_Delta.getValue() && (Math.abs(ControllerX) >= 0.05 || Math.abs(ControllerY) >= 0.05)) {
-            minDistanceID = solveEdgeCase(ControllerX, ControllerY, minDistanceID, secondMinDistanceID);
-        }
+//        if ((secondMinDistance - minDistance) < NavToStationCommandParamsNT.Edge_Case_Max_Delta.getValue() && (Math.abs(ControllerX) >= 0.05 || Math.abs(ControllerY) >= 0.05)) {
+//            minDistanceID = solveEdgeCase(ControllerX, ControllerY, minDistanceID, secondMinDistanceID);
+//        }
         return minDistanceID;
     }
 
@@ -214,7 +214,7 @@ public class DestinationSupplier {
      */
     public void updateElevatorSetpoint(elevatorSetpoint setpoint) {
         switch (setpoint) {
-            case L2, L3, L4, INTAKE:
+            case L2, L3, L4:
                 currentElevSetpointCoral = setpoint;
                 Logger.recordOutput("DestinationSupplier/currentElevSetpointCoral", setpoint);
                 SmartDashboard.putString("DestinationSupplier/currentElevSetpointCoral", setpoint.toString());
@@ -242,7 +242,6 @@ public class DestinationSupplier {
                 case L2 -> ElevatorCommonNT.L2_EXTENSION_METERS.getValue();
                 case L3 -> ElevatorCommonNT.L3_EXTENSION_METERS.getValue();
                 case L4 -> ElevatorCommonNT.L4_EXTENSION_METERS.getValue();
-                case INTAKE -> ElevatorCommonNT.INTAKE_EXTENSION_METERS.getValue();
                 default -> ElevatorCommonNT.INTAKE_EXTENSION_METERS.getValue();
             };
         } else {
@@ -267,7 +266,7 @@ public class DestinationSupplier {
     }
 
     public enum elevatorSetpoint {
-        L2, L3, L4, P1, P2, INTAKE
+        L2, L3, L4, P1, P2
     }
 
     public static boolean isSafeToRaise(Pose2d robotPose, boolean rightReef) {

@@ -30,11 +30,21 @@ public class FieldConstants {
     public static final double aprilTagWidth = Units.inchesToMeters(6.5);
     public static final AprilTagLayoutType aprilTagType = AprilTagLayoutType.WELDED;
     public static final AprilTagLayoutType officialAprilTagType = AprilTagLayoutType.WELDED;
+    public static final AprilTagLayoutType weldedRedAprilTagType = AprilTagLayoutType.WELDED_RED;
+    public static final AprilTagLayoutType weldedBlueAprilTagType = AprilTagLayoutType.WELDED_BLUE;
+    public static final AprilTagLayoutType weldedReefAprilTagType = AprilTagLayoutType.WELDED_REEF;
+    public static final AprilTagLayoutType andymarkRedAprilTagType = AprilTagLayoutType.ANDYMARK_RED;
+    public static final AprilTagLayoutType andymarkBlueAprilTagType = AprilTagLayoutType.ANDYMARK_BLUE;
 
     @Getter
     public enum AprilTagLayoutType {
         WELDED("2025-reefscape-welded"),
+        WELDED_RED("2025-reefscape-welded-red"),
+        WELDED_BLUE("2025-reefscape-welded-blue"),
+        WELDED_REEF("2025-reefscape-welded-reef"),
         ANDYMARK("2025-reefscape-andymark"),
+        ANDYMARK_RED("2025-reefscape-andymark-red"),
+        ANDYMARK_BLUE("2025-reefscape-andymark-blue"),
         CUSTOM("2025-custom");
 
         private final AprilTagFieldLayout layout;

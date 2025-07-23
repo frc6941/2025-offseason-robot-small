@@ -33,7 +33,6 @@ public class ShootCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         endEffectorSubsystem.setRollerVoltage(0);
-        indicatorSubsystem.setPattern(Patterns.NORMAL);
         timer.stop();
         timer.reset();
     }

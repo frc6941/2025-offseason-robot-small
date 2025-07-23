@@ -38,6 +38,7 @@ import lib.ironpulse.swerve.sim.ImuIOSim;
 import lib.ironpulse.swerve.sim.SwerveModuleIOSimpleSim;
 import lib.ironpulse.swerve.sjtu6.ImuIOPigeon;
 import lib.ironpulse.swerve.sjtu6.SwerveModuleIOSJTU6;
+import org.frcteam6941.command.DriverConditionalCommand;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -76,6 +77,8 @@ public class RobotContainer {
         AutoSelector.getInstance().registerAuto("Forward0CoralAuto", new Forward0CoralAuto());
         AutoSelector.getInstance().registerAuto("Left5L4Auto", new Left5L4Auto());
         AutoSelector.getInstance().registerAuto("Right5L4Auto", new Right5L4Auto());
+        AutoSelector.getInstance().registerAuto("Left5L3Auto", new Left5L3Auto());
+        AutoSelector.getInstance().registerAuto("Right5L3Auto", new Right5L3Auto());
         AutoSelector.getInstance().registerAuto("Middle1CoralAuto", new Middle1CoralAuto());
         AutoSelector.getInstance().registerAuto("TestAuto", new TestAuto());
         AutoSelector.getInstance().registerAuto("Left3L4And2L3Auto", new Left3L4And2L3Auto());
@@ -152,7 +155,7 @@ public class RobotContainer {
                                             TransformRecorder.kFrameWorld,
                                             TransformRecorder.kFrameRobot);
                                     indicatorSubsystem.setPattern(IndicatorIO.Patterns.RESET_ODOM);
-                                })));
+                                })).ignoringDisable(true));
         driverController.povRight().whileTrue(
                 new ConditionalCommand(
                         Commands.sequence(
@@ -225,31 +228,33 @@ public class RobotContainer {
         driverController.leftBumper().onTrue(Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)));
 
 
-        driverController.y().onTrue(Commands.sequence(
+        driverController.y().toggleOnTrue(Commands.sequence(
                 Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.P2)),
                 new PokeCommand(endEffectorSubsystem, elevatorSubsystem)
         ));
-        driverController.a().onTrue(Commands.sequence(
+        driverController.a().toggleOnTrue(Commands.sequence(
                 Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.P1)),
                 new PokeCommand(endEffectorSubsystem, elevatorSubsystem)
         ));
 
         driverController.b().whileTrue(new ShootCommand(endEffectorSubsystem, indicatorSubsystem));
-        driverController.x().toggleOnTrue(new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem));
+        driverController.x().toggleOnTrue(new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem, true));
 
         driverController.povDown().onTrue(elevatorSubsystem.zeroElevator());
 
         driverController.leftStick().whileTrue(
-                new ConditionalCommand(
-                        new AutoIntakeCommand(swerve, endEffectorSubsystem, elevatorSubsystem, indicatorSubsystem),
-                        Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(DestinationSupplier.getInstance().getElevatorSetpoint(true))),
+                new DriverConditionalCommand(
+                        new NavToStationCommand(swerve, indicatorSubsystem),
+                        Commands.run(() -> elevatorSubsystem.setElevatorPosition(DestinationSupplier.getInstance().getElevatorSetpoint(true)))
+                                .finallyDo(() -> elevatorSubsystem.setElevatorPosition(0)),
                         DestinationSupplier.getInstance()::isAuto
                 )
         );//背键-左侧靠外
         driverController.rightStick().whileTrue(
-                new ConditionalCommand(
-                        new AutoIntakeCommand(swerve, endEffectorSubsystem, elevatorSubsystem, indicatorSubsystem),
-                        Commands.runOnce(() -> elevatorSubsystem.setElevatorPosition(DestinationSupplier.getInstance().getElevatorSetpoint(true))),
+                new DriverConditionalCommand(
+                        new NavToStationCommand(swerve, indicatorSubsystem),
+                        Commands.run(() -> elevatorSubsystem.setElevatorPosition(DestinationSupplier.getInstance().getElevatorSetpoint(true)))
+                                .finallyDo(() -> elevatorSubsystem.setElevatorPosition(0)),
                         DestinationSupplier.getInstance()::isAuto
                 )
         );//背键-右侧靠外
