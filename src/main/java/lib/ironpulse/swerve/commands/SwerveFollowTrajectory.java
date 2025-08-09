@@ -43,9 +43,9 @@ public class SwerveFollowTrajectory extends Command {
     private Queue<Event> eventQueue = new LinkedList<>();
 
     public SwerveFollowTrajectory(Swerve swerve, Supplier<Pose3d> poseWorldRobotSupplier,
-                                             Trajectory trajectory, PIDController translationController,
-                                             PIDController rotationController, Distance translationTolerance,
-                                             Angle rotationTolerance
+                                  Trajectory trajectory, PIDController translationController,
+                                  PIDController rotationController, Distance translationTolerance,
+                                  Angle rotationTolerance
 
     ) {
         // initialize

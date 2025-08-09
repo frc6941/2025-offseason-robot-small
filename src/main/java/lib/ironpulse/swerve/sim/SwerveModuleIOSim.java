@@ -124,7 +124,7 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
         driveFB.setP(kp);
         driveFB.setI(ki);
         driveFB.setD(kd);
-            
+
         // Configure FF
         driveFF = new SimpleMotorFeedforward(ks, kv, ka);
 

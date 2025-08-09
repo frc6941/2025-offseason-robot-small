@@ -66,7 +66,7 @@ public class SwerveFollowPathPlannerTrajectory extends Command {
         // sort through the events by time, so at runtime polling is easy
         var events = trajectory.getEvents();
         events.sort((x, y) -> {
-            double t1 = x.getTimestampSeconds();;
+            double t1 = x.getTimestampSeconds();
             double t2 = y.getTimestampSeconds();
             if (t1 < t2) return -1;
             else if (t1 > t2) return 1;
@@ -125,7 +125,7 @@ public class SwerveFollowPathPlannerTrajectory extends Command {
         swerve.runTwistWithTorque(V_FF.plus(V_FB), tau_FF);
 
         // handle events
-        while (eventConsumer !=null && !eventQueue.isEmpty() && eventQueue.peek().getTimestampSeconds() <= t)
+        while (eventConsumer != null && !eventQueue.isEmpty() && eventQueue.peek().getTimestampSeconds() <= t)
             eventConsumer.accept(eventQueue.poll());
     }
 

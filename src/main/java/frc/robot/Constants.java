@@ -185,7 +185,6 @@ public class Constants {
     public static class Elevator {
         public static final double ELEVATOR_SPOOL_DIAMETER = 0.04 + 0.003; //0.04m for spool diameter, 0.003 for rope diameter//TODO: change
         public static final double ELEVATOR_GEAR_RATIO = 3.0;//TODO: change
-        public static final double ELEVATOR_DANGER_ZONE = 0.4180619200456253;//TODO: change
         public static final double ELEVATOR_DEFAULT_POSITION_WHEN_DISABLED = 0.0;//TODO: fixme
         public static final int ELEVATOR_ZEROING_FILTER_SIZE = 5;
 

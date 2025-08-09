@@ -62,6 +62,7 @@ public class Robot extends LoggedRobot {
         if (Constants.kTuning)
             NTParameterRegistry.refresh(); // refresh all the parameters when needed
         PhoenixUtils.refreshAll();
+
         CommandScheduler.getInstance().run();
         LoggedTracer.record("Commands");
         container.robotPeriodic();

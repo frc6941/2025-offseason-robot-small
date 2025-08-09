@@ -13,7 +13,9 @@ import com.ctre.phoenix6.StatusCode;
 import java.util.function.Supplier;
 
 public class PhoenixUtils {
-    /** Attempts to run the command until no error is produced. */
+    /**
+     * Attempts to run the command until no error is produced.
+     */
     public static void tryUntilOk(int maxAttempts, Supplier<StatusCode> command) {
         for (int i = 0; i < maxAttempts; i++) {
             var error = command.get();
@@ -21,12 +23,16 @@ public class PhoenixUtils {
         }
     }
 
-    /** Signals for synchronized refresh. */
+    /**
+     * Signals for synchronized refresh.
+     */
     private static BaseStatusSignal[] canivoreSignals = new BaseStatusSignal[0];
 
     private static BaseStatusSignal[] rioSignals = new BaseStatusSignal[0];
 
-    /** Registers a set of signals for synchronized refresh. */
+    /**
+     * Registers a set of signals for synchronized refresh.
+     */
     public static void registerSignals(boolean canivore, BaseStatusSignal... signals) {
         if (canivore) {
             BaseStatusSignal[] newSignals = new BaseStatusSignal[canivoreSignals.length + signals.length];
@@ -41,7 +47,9 @@ public class PhoenixUtils {
         }
     }
 
-    /** Refresh all registered signals. */
+    /**
+     * Refresh all registered signals.
+     */
     public static void refreshAll() {
         if (canivoreSignals.length > 0) {
             BaseStatusSignal.refreshAll(canivoreSignals);

@@ -15,25 +15,33 @@ public interface SwerveModuleIO {
     // set
     default void setSwerveModuleState(SwerveModuleState state) {
     }
+
     default void setDriveOpenLoop(Voltage des) {
     }
+
     default void setDriveVelocity(LinearVelocity des) {
     }
+
     default void setDriveVelocity(LinearVelocity des, Current ff) {
         setDriveVelocity(des);
     }
+
     default void setSteerOpenLoop(Voltage des) {
     }
+
     default void setSteerAngleAbsolute(Angle des) {
     }
 
     // config
     default void configDriveController(double kp, double ki, double kd, double ks, double kv, double ka) {
     }
+
     default void configDriveBrake(boolean isBreak) {
     }
+
     default void configSteerController(double kp, double ki, double kd, double ks) {
     }
+
     default void configSteerBrake(boolean isBreak) {
     }
 

@@ -83,6 +83,10 @@ public class MathTools {
         return Math.abs(v1.getX() - v2.getX()) <= epsilon && Math.abs(v1.getY() - v2.getY()) <= epsilon;
     }
 
+    public static boolean epsilonEqualsNorm(Translation2d v1, Translation2d v2, double epsilon) {
+        return v1.minus(v2).getNorm() < epsilon;
+    }
+
     public static boolean epsilonEquals(Translation2d v1, Translation2d v2) {
         return epsilonEquals(v1, v2, TOLERANCE);
     }
