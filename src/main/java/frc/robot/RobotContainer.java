@@ -16,6 +16,7 @@ import frc.robot.auto.routines.*;
 import frc.robot.commands.*;
 import frc.robot.display.Display;
 import frc.robot.drivers.DestinationSupplier;
+import frc.robot.subsystems.RobotSuperStructure;
 import frc.robot.subsystems.beambreak.BeambreakIOReal;
 import frc.robot.subsystems.beambreak.BeambreakIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOReal;
@@ -51,6 +52,7 @@ public class RobotContainer {
     IndicatorSubsystem indicatorSubsystem;
     DestinationSupplier destinationSupplier = DestinationSupplier.getInstance();
     PhotonVisionSubsystem photonVisionSubsystem;
+    RobotSuperStructure robotSuperStructure;
     Display display = Display.getInstance();
 
     // controllers
@@ -161,7 +163,7 @@ public class RobotContainer {
                         Commands.sequence(
                                 Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(true)),
                                 Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)),
-                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.b())),
+                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, null, null, driverController.b())),
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)),
                         DestinationSupplier.getInstance()::isAuto
                 )
@@ -171,7 +173,7 @@ public class RobotContainer {
                         Commands.sequence(
                                 Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(false)),
                                 Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)),
-                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.b())),
+                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, null, null, driverController.b())),
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)),
                         DestinationSupplier.getInstance()::isAuto
                 )
@@ -182,7 +184,7 @@ public class RobotContainer {
                         Commands.sequence(
                                 Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(true)),
                                 Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)),
-                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.b())),
+                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, null, null, driverController.b())),
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)),
                         DestinationSupplier.getInstance()::isAuto
                 )
@@ -192,7 +194,7 @@ public class RobotContainer {
                         Commands.sequence(
                                 Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(false)),
                                 Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)),
-                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.b())),
+                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, null, null, driverController.b())),
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)),
                         DestinationSupplier.getInstance()::isAuto
                 )
@@ -203,7 +205,7 @@ public class RobotContainer {
                         Commands.sequence(
                                 Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(true)),
                                 Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
-                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.b())),
+                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, null, null, driverController.b())),
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
                         DestinationSupplier.getInstance()::isAuto
                 )
@@ -213,7 +215,7 @@ public class RobotContainer {
                         Commands.sequence(
                                 Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(false)),
                                 Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
-                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.b())),
+                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, robotSuperStructure, null, driverController.b())),
                         Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
                         DestinationSupplier.getInstance()::isAuto
                 )

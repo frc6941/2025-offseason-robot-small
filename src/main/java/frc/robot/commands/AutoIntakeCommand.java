@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import frc.robot.subsystems.RobotSuperStructure;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endeffector.EndEffectorSubsystem;
 import frc.robot.subsystems.indicator.IndicatorSubsystem;
@@ -11,10 +12,11 @@ public class AutoIntakeCommand extends ParallelCommandGroup {
             Swerve swerve,
             EndEffectorSubsystem endEffectorSubsystem,
             ElevatorSubsystem elevatorSubsystem,
-            IndicatorSubsystem indicatorSubsystem) {
+            IndicatorSubsystem indicatorSubsystem,
+            RobotSuperStructure robotSuperStructure) {
         addCommands(
                 new NavToStationCommand(swerve, indicatorSubsystem),
-                new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem)
+                robotSuperStructure.runGoal(()-> RobotSuperStructure.RobotSuperstructuresState.INTAKE)
         );
     }
 
@@ -23,10 +25,11 @@ public class AutoIntakeCommand extends ParallelCommandGroup {
             EndEffectorSubsystem endEffectorSubsystem,
             ElevatorSubsystem elevatorSubsystem,
             IndicatorSubsystem indicatorSubsystem,
+            RobotSuperStructure robotSuperStructure,
             boolean enableRumble) {
         addCommands(
                 new NavToStationCommand(swerve, indicatorSubsystem),
-                new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem, enableRumble)
+                robotSuperStructure.runGoal(()->RobotSuperStructure.RobotSuperstructuresState.INTAKE)
         );
     }
 }

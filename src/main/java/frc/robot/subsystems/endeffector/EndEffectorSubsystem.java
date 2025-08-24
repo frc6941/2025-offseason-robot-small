@@ -12,6 +12,9 @@ import frc.robot.subsystems.roller.RollerIOInputsAutoLogged;
 import lib.ironpulse.utils.LoggedTracer;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -94,6 +97,10 @@ public class EndEffectorSubsystem extends SubsystemBase {
 
     public void setRollerVoltage(double voltage) {
         rollerIO.setVoltage(voltage);
+    }
+
+    public void setRollerVoltage(DoubleSupplier voltage) {
+        rollerIO.setVoltage(voltage.getAsDouble());
     }
 
     public void hold() {

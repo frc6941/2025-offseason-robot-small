@@ -194,7 +194,7 @@ public class AutoActions {
     }
 
     public static Command autoScore(char goal) {
-        return new AutoShootCommand(swerve, indicator, elevatorSubsystem, endEffectorSubsystem, goal);
+        return new AutoShootCommand(swerve, indicator, elevatorSubsystem, endEffectorSubsystem, null, null, goal);
     }
 
     public static Command toStation(boolean isRight) {
