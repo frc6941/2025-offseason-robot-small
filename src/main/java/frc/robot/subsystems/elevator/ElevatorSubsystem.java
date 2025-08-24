@@ -21,7 +21,7 @@ import java.util.function.DoubleSupplier;
 import static frc.robot.Constants.Elevator.ELEVATOR_ZEROING_FILTER_SIZE;
 import static frc.robot.ElevatorCommonNT.*;
 
-public class ElevatorSubsystem extends SubsystemBase {
+public class ElevatorSubsystem extends SubsystemBase{
     @Getter
     private final ElevatorIO io;
     private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
@@ -164,7 +164,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void setElevatorPosition(double position) {
         wantedPosition = position;
     }
-
+    
     public boolean elevatorAtGoal(double offset) {
         return Math.abs(inputs.positionMeters - wantedPosition) < offset;
     }

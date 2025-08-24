@@ -38,7 +38,7 @@ import lib.ironpulse.swerve.sim.ImuIOSim;
 import lib.ironpulse.swerve.sim.SwerveModuleIOSimpleSim;
 import lib.ironpulse.swerve.sjtu6.ImuIOPigeon;
 import lib.ironpulse.swerve.sjtu6.SwerveModuleIOSJTU6;
-import org.frcteam6941.command.DriverConditionalCommand;
+import lib.ironpulse.command.DriverConditionalCommand;
 
 import static edu.wpi.first.units.Units.*;
 

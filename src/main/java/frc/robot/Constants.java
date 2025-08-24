@@ -257,6 +257,7 @@ public class Constants {
             public static final double CORAL_SHOOT_VOLTAGE = 9.0;
             public static final double CORAL_SHOOT_DELAY_TIME = 0.2;
             public static final double ALGAE_POKE_VOLTAGE = 12.0;
+            public static final double IDLE_VOLTAGE = 0.0d;
         }
 
     }
