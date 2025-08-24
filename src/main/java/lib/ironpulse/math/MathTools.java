@@ -67,6 +67,11 @@ public class MathTools {
         return clampMagnitude(input, 0.0, maxMagnitude);
     }
 
+    private double greaterInput(double input1, double input2) {
+        if (Math.abs(input1) > Math.abs(input2)) return input1;
+        return input2;
+    }
+
     public static double clampMagnitude(double input, double maxMagnitude) {
         return MathUtil.clamp(Math.abs(input), 0.0, maxMagnitude) * Math.signum(input);
     }

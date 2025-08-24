@@ -272,6 +272,19 @@ public class RobotSuperStructure extends SuperstructureLibrary<frc.robot.subsyst
                 return elevatorSubsystem.isAtGoal();
         }
 
+        public RobotSuperstructuresState checkShootingState(){
+                switch (getCurrentState()) {
+                        case L2:
+                                return RobotSuperstructuresState.L2_EJECT;
+                        case L3:
+                                return RobotSuperstructuresState.L3_EJECT;
+                        case L4:
+                                return RobotSuperstructuresState.L4_EJECT;
+                        default:
+                                return getCurrentState();
+                }
+        }
+
         
         public static RobotSuperstructuresState elevatorNormalSetpointMapping(elevatorSetpoint setpoint) {
                 switch (setpoint) {
