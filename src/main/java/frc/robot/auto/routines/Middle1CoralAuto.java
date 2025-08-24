@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.auto.AutoActions;
 import frc.robot.auto.AutoRoutine;
 import frc.robot.drivers.DestinationSupplier;
+import frc.robot.subsystems.RobotSuperStructure.elevatorSetpoint;
 
 public class Middle1CoralAuto extends AutoRoutine {
     public Middle1CoralAuto() {
@@ -14,7 +15,7 @@ public class Middle1CoralAuto extends AutoRoutine {
     @Override
     public Command getAutoCommand() {
         return Commands.sequence(
-                AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L4),
-                AutoActions.autoScore('H'));
+                // AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L4),
+                AutoActions.autoScore('H', elevatorSetpoint.L4));
     }
 }

@@ -16,6 +16,8 @@ import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.NavToStationCommand;
 import frc.robot.drivers.DestinationSupplier;
+import frc.robot.subsystems.RobotSuperStructure;
+import frc.robot.subsystems.RobotSuperStructure.elevatorSetpoint;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endeffector.EndEffectorSubsystem;
 import frc.robot.subsystems.indicator.IndicatorSubsystem;
@@ -76,16 +78,19 @@ public class AutoActions {
     public static IndicatorSubsystem indicator;
     public static ElevatorSubsystem elevatorSubsystem;
     public static EndEffectorSubsystem endEffectorSubsystem;
+    public static RobotSuperStructure robotSuperStructure;
 
     public static void init(
             Swerve swerve,
             IndicatorSubsystem indicator,
             ElevatorSubsystem elevatorSubsystem,
-            EndEffectorSubsystem endEffectorSubsystem) {
+            EndEffectorSubsystem endEffectorSubsystem,
+            RobotSuperStructure robotSuperStructure) {
         AutoActions.swerve = swerve;
         AutoActions.indicator = indicator;
         AutoActions.elevatorSubsystem = elevatorSubsystem;
         AutoActions.endEffectorSubsystem = endEffectorSubsystem;
+        AutoActions.robotSuperStructure = robotSuperStructure;
     }
 
 
@@ -193,8 +198,8 @@ public class AutoActions {
         );
     }
 
-    public static Command autoScore(char goal) {
-        return new AutoShootCommand(swerve, indicator, elevatorSubsystem, endEffectorSubsystem, null, null, goal);
+    public static Command autoScore(char goal, elevatorSetpoint setPoint) {
+        return new AutoShootCommand(swerve, indicator, elevatorSubsystem, endEffectorSubsystem, robotSuperStructure, setPoint, goal);
     }
 
     public static Command toStation(boolean isRight) {
@@ -202,19 +207,16 @@ public class AutoActions {
     }
 
     public static Command intake() {
-        return new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicator);
+        return robotSuperStructure.runGoal(()->RobotSuperStructure.RobotSuperstructuresState.INTAKE);
     }
 
     public static Command autoIntake(boolean isRight) {
         return Commands.deadline(
-                new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicator),
+                robotSuperStructure.runGoal(()->RobotSuperStructure.RobotSuperstructuresState.INTAKE),
                 new NavToStationCommand(swerve, indicator, isRight)
         );
     }
 
-    public static Command setLevel(DestinationSupplier.elevatorSetpoint setpoint) {
-        return Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(setpoint));
-    }
 
 
     @NTParameter(tableName = "Params/Auto")

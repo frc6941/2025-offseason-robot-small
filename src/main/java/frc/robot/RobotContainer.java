@@ -17,6 +17,7 @@ import frc.robot.commands.*;
 import frc.robot.display.Display;
 import frc.robot.drivers.DestinationSupplier;
 import frc.robot.subsystems.RobotSuperStructure;
+import frc.robot.subsystems.RobotSuperStructure.elevatorSetpoint;
 import frc.robot.subsystems.beambreak.BeambreakIOReal;
 import frc.robot.subsystems.beambreak.BeambreakIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOReal;
@@ -74,7 +75,7 @@ public class RobotContainer {
         //    L     C
         //      A B
         //  Driver Station
-        AutoActions.init(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem);
+        AutoActions.init(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, robotSuperStructure);
 
         AutoSelector.getInstance().registerAuto("Forward0CoralAuto", new Forward0CoralAuto());
         AutoSelector.getInstance().registerAuto("Left5L4Auto", new Left5L4Auto());
@@ -261,8 +262,8 @@ public class RobotContainer {
                 )
         );//背键-右侧靠外
 
-        testerController.rightBumper().whileTrue(Commands.sequence(AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L4),
-                AutoActions.autoScore('E')));
+        testerController.rightBumper().whileTrue(
+                AutoActions.autoScore('E', elevatorSetpoint.L4));
     }
 
     public void robotPeriodic() {
