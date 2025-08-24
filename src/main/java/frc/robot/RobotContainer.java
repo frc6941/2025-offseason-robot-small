@@ -102,7 +102,6 @@ public class RobotContainer {
                     new SwerveModuleIOSJTU6(Constants.Swerve.kRealConfig, 3));
             indicatorSubsystem = new IndicatorSubsystem(new IndicatorIOARGB());
             elevatorSubsystem = new ElevatorSubsystem(new ElevatorIOReal());
-            robotSuperStructure = new RobotSuperStructure(elevatorSubsystem, endEffectorSubsystem);
             endEffectorSubsystem = new EndEffectorSubsystem(
                     new RollerIOReal(
                             Constants.EndEffector.MOTOR_ID,
@@ -117,6 +116,7 @@ public class RobotContainer {
                     new PhotonVisionIOReal(0),
                     new PhotonVisionIOReal(1)
             );
+            robotSuperStructure = new RobotSuperStructure(elevatorSubsystem, endEffectorSubsystem);
         } else {
             swerve = new Swerve(
                     Constants.Swerve.kSimConfig,
@@ -127,7 +127,6 @@ public class RobotContainer {
                     new SwerveModuleIOSimpleSim(Constants.Swerve.kSimConfig, 3));
             indicatorSubsystem = new IndicatorSubsystem(new IndicatorIOSim());
             elevatorSubsystem = new ElevatorSubsystem(new ElevatorIOSim());
-            robotSuperStructure = new RobotSuperStructure(elevatorSubsystem, endEffectorSubsystem);
             photonVisionSubsystem = new PhotonVisionSubsystem(
                     new PhotonVisionIOSim(0),
                     new PhotonVisionIOSim(1)
@@ -140,6 +139,7 @@ public class RobotContainer {
                                     new TrapezoidProfile.Constraints(15, 1))),
                     new BeambreakIOSim(3),
                     new BeambreakIOSim(2));
+            robotSuperStructure = new RobotSuperStructure(elevatorSubsystem, endEffectorSubsystem);
         }
     }
 
@@ -235,7 +235,7 @@ public class RobotContainer {
         driverController.b().whileTrue(robotSuperStructure.runGoal(()->robotSuperStructure.checkShootingState()));
         driverController.x().toggleOnTrue(robotSuperStructure.runGoal(()->RobotSuperstructuresState.INTAKE));
 
-        driverController.povDown().onTrue(elevatorSubsystem.zeroElevator());
+        driverController.povDown().onTrue(elevatorSubsystem.zeroElevator().andThen(robotSuperStructure.runGoal(RobotSuperstructuresState.IDLE)));
 
         driverController.leftStick().whileTrue(
                 new DriverConditionalCommand(

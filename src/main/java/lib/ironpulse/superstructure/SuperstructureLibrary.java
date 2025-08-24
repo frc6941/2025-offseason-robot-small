@@ -118,6 +118,14 @@ public class SuperstructureLibrary<T extends SuperstructureState> extends Subsys
     public Command runGoal(T goal) {
         return Commands.runOnce(() -> setGoal(goal)).andThen(Commands.waitUntil(this::atGoal));
     }
+
+    public void setCurrentState(T state){
+        currentState = state;
+    }
+
+    public void setNextState(T state){
+        nextState = state;
+    }
     
     /**
      * Creates a command with dynamic goal selection.

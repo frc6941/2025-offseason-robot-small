@@ -41,7 +41,9 @@ public class RobotSuperStructure extends SuperstructureLibrary<frc.robot.subsyst
 
         Init();
 
-        setDefaultCommand(runGoal(() -> RobotSuperstructuresState.IDLE));
+        setCurrentState(RobotSuperstructuresState.IDLE);
+        setNextState(RobotSuperstructuresState.IDLE);
+        setGoal(RobotSuperstructuresState.IDLE);
         
     }
 
@@ -273,36 +275,32 @@ public class RobotSuperStructure extends SuperstructureLibrary<frc.robot.subsyst
         }
 
         public RobotSuperstructuresState checkShootingState(){
-                switch (getCurrentState()) {
-                        case L2:
-                                return RobotSuperstructuresState.L2_EJECT;
-                        case L3:
-                                return RobotSuperstructuresState.L3_EJECT;
-                        case L4:
-                                return RobotSuperstructuresState.L4_EJECT;
-                        default:
-                                return getCurrentState();
-                }
+            return switch (getCurrentState()) {
+                case L2 -> RobotSuperstructuresState.L2_EJECT;
+                case L3 -> RobotSuperstructuresState.L3_EJECT;
+                case L4 -> RobotSuperstructuresState.L4_EJECT;
+                default -> getCurrentState();
+            };
         }
 
         
         public static RobotSuperstructuresState elevatorNormalSetpointMapping(elevatorSetpoint setpoint) {
-                switch (setpoint) {
-                    case L2:   return RobotSuperstructuresState.L2;
-                    case L3:   return RobotSuperstructuresState.L3;
-                    case L4:   return RobotSuperstructuresState.L4;
-                    case P1:   return RobotSuperstructuresState.P1;
-                    case P2:   return RobotSuperstructuresState.P2;
-                    default:   return RobotSuperstructuresState.IDLE;
-                }
+            return switch (setpoint) {
+                case L2 -> RobotSuperstructuresState.L2;
+                case L3 -> RobotSuperstructuresState.L3;
+                case L4 -> RobotSuperstructuresState.L4;
+                case P1 -> RobotSuperstructuresState.P1;
+                case P2 -> RobotSuperstructuresState.P2;
+                default -> RobotSuperstructuresState.IDLE;
+            };
             }
             public static RobotSuperstructuresState elevatorScoringSetpointMapping(elevatorSetpoint setpoint) {
-                switch (setpoint) {
-                    case L2:   return RobotSuperstructuresState.L2_EJECT;
-                    case L3:   return RobotSuperstructuresState.L3_EJECT;
-                    case L4:   return RobotSuperstructuresState.L4_EJECT;
-                    default:   return RobotSuperstructuresState.IDLE;
-                }
+                return switch (setpoint) {
+                    case L2 -> RobotSuperstructuresState.L2_EJECT;
+                    case L3 -> RobotSuperstructuresState.L3_EJECT;
+                    case L4 -> RobotSuperstructuresState.L4_EJECT;
+                    default -> RobotSuperstructuresState.IDLE;
+                };
             }
         
 
