@@ -218,13 +218,13 @@ public class Constants {
             public static final double motionJerkDown = 0;
 
             private static class ElevatorGainsClass {
-                private static final double ELEVATOR_KP = 1.67d;
-                private static final double ELEVATOR_KI = 0.0d;
-                private static final double ELEVATOR_KD = 0.0d;
-                private static final double ELEVATOR_KA = 0.0d;
+                private static final double ELEVATOR_KP = 1.67;
+                private static final double ELEVATOR_KI = 0.00001;
+                private static final double ELEVATOR_KD = 0.000010;
+                private static final double ELEVATOR_KA = 0.000010;
                 private static final double ELEVATOR_KV = 0.11;// 0.107853495
-                private static final double ELEVATOR_KS = 0.79;
-                private static final double ELEVATOR_KG = 0.42;//0.3
+                private static final double ELEVATOR_KS = 0.8;
+                private static final double ELEVATOR_KG = 0.420000;//0.3
             }
         }
     }

@@ -16,8 +16,9 @@ import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.NavToStationCommand;
 import frc.robot.drivers.DestinationSupplier;
-import frc.robot.subsystems.RobotSuperStructure;
-import frc.robot.subsystems.RobotSuperStructure.elevatorSetpoint;
+import frc.robot.subsystems.ElevatorSetPoint;
+import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.SuperstructureState;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endeffector.EndEffectorSubsystem;
 import frc.robot.subsystems.indicator.IndicatorSubsystem;
@@ -78,19 +79,19 @@ public class AutoActions {
     public static IndicatorSubsystem indicator;
     public static ElevatorSubsystem elevatorSubsystem;
     public static EndEffectorSubsystem endEffectorSubsystem;
-    public static RobotSuperStructure robotSuperStructure;
+    private static Superstructure superstructure;
 
     public static void init(
             Swerve swerve,
             IndicatorSubsystem indicator,
             ElevatorSubsystem elevatorSubsystem,
             EndEffectorSubsystem endEffectorSubsystem,
-            RobotSuperStructure robotSuperStructure) {
+            Superstructure superstructure) {
         AutoActions.swerve = swerve;
         AutoActions.indicator = indicator;
         AutoActions.elevatorSubsystem = elevatorSubsystem;
         AutoActions.endEffectorSubsystem = endEffectorSubsystem;
-        AutoActions.robotSuperStructure = robotSuperStructure;
+        AutoActions.superstructure = superstructure;
     }
 
 
@@ -198,8 +199,8 @@ public class AutoActions {
         );
     }
 
-    public static Command autoScore(char goal, elevatorSetpoint setPoint) {
-        return new AutoShootCommand(swerve, indicator, elevatorSubsystem, endEffectorSubsystem, robotSuperStructure, setPoint, goal);
+    public static Command autoScore(char goal, ElevatorSetPoint setPoint) {
+        return new AutoShootCommand(swerve, indicator, elevatorSubsystem, endEffectorSubsystem, superstructure, setPoint, goal);
     }
 
     public static Command toStation(boolean isRight) {
@@ -207,16 +208,15 @@ public class AutoActions {
     }
 
     public static Command intake() {
-        return robotSuperStructure.runGoal(()->RobotSuperStructure.RobotSuperstructuresState.INTAKE);
+        return new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicator);
     }
 
     public static Command autoIntake(boolean isRight) {
         return Commands.deadline(
-                robotSuperStructure.runGoal(()->RobotSuperStructure.RobotSuperstructuresState.INTAKE),
+                superstructure.runGoal(SuperstructureState.INTAKE).until(endEffectorSubsystem::hasCoral),
                 new NavToStationCommand(swerve, indicator, isRight)
         );
     }
-
 
 
     @NTParameter(tableName = "Params/Auto")

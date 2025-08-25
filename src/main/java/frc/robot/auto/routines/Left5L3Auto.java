@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.auto.AutoActions;
 import frc.robot.auto.AutoRoutine;
 import frc.robot.drivers.DestinationSupplier;
-import frc.robot.subsystems.RobotSuperStructure.elevatorSetpoint;
+import frc.robot.subsystems.ElevatorSetPoint;
 
 public class Left5L3Auto extends AutoRoutine {
 
@@ -17,21 +17,21 @@ public class Left5L3Auto extends AutoRoutine {
     @Override
     public Command getAutoCommand() {
         return Commands.sequence(
-                // AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L3),
-                AutoActions.autoScore('I', elevatorSetpoint.L3),
+//                AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L3),
+                AutoActions.autoScore('I', ElevatorSetPoint.L3),
                 AutoActions.autoIntake(false),
-                // AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L3),
-                AutoActions.autoScore('K', elevatorSetpoint.L3),
+//                AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L3),
+                AutoActions.autoScore('K',ElevatorSetPoint.L3),
                 AutoActions.autoIntake(false),
-                // AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L3),
-                AutoActions.autoScore('L', elevatorSetpoint.L3),
+//                AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L3),
+                AutoActions.autoScore('L',ElevatorSetPoint.L3),
                 AutoActions.autoIntake(false),
-                // AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L3),
+//                AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L3),
                 // DO NOT GO TO J SIDE
-                AutoActions.autoScore('A', elevatorSetpoint.L3),
+                AutoActions.autoScore('A',ElevatorSetPoint.L3),
                 AutoActions.autoIntake(false),
-                // AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L3),
-                AutoActions.autoScore('B', elevatorSetpoint.L3),
+//                AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L3),
+                AutoActions.autoScore('B',ElevatorSetPoint.L3),
                 AutoActions.autoIntake(false)
         );
     }

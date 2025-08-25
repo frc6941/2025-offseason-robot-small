@@ -1,8 +1,10 @@
 package frc.robot.display;
 
-import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import frc.robot.Robot;
+import frc.robot.RobotStateRecorder;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.mechanism.LoggedMechanism2d;
 import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
@@ -31,6 +33,11 @@ public class SuperstructureVisualizer {
     private static final double STAGE2_TRAVEL = mmToM(820);
     private static final double STAGE2_LENGTH = mmToM(352);
     private static final double STAGE3_LENGTH = mmToM(314.29);
+
+    private static final Translation3d END_EFFECTOR_CENTER = ELEVATOR_CENTER;
+    private static final double END_EFFECTOR_LENGTH_CORAL = mmToM(170);
+    private static final double END_EFFECTOR_LENGTH_ALGAE = mmToM(325);
+    private static final double END_EFFECTOR_MOUNT_ARM_LENGTH = mmToM(242);
 
 
     // Visualization components
@@ -89,44 +96,53 @@ public class SuperstructureVisualizer {
     /**
      * Logs the Coral pose 3D if coral is detected in the intake
      */
-    private void logCoralPose3D() {
-//        // Check if coral is detected in the intake
-//        if (GamepieceTracker.getInstance().isIntakeHasCoral()) {
-//            Pose3d robotPose = new Pose3d(Swerve.getInstance().getLocalizer().getCoarseFieldPose(Timer.getFPGATimestamp()));
-//
-//            // Create a rotation matrix for the intake angle
-//            Rotation3d intakeRotation = new Rotation3d(0, intakeAngleRad, 0);
-//
-//            // Calculate the position of the coral at the end of the intake arm
-//            Pose3d coralPosition = robotPose.transformBy(new Transform3d(INTAKE_CENTER.plus(new Translation3d(INTAKE_LENGTH / 2, 0, 0).rotateBy(intakeRotation)), intakeRotation));
-//
-//            // Log the Coral pose 3D
-//            Logger.recordOutput("Superstructure/Coral/InakeCoral",
-//                    coralPosition);
-//        } else {
-//            // If no coral is detected, log an empty pose
-//            Logger.recordOutput("Superstructure/Coral/InakeCoral", new Pose3d());
-//        }
-//        Pose3d robotPose = RobotStateRecorder.getPoseWorldRobotCurrent();
-//        if (GamepieceTracker.getInstance().isEndeffectorHasCoral()) {
-//            // Calculate the position of the coral at the middle of the end effector arm coral
-//            Pose3d coralPosition = robotPose.transformBy(new Transform3d(
-//                    endEffectorPosition.plus(new Translation3d(-END_EFFECTOR_LENGTH_CORAL, 0, END_EFFECTOR_MOUNT_ARM_LENGTH).rotateBy(endEffectorRotation)),
-//                    endEffectorRotation));
-//            Logger.recordOutput("Superstructure/Coral/EECoral", coralPosition);
-//        } else {
-//            Logger.recordOutput("Superstructure/Coral/EECoral", new Pose3d());
-//        }
+    public void logCoralPose3D(boolean isEndeffectorHasCoral) {
+
+        if (isEndeffectorHasCoral) {
+            Pose3d robotPose = RobotStateRecorder.getPoseWorldRobotCurrent();
+
+            // Calculate the position of the coral at the middle of the end effector arm
+            // coral
+            double endEffectorAngleRad = Math.toRadians(45);
+
+            // Create a rotation matrix for the end effector angle
+            Rotation3d endEffectorRotation = new Rotation3d(0, endEffectorAngleRad, 0);
+
+            Translation3d endEffectorPosition = END_EFFECTOR_CENTER
+                    .plus(new Translation3d(0, 0, currentElevatorHeight + STAGE3_LENGTH));
+
+            // Calculate the position of the coral at the middle of the end effector arm
+            // coral
+            Pose3d coralPosition = robotPose.transformBy(new Transform3d(
+                    endEffectorPosition
+                            .plus(new Translation3d(-END_EFFECTOR_LENGTH_CORAL, 0, END_EFFECTOR_MOUNT_ARM_LENGTH)
+                                    .rotateBy(endEffectorRotation)),
+                    endEffectorRotation));
+
+            Logger.recordOutput("Superstructure/Visualizer/Gamepiece/EECoral", coralPosition);
+        } else {
+            Logger.recordOutput("Superstructure/Visualizer/Gamepiece/EECoral", new Pose3d());
+        }
+
     }
 
     private void updateVisuals() {
-        // Update elevator components
         elevatorHeight.setLength(currentElevatorHeight); // Stage 1 extends
 
-        // Log Coral pose 3D
-        logCoralPose3D();
+        // Update intake components
+//        intakeArm.setAngle(Rotation2d.fromRadians(Math.toRadians(-currentIntakeAngleDeg + 90)));
+
+        // Update end effector components
+//        endEffectorMountArm.setAngle(Rotation2d.fromRadians(Math.toRadians(currentEndEffectorAngleDeg + 180)));
 
         // Log 2D mechanisms
-        Logger.recordOutput("Superstructure/Elevator/Mechanism2d", elevatorMechanism);
+        if (Robot.isSimulation()) {
+            Logger.recordOutput("Superstructure/Visualizer/" + "/Elevator/Mechanism2d", elevatorMechanism);
+//            Logger.recordOutput("Superstructure/Visualizer/" + name + "/Intake/Mechanism2d", intakeMechanism);
+        }
+    }
+    public void update(double elevatorHeight) {
+        this.currentElevatorHeight = elevatorHeight;
+        updateVisuals();
     }
 }
