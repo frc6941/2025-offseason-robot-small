@@ -236,6 +236,7 @@ public class DestinationSupplier {
      * @param useCoral Whether to use coral scoring position (true) or poke position (false)
      * @return The elevator extension distance in meters
      */
+    @Deprecated
     public double getElevatorSetpoint(boolean useCoral) {
         this.useCoral = useCoral;
         if (useCoral) {
@@ -265,7 +266,7 @@ public class DestinationSupplier {
         Logger.recordOutput("DestinationSupplier/Pipe", coralRight);
         SmartDashboard.putString("DestinationSupplier/Pipe", coralRight ? "Right" : "Left");
     }
-
+    @Deprecated
     public enum elevatorSetpoint {
         L2, L3, L4, P1, P2
     }

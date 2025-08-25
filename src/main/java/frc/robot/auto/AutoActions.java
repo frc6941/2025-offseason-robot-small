@@ -208,7 +208,7 @@ public class AutoActions {
     }
 
     public static Command intake() {
-        return superstructure.runGoal(SuperstructureState.INTAKE).until(endEffectorSubsystem::hasCoral);
+        return new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicator);
     }
 
     public static Command autoIntake(boolean isRight) {

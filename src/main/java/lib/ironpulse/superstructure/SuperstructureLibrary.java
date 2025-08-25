@@ -22,7 +22,7 @@ import java.util.function.Supplier;
  * 5. Use runGoal() to transition between states
  */
 public class SuperstructureLibrary<T extends SuperstructureState> extends SubsystemBase {
-    private final Graph<T, EdgeCommand> graph = new DefaultDirectedGraph<>(EdgeCommand.class);
+    public final Graph<T, EdgeCommand> graph = new DefaultDirectedGraph<>(EdgeCommand.class);
     
     private T currentState;
     private T nextState;
@@ -118,6 +118,14 @@ public class SuperstructureLibrary<T extends SuperstructureState> extends Subsys
     public Command runGoal(T goal) {
         return Commands.runOnce(() -> setGoal(goal)).andThen(Commands.waitUntil(this::atGoal));
     }
+
+    public void setCurrentState(T state){
+        currentState = state;
+    }
+
+    public void setNextState(T state){
+        nextState = state;
+    }
     
     /**
      * Creates a command with dynamic goal selection.
@@ -186,6 +194,10 @@ public class SuperstructureLibrary<T extends SuperstructureState> extends Subsys
     public boolean atGoal() {
         return currentState == goalState;
     }
+
+    public EdgeCommand getCurrentEdge() {
+        return currentEdge;
+    }
     
     /**
      * Gets the current state.
@@ -193,6 +205,14 @@ public class SuperstructureLibrary<T extends SuperstructureState> extends Subsys
      */
     public T getCurrentState() {
         return currentState;
+    }
+
+    /**
+     * Gets the mext state.
+     * @return The next state
+     */
+    public T getNextState() {
+        return nextState;
     }
     
     /**

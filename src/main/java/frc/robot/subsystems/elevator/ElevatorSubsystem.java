@@ -129,8 +129,8 @@ public class ElevatorSubsystem extends SubsystemBase{
             // Check if wanted position has changed to determine direction
             if (wantedPosition != previousWantedPosition) {
                 isGoingUp = wantedPosition > previousWantedPosition;
-                System.out.println("Elevator direction changed: " + (isGoingUp ? "UP" : "DOWN") +
-                        " (from " + previousWantedPosition + " to " + wantedPosition + ")");
+//                System.out.println("Elevator direction changed: " + (isGoingUp ? "UP" : "DOWN") +
+//                        " (from " + previousWantedPosition + " to " + wantedPosition + ")");
                 previousWantedPosition = wantedPosition;
             }
 

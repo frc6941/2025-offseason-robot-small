@@ -14,6 +14,9 @@ import frc.robot.subsystems.roller.RollerIOInputsAutoLogged;
 import lib.ironpulse.utils.LoggedTracer;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 

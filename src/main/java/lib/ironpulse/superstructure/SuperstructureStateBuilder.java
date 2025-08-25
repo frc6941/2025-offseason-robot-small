@@ -22,6 +22,14 @@ public class SuperstructureStateBuilder {
         this.pose = pose;
         this.dataBuilder = new SuperstructureStateDataBuilder();
     }
+
+    public SuperstructurePose getPose() {
+        return pose;
+    }
+    
+    public SuperstructureStateDataBuilder getDataBuilder() {
+        return dataBuilder;
+    }
     
     /**
      * Static factory to start a new builder.
