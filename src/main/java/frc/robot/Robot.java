@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.auto.AutoSelector;
-import frc.robot.subsystems.RobotSuperStructure;
 import lib.ironpulse.utils.LoggedTracer;
 import lib.ironpulse.utils.PhoenixUtils;
 import lib.ntext.NTParameterRegistry;
@@ -56,7 +55,6 @@ public class Robot extends LoggedRobot {
         WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
 
         container = new RobotContainer();
-        container.robotSuperStructure.runGoal(RobotSuperStructure.RobotSuperstructuresState.IDLE).ignoringDisable(true);
     }
 
     @Override

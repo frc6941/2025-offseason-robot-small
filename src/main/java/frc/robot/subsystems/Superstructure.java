@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.EndEffectorParamsNT;
@@ -121,7 +122,7 @@ public class Superstructure extends SubsystemBase {
         );
     }
 
-    Timer simTimer = new Timer();
+    edu.wpi.first.wpilibj.Timer simTimer = new Timer();
 
     @Override
     public void periodic() {
@@ -136,11 +137,24 @@ public class Superstructure extends SubsystemBase {
 
         //simulated gamepiece tracking
         if (Robot.isSimulation()) {
+            if(state == START){
+                endEffectorSubsystem.setHasCoral(true);
+            }
             for (var pair : shootStates) {
-                if (atGoal() && state == pair.getSecond()) {
-                    endEffectorSubsystem.setFrontEE(false);
-                    endEffectorSubsystem.setEndEE(false);
-                    endEffectorSubsystem.setHasCoral(false);
+                if (state == pair.getSecond()) {
+                    // Start the one-shot timer the first time we enter the state
+                    if (simTimer.get() == 0) {
+                        simTimer.restart();
+                    }
+
+                    // Wait 0.5 s before actually clearing the game piece
+                    if (simTimer.hasElapsed(0.5)) {
+                        endEffectorSubsystem.setFrontEE(false);
+                        endEffectorSubsystem.setEndEE(false);
+                        endEffectorSubsystem.setHasCoral(false);
+                        simTimer.stop();          // reset so it’s ready for the next shot
+                        simTimer.reset();
+                    }
                 }
             }
 

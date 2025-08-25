@@ -2,7 +2,9 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.ElevatorCommonNT;
+import frc.robot.Robot;
 import frc.robot.drivers.DestinationSupplier;
 import frc.robot.subsystems.ElevatorSetPoint;
 import frc.robot.subsystems.Superstructure;
@@ -35,6 +37,7 @@ public class AutoShootCommand extends SequentialCommandGroup {
                         Commands.waitUntil(shoot)
                 ),
                 Commands.waitUntil(elevatorSubsystem::isAtGoal),
+                new WaitCommand(0.5).onlyIf(Robot::isSimulation),
                 superstructure.runGoal(Superstructure.elevatorforShoot(setPoint))
                         .until(()->!endEffectorSubsystem.hasCoral())
                         .andThen(superstructure.runGoal(()->SuperstructureState.IDLE))
@@ -53,12 +56,10 @@ public class AutoShootCommand extends SequentialCommandGroup {
         addCommands(
                 Commands.sequence(
                         new ReefAimCommand(swerve, indicatorSubsystem, goal),
-                        superstructure.runGoal(Superstructure.elevatorNormal(setPoint))
+                        superstructure.runGoal(Superstructure.elevatorNormal(setPoint)).until(elevatorSubsystem::isAtGoal)
                 ),
-                Commands.waitUntil(elevatorSubsystem::isAtGoal),
-                superstructure.runGoal(Superstructure.elevatorforShoot(setPoint))
-                        .until(()->!endEffectorSubsystem.hasCoral())
-                        .andThen(superstructure.runGoal(()->SuperstructureState.IDLE))
+                new WaitCommand(0.5).onlyIf(Robot::isSimulation),
+                superstructure.runGoal(Superstructure.elevatorforShoot(setPoint)).until(()->!endEffectorSubsystem.hasCoral()).andThen(superstructure.runGoal(SuperstructureState.IDLE)).until(elevatorSubsystem::isAtGoal)
         );
     }
 }

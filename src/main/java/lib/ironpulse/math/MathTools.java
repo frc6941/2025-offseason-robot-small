@@ -42,11 +42,6 @@ public class MathTools {
         return input.getAngle();
     }
 
-    private double greaterInput(double input1, double input2) {
-        if (Math.abs(input1) > Math.abs(input2)) return input1;
-        return input2;
-    }
-
     /**
      * Clamp a vector's magnitude to a maximum value.
      *

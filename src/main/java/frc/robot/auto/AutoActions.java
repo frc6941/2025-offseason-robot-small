@@ -212,9 +212,11 @@ public class AutoActions {
     }
 
     public static Command autoIntake(boolean isRight) {
-        return Commands.deadline(
-                superstructure.runGoal(SuperstructureState.INTAKE).until(endEffectorSubsystem::hasCoral),
-                new NavToStationCommand(swerve, indicator, isRight)
+        return Commands.sequence(
+                Commands.runOnce(()->endEffectorSubsystem.setHasCoral(false)),
+                superstructure.runGoal(SuperstructureState.IDLE).until(elevatorSubsystem::isAtGoal),
+                new NavToStationCommand(swerve, indicator, isRight),
+                superstructure.runGoal(SuperstructureState.INTAKE).until(endEffectorSubsystem::hasCoral)
         );
     }
 
