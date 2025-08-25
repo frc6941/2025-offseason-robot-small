@@ -212,6 +212,7 @@ public class DestinationSupplier {
      *
      * @param setpoint The desired elevator setpoint (L1-L4 for coral, P1-P2 for poke)
      */
+    @Deprecated
     public void updateElevatorSetpoint(elevatorSetpoint setpoint) {
         switch (setpoint) {
             case L2, L3, L4:

@@ -2,6 +2,8 @@ package frc.robot.subsystems.endeffector;
 
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.EndEffectorParamsNT;
@@ -14,6 +16,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+
+import java.util.function.DoubleSupplier;
 
 public class EndEffectorSubsystem extends SubsystemBase {
     public static final String NAME = "EndEffector";
@@ -35,6 +39,16 @@ public class EndEffectorSubsystem extends SubsystemBase {
     @Setter
     @AutoLogOutput(key = "EndEffector/endEE")
     private boolean endEE = false;
+
+    @Getter
+    @Setter
+    @AutoLogOutput(key = "EndEffectorArm/hasCoral")
+    private boolean hasCoral = false;
+
+    @Getter
+    @Setter
+    @AutoLogOutput(key = "EndEffectorArm/intakeFinished")
+    private boolean intakeFinished = false;
 
 
     public EndEffectorSubsystem(
@@ -64,6 +78,8 @@ public class EndEffectorSubsystem extends SubsystemBase {
         if (RobotBase.isReal()) {
             frontEE = frontBeambreakInputs.isBeambreakOn;
             endEE = endBeambreakInputs.isBeambreakOn;
+            intakeFinished = endEE && !frontEE;
+            hasCoral = endEE || frontEE;
         }
 
         // Process and log inputs
@@ -96,6 +112,10 @@ public class EndEffectorSubsystem extends SubsystemBase {
         rollerIO.setVoltage(voltage);
     }
 
+    public void setRollerVoltage(DoubleSupplier voltage) {
+        rollerIO.setVoltage(voltage.getAsDouble());
+    }
+
     public void hold() {
         rollerIO.setVoltage(EndEffectorParamsNT.CORAL_HOLD_VOLTAGE.getValue());
     }
@@ -105,7 +125,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
     }
 
     public boolean intakeFinished() {
-        return endEE && !frontEE;
+        return intakeFinished;
     }
 
     public boolean coralInMiddle() {
@@ -113,6 +133,10 @@ public class EndEffectorSubsystem extends SubsystemBase {
     }
 
     public boolean hasCoral() {
-        return endEE || frontEE;
+        return hasCoral;
+    }
+
+    public Command setRolelrVoltage(DoubleSupplier voltage){
+        return Commands.runOnce(()->setRollerVoltage(voltage));
     }
 } 

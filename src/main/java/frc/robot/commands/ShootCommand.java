@@ -7,6 +7,7 @@ import frc.robot.subsystems.endeffector.EndEffectorSubsystem;
 import frc.robot.subsystems.indicator.IndicatorIO.Patterns;
 import frc.robot.subsystems.indicator.IndicatorSubsystem;
 
+@Deprecated
 public class ShootCommand extends Command {
     private final EndEffectorSubsystem endEffectorSubsystem;
     private final IndicatorSubsystem indicatorSubsystem;

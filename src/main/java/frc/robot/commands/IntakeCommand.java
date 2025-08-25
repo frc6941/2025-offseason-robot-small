@@ -13,6 +13,7 @@ import frc.robot.subsystems.indicator.IndicatorSubsystem;
 
 import static edu.wpi.first.units.Units.Seconds;
 
+@Deprecated
 public class IntakeCommand extends Command {
     private final ElevatorSubsystem elevatorSubsystem;
     private final EndEffectorSubsystem endEffectorSubsystem;

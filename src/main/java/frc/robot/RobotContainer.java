@@ -16,6 +16,9 @@ import frc.robot.auto.routines.*;
 import frc.robot.commands.*;
 import frc.robot.display.Display;
 import frc.robot.drivers.DestinationSupplier;
+import frc.robot.subsystems.ElevatorSetPoint;
+import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.SuperstructureState;
 import frc.robot.subsystems.beambreak.BeambreakIOReal;
 import frc.robot.subsystems.beambreak.BeambreakIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOReal;
@@ -52,6 +55,7 @@ public class RobotContainer {
     DestinationSupplier destinationSupplier = DestinationSupplier.getInstance();
     PhotonVisionSubsystem photonVisionSubsystem;
     Display display = Display.getInstance();
+    Superstructure superstructure;
 
     // controllers
     CommandXboxController driverController = new CommandXboxController(Constants.Controller.kDriver);
@@ -72,7 +76,7 @@ public class RobotContainer {
         //    L     C
         //      A B
         //  Driver Station
-        AutoActions.init(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem);
+        AutoActions.init(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem,superstructure);
 
         AutoSelector.getInstance().registerAuto("Forward0CoralAuto", new Forward0CoralAuto());
         AutoSelector.getInstance().registerAuto("Left5L4Auto", new Left5L4Auto());
@@ -111,6 +115,7 @@ public class RobotContainer {
                     new PhotonVisionIOReal(0),
                     new PhotonVisionIOReal(1)
             );
+            superstructure = new Superstructure(endEffectorSubsystem, elevatorSubsystem);
         } else {
             swerve = new Swerve(
                     Constants.Swerve.kSimConfig,
@@ -133,6 +138,7 @@ public class RobotContainer {
                                     new TrapezoidProfile.Constraints(15, 1))),
                     new BeambreakIOSim(3),
                     new BeambreakIOSim(2));
+            superstructure = new Superstructure(endEffectorSubsystem,elevatorSubsystem);
         }
     }
 
@@ -160,9 +166,8 @@ public class RobotContainer {
                 new ConditionalCommand(
                         Commands.sequence(
                                 Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(true)),
-                                Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)),
-                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.b())),
-                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)),
+                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, superstructure, ElevatorSetPoint.L2,driverController.b())),
+                        superstructure.runGoal(()->SuperstructureState.L2),
                         DestinationSupplier.getInstance()::isAuto
                 )
         );//背键-右侧靠内
@@ -170,9 +175,9 @@ public class RobotContainer {
                 new ConditionalCommand(
                         Commands.sequence(
                                 Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(false)),
-                                Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)),
-                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.b())),
-                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)),
+//                                Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)),
+                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, superstructure, ElevatorSetPoint.L2,driverController.b())),
+                        superstructure.runGoal(()->SuperstructureState.L2),
                         DestinationSupplier.getInstance()::isAuto
                 )
         );//背键-左侧靠内
@@ -181,9 +186,9 @@ public class RobotContainer {
                 new ConditionalCommand(
                         Commands.sequence(
                                 Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(true)),
-                                Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)),
-                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.b())),
-                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)),
+//                                Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)),
+                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem,superstructure,ElevatorSetPoint.L3, driverController.b())),
+                        superstructure.runGoal(()->SuperstructureState.L3),
                         DestinationSupplier.getInstance()::isAuto
                 )
         );
@@ -191,9 +196,10 @@ public class RobotContainer {
                 new ConditionalCommand(
                         Commands.sequence(
                                 Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(false)),
-                                Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)),
-                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.b())),
-                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)),
+//                                Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)),
+                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, superstructure, ElevatorSetPoint.L3, driverController.b())),
+//                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)),
+                        superstructure.runGoal(()->SuperstructureState.L3),
                         DestinationSupplier.getInstance()::isAuto
                 )
         );
@@ -202,45 +208,49 @@ public class RobotContainer {
                 new ConditionalCommand(
                         Commands.sequence(
                                 Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(true)),
-                                Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
-                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.b())),
-                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
+//                                Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
+                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, superstructure, ElevatorSetPoint.L4, driverController.b())),
+//                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
+                        superstructure.runGoal(()->SuperstructureState.L4),
                         DestinationSupplier.getInstance()::isAuto
+
                 )
         );
         driverController.leftBumper().whileTrue(
                 new ConditionalCommand(
                         Commands.sequence(
                                 Commands.runOnce(() -> DestinationSupplier.getInstance().updateBranch(false)),
-                                Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
-                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, driverController.b())),
-                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
+//                                Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
+                                new AutoShootCommand(swerve, indicatorSubsystem, elevatorSubsystem, endEffectorSubsystem, superstructure, ElevatorSetPoint.L4, driverController.b())),
+//                        Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)),
+                        superstructure.runGoal(()->SuperstructureState.L4),
                         DestinationSupplier.getInstance()::isAuto
                 )
         );
 
         driverController.povUp().onTrue(Commands.runOnce(() -> DestinationSupplier.getInstance().setIsAuto(!DestinationSupplier.getInstance().isAuto())).ignoringDisable(true));
-        driverController.povRight().onTrue(Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)));//背键-右侧靠内
-        driverController.povLeft().onTrue(Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L2)));//背键-左侧靠内
-        driverController.rightTrigger().onTrue(Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)));
-        driverController.leftTrigger().onTrue(Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L3)));
-        driverController.rightBumper().onTrue(Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)));
-        driverController.leftBumper().onTrue(Commands.runOnce(() -> DestinationSupplier.getInstance().updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.L4)));
+//        driverController.povRight().onTrue(superstructure.runGoal(()->SuperstructureState.L2));//背键-右侧靠内
+//        driverController.povLeft().onTrue(superstructure.runGoal(()->SuperstructureState.L2));//背键-左侧靠内
+//        driverController.rightTrigger().onTrue(superstructure.runGoal(()->SuperstructureState.L3));
+//        driverController.leftTrigger().onTrue(superstructure.runGoal(()->SuperstructureState.L3));
+//        driverController.rightBumper().onTrue(superstructure.runGoal(()->SuperstructureState.L4));
+//        driverController.leftBumper().onTrue(superstructure.runGoal(()->SuperstructureState.L4));
 
 
         driverController.y().toggleOnTrue(Commands.sequence(
-                Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.P2)),
-                new PokeCommand(endEffectorSubsystem, elevatorSubsystem)
+                superstructure.runGoal(()->SuperstructureState.P2)
         ));
         driverController.a().toggleOnTrue(Commands.sequence(
-                Commands.runOnce(() -> destinationSupplier.updateElevatorSetpoint(DestinationSupplier.elevatorSetpoint.P1)),
-                new PokeCommand(endEffectorSubsystem, elevatorSubsystem)
+                superstructure.runGoal(()->SuperstructureState.P1)
         ));
 
-        driverController.b().whileTrue(new ShootCommand(endEffectorSubsystem, indicatorSubsystem));
-        driverController.x().toggleOnTrue(new IntakeCommand(elevatorSubsystem, endEffectorSubsystem, indicatorSubsystem, true));
+        driverController.b().whileTrue(superstructure.shoot());
+        driverController.x().toggleOnTrue(superstructure.runGoal(()-> SuperstructureState.INTAKE).until(endEffectorSubsystem::isFrontEE));
 
         driverController.povDown().onTrue(elevatorSubsystem.zeroElevator());
+
+        driverController.povDownLeft().onTrue(superstructure.runGoal(SuperstructureState.IDLE));
+        driverController.povDownRight().onTrue(superstructure.runGoal(SuperstructureState.OUTTAKE));
 
         driverController.leftStick().whileTrue(
                 new DriverConditionalCommand(
@@ -259,8 +269,12 @@ public class RobotContainer {
                 )
         );//背键-右侧靠外
 
-        testerController.rightBumper().whileTrue(Commands.sequence(AutoActions.setLevel(DestinationSupplier.elevatorSetpoint.L4),
-                AutoActions.autoScore('E')));
+        testerController.rightBumper().whileTrue(Commands.sequence(                AutoActions.autoScore('E',ElevatorSetPoint.L4)));
+        testerController.b().whileTrue(superstructure.runGoal(()->SuperstructureState.P1));
+        testerController.a().whileTrue(superstructure.runGoal(()->SuperstructureState.L2_EJECT
+        ));
+        testerController.x().whileTrue(superstructure.runGoal(()->SuperstructureState.L2));
+        testerController.y().whileTrue(superstructure.runGoal(()->SuperstructureState.INTAKE));
     }
 
     public void robotPeriodic() {
@@ -278,10 +292,5 @@ public class RobotContainer {
                 TransformRecorder.kFrameRobot);
         RobotStateRecorder.putVelocityRobot(now, swerve.getChassisSpeeds());
         RobotStateRecorder.periodic();
-    }
-
-    private double greaterInput(double input1, double input2) {
-        if (Math.abs(input1) > Math.abs(input2)) return input1;
-        return input2;
     }
 }
