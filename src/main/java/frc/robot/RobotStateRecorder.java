@@ -36,6 +36,7 @@ public class RobotStateRecorder extends TransformRecorder {
     }
 
     public static void periodic() {
+        Logger.recordOutput("RobotStateRecorder/fixed",new Pose3d());
         // logging
         Logger.recordOutput("RobotStateRecorder/poseWorldRobot", RobotStateRecorder.getPoseWorldRobotCurrent());
         Logger.recordOutput("RobotStateRecorder/velocityRobot", RobotStateRecorder.getVelocityRobotCurrent());

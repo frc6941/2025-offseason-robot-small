@@ -1,0 +1,113 @@
+{
+  "name": "CarbonpulseT",
+  "position":[0,0,0],
+"rotations": [
+{
+"axis": "x",
+"degrees": 90
+},
+{
+"axis": "z",
+"degrees": 90
+}
+],
+"components": [
+  {
+    "zeroedRotations":[
+      {
+        "axis": "x",
+        "degrees":90
+      },
+      {
+        "axis": "y",
+        "degrees": 0
+      },
+      {
+        "axis": "z",
+        "degrees": -90
+
+      }
+    ],
+    "zeroedPosition":[
+      0.06,-0.0015, 0.2435
+    ]
+  },
+  {
+    "zeroedRotations":[
+      {
+        "axis": "x",
+        "degrees": 90
+      },
+      {
+        "axis": "y",
+        "degrees": 0
+      },
+      {
+        "axis": "z",
+        "degrees": -90
+      }
+    ],
+    "zeroedPosition":[
+      -0.017,0.247,0.317
+    ]
+  },
+  {
+    "zeroedRotations":[
+      {
+        "axis": "x",
+        "degrees": 90
+      },
+      {
+        "axis": "y",
+        "degrees": 0
+      },
+      {
+        "axis": "z",
+        "degrees": -90
+      }
+    ],
+    "zeroedPosition":[
+      0.1633,-0.005,1.22
+    ]
+  },
+  {
+    "zeroedRotations":[
+      {
+        "axis": "x",
+        "degrees": 90
+      },
+      {
+        "axis": "y",
+        "degrees": 0
+      },
+      {
+        "axis": "z",
+        "degrees": 90
+      }
+    ],
+    "zeroedPosition":[
+      -0.0186,-0.0186,0.003
+    ]
+  },
+  {
+    "zeroedRotations":[
+      {
+        "axis": "x",
+        "degrees": 90
+      },
+      {
+        "axis": "y",
+        "degrees": 0
+      },
+      {
+        "axis": "z",
+        "degrees": 90
+      }
+    ],
+    "zeroedPosition":[
+      -0.0145,0,0.0067
+    ]
+  }
+]
+}
+

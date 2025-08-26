@@ -9,6 +9,7 @@ import frc.robot.EndEffectorParamsNT;
 import frc.robot.Robot;
 import frc.robot.RobotStateRecorder;
 import frc.robot.display.SuperstructureVisualizer;
+import frc.robot.display.SuperstructureVisualizerPose3d;
 import frc.robot.drivers.AimGoalSupplier;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endeffector.EndEffectorSubsystem;
@@ -42,6 +43,9 @@ public class Superstructure extends SubsystemBase {
     private final SuperstructureVisualizer measuredPoseVisualizer;
     private final SuperstructureVisualizer setpointPoseVisualizer;
     private final SuperstructureVisualizer goalPoseVisualizer;
+    private final SuperstructureVisualizerPose3d measuredPose;
+    private final SuperstructureVisualizerPose3d setPointPose;
+    private final SuperstructureVisualizerPose3d goalPose;
     private final Set<Pair<SuperstructureState, SuperstructureState>> shootStates;
 
 
@@ -63,6 +67,9 @@ public class Superstructure extends SubsystemBase {
         this.measuredPoseVisualizer = new SuperstructureVisualizer();
         this.setpointPoseVisualizer = new SuperstructureVisualizer();
         this.goalPoseVisualizer = new SuperstructureVisualizer();
+        this.goalPose = new SuperstructureVisualizerPose3d();
+        this.measuredPose = new SuperstructureVisualizerPose3d();
+        this.setPointPose = new SuperstructureVisualizerPose3d();
 
         // Add states as vertices
         for (var state : SuperstructureState.values()) {
@@ -187,7 +194,14 @@ public class Superstructure extends SubsystemBase {
                 goal.getValue().getPose().elevatorHeight().getAsDouble()
             );
         }
-
+        measuredPose.updateVisuals(elevator.getElevatorPosition());
+        measuredPose.logCoralPose(endEffectorSubsystem.hasCoral());
+        goalPose.updateVisuals(goal.getValue().getPose().elevatorHeight().getAsDouble());
+        setPointPose.updateVisuals(elevator.getWantedPosition());
+        Logger.recordOutput("Superstructure/endeffectorPose",measuredPose.getEndeffector());
+        Logger.recordOutput("Superstructure/elevatorStage1Pose",measuredPose.getElevator1stStage());
+        Logger.recordOutput("Superstructure/elevatorStage2Pose",measuredPose.getElevator2ndStage());
+        Logger.recordOutput("Superstructure/coralPose",measuredPose.getCoralPose());
         // if we complete the current command, there are three things that we should planning to do
         // 1. update state (to next, which is current state)
         // 2. update next (to the next target state, which should be found through bfs)

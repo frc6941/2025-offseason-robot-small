@@ -1,0 +1,21 @@
+{
+  "name": "Coral",
+  "position":[0.13,0,0.6],
+"rotations": [
+{
+"axis": "x",
+"degrees": 220
+},{
+"axis": "y",
+"degrees": 0
+},
+{
+"axis": "z",
+"degrees": 90
+}
+],
+"components": [
+  
+]
+}
+
