@@ -35,7 +35,7 @@ public class SuperstructureVisualizerPose3d{
     public void logCoralPose(boolean hasCoral){
         Pose3d robotPose = RobotStateRecorder.getPoseWorldRobotCurrent();
         if(hasCoral){
-            coralPose = new Pose3d(robotPose.getX(),robotPose.getY(), robotPose.getZ()+elevator2ndStage.getZ(),robotPose.getRotation());
+            coralPose = new Pose3d(robotPose.getX(),0+robotPose.getY(),0.72+ robotPose.getZ()+elevator2ndStage.getZ(),new Rotation3d(robotPose.getX(),robotPose.getRotation().getY()-40,robotPose.getRotation().getZ()));
         }
         else {
             coralPose = new Pose3d(10000, 0, 0, new Rotation3d());
