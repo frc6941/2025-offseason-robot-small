@@ -101,7 +101,12 @@ public class ImuIOPigeon implements ImuIO {
         roll.setUpdateFrequency(50.0);
         rollVelocity.setUpdateFrequency(50.0);
     }
-    
+
+    @Override
+    public void reset() {
+        pigeon.reset();
+    }
+
     // Note: No need for startSyncThread() method since we use the shared sync thread from SwerveModuleIOSJTU6
 
     @Override

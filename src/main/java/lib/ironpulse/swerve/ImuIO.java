@@ -9,6 +9,8 @@ public interface ImuIO {
     default void updateInputs(ImuIOInputs inputs) {
     }
 
+    default void reset() {}
+
 
     @AutoLog
     class ImuIOInputs {
